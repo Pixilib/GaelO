@@ -123,7 +123,7 @@ class JobRadiomicsReport implements ShouldQueue
         $tokenResult = $user->createToken('GaelO')->plainTextToken;
         $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
-        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', 'nii.gz', $maskdicom);
+        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'nii.gz', $maskdicom);
 
         $this->deleteCreatedRessources();
     }

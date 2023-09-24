@@ -108,7 +108,14 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function requestJson(string $method, string $uri, array $body = []): Psr7ResponseInterface
     {
-        $authenticationOption = ['auth' => [$this->login, $this->password]];
+        if ($this->login !== '' && $this->password !== '') {
+            $authenticationOption['auth'] = [$this->login, $this->password];
+        }
+
+        if ($this->authorizationToken != null) {
+            $authenticationOption['headers']['Authorization'] = 'Bearer ' . $this->authorizationToken;
+        }
+
         $bodyOption = ['json' => $body];
         $options = array_merge($authenticationOption, $bodyOption);
         $response = $this->client->request($method, $this->address . $uri, $options);

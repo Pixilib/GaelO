@@ -39,12 +39,12 @@ class GaelOClientService
         $this->httpClientInterface->setAuthorizationToken($answer['access_token']);
     }
 
-    public function createFileToVisit(string $studyName, int $visitId, string $key, string $contentType, ?string $extension, string $filePath)
+    public function createFileToVisit(string $studyName, int $visitId, string $key, ?string $extension, string $filePath)
     {
         $payload = [
             'extension' => $extension,
             'content' => base64_encode(file_get_contents($filePath))
         ];
-        $this->httpClientInterface->rawRequest("POST", '/api/visits/' . $visitId . '/files/' . $key . '?studyName=' . $studyName . '&role=Supervisor', $payload, ['Content-Type' => $contentType]);
+        $this->httpClientInterface->requestJson("POST", '/api/visits/' . $visitId . '/files/' . $key . '?studyName=' . $studyName . '&role=Supervisor', $payload);
     }
 }
