@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66637653407607" branch-rate="0" lines-covered="7656" lines-valid="11489" branches-covered="0" branches-valid="0" complexity="2774" version="0.4" timestamp="1695587737">
+<coverage line-rate="0.66614460976246" branch-rate="0" lines-covered="7656" lines-valid="11493" branches-covered="0" branches-valid="0" complexity="2774" version="0.4" timestamp="1695593466">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1269,8 +1269,8 @@
           <methods>
             <method name="getExtensionsFromMime" signature="string $mime" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="13" hits="4"/>
-                <line number="14" hits="4"/>
+                <line number="13" hits="3"/>
+                <line number="14" hits="3"/>
               </lines>
             </method>
             <method name="getMimesFromExtension" signature="string $extension" line-rate="1" branch-rate="0" complexity="1">
@@ -1281,8 +1281,8 @@
             </method>
           </methods>
           <lines>
-            <line number="13" hits="4"/>
-            <line number="14" hits="4"/>
+            <line number="13" hits="3"/>
+            <line number="14" hits="3"/>
             <line number="19" hits="8"/>
             <line number="20" hits="8"/>
           </lines>
@@ -6847,9 +6847,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/GaelOClientService.php" line-rate="0" branch-rate="0" complexity="7">
+    <package name="GaelO/Services/GaelOClientService.php" line-rate="0" branch-rate="0" complexity="6">
       <classes>
-        <class name="App\GaelO\Services\GaelOClientService" filename="GaelO/Services/GaelOClientService.php" line-rate="0" branch-rate="0" complexity="7">
+        <class name="App\GaelO\Services\GaelOClientService" filename="GaelO/Services/GaelOClientService.php" line-rate="0" branch-rate="0" complexity="6">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\HttpClientInterface $httpClientInterface, App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface" line-rate="0" branch-rate="0" complexity="1">
               <lines>
@@ -6857,44 +6857,54 @@
                 <line number="17" hits="0"/>
               </lines>
             </method>
-            <method name="setAuthorizationToken" signature="string $token" line-rate="0" branch-rate="0" complexity="1">
+            <method name="loadUrl" signature="" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="22" hits="0"/>
+                <line number="23" hits="0"/>
+                <line number="24" hits="0"/>
               </lines>
             </method>
-            <method name="login" signature="string $email, $password" line-rate="0" branch-rate="0" complexity="4">
+            <method name="setAuthorizationToken" signature="string $token" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="28" hits="0"/>
                 <line number="29" hits="0"/>
-                <line number="31" hits="0"/>
-                <line number="32" hits="0"/>
-                <line number="33" hits="0"/>
+              </lines>
+            </method>
+            <method name="login" signature="string $email, $password" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
                 <line number="34" hits="0"/>
                 <line number="35" hits="0"/>
                 <line number="36" hits="0"/>
                 <line number="37" hits="0"/>
+                <line number="38" hits="0"/>
+                <line number="39" hits="0"/>
               </lines>
             </method>
-            <method name="createFileToVisit" signature="string $studyName, int $visitId, string $key, string $contentType, string $filePath" line-rate="0" branch-rate="0" complexity="1">
+            <method name="createFileToVisit" signature="string $studyName, int $visitId, string $key, string $contentType, ?string $extension, string $filePath" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="43" hits="0"/>
+                <line number="44" hits="0"/>
+                <line number="45" hits="0"/>
+                <line number="46" hits="0"/>
+                <line number="47" hits="0"/>
+                <line number="48" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
             <line number="16" hits="0"/>
             <line number="17" hits="0"/>
-            <line number="22" hits="0"/>
-            <line number="28" hits="0"/>
+            <line number="23" hits="0"/>
+            <line number="24" hits="0"/>
             <line number="29" hits="0"/>
-            <line number="31" hits="0"/>
-            <line number="32" hits="0"/>
-            <line number="33" hits="0"/>
             <line number="34" hits="0"/>
             <line number="35" hits="0"/>
             <line number="36" hits="0"/>
             <line number="37" hits="0"/>
-            <line number="43" hits="0"/>
+            <line number="38" hits="0"/>
+            <line number="39" hits="0"/>
+            <line number="44" hits="0"/>
+            <line number="45" hits="0"/>
+            <line number="46" hits="0"/>
+            <line number="47" hits="0"/>
+            <line number="48" hits="0"/>
           </lines>
         </class>
       </classes>
@@ -13194,9 +13204,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/CreateFileToVisit/CreateFileToVisit.php" line-rate="0.90697674418605" branch-rate="0" complexity="8">
+    <package name="GaelO/UseCases/CreateFileToVisit/CreateFileToVisit.php" line-rate="0.91111111111111" branch-rate="0" complexity="9">
       <classes>
-        <class name="App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisit" filename="GaelO/UseCases/CreateFileToVisit/CreateFileToVisit.php" line-rate="0.90697674418605" branch-rate="0" complexity="8">
+        <class name="App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisit" filename="GaelO/UseCases/CreateFileToVisit/CreateFileToVisit.php" line-rate="0.91111111111111" branch-rate="0" complexity="9">
           <methods>
             <method name="__construct" signature="App\GaelO\Services\AuthorizationService\AuthorizationVisitService $authorizationVisitService, App\GaelO\Services\VisitService $visitService, App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface $trackerRepositoryInterface, App\GaelO\Interfaces\Adapters\MimeInterface $mimeInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -13206,7 +13216,7 @@
                 <line number="33" hits="3"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitRequest $createFileToVisitRequest, App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitResponse $createFileToVisitResponse" line-rate="0.88571428571429" branch-rate="0" complexity="5">
+            <method name="execute" signature="App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitRequest $createFileToVisitRequest, App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitResponse $createFileToVisitResponse" line-rate="0.89189189189189" branch-rate="0" complexity="6">
               <lines>
                 <line number="41" hits="3"/>
                 <line number="42" hits="3"/>
@@ -13222,35 +13232,37 @@
                 <line number="56" hits="0"/>
                 <line number="59" hits="3"/>
                 <line number="61" hits="2"/>
-                <line number="62" hits="2"/>
+                <line number="62" hits="1"/>
                 <line number="64" hits="1"/>
-                <line number="65" hits="1"/>
-                <line number="66" hits="1"/>
-                <line number="67" hits="1"/>
+                <line number="67" hits="2"/>
                 <line number="69" hits="1"/>
                 <line number="70" hits="1"/>
                 <line number="71" hits="1"/>
                 <line number="72" hits="1"/>
-                <line number="73" hits="1"/>
                 <line number="74" hits="1"/>
                 <line number="75" hits="1"/>
                 <line number="76" hits="1"/>
+                <line number="77" hits="1"/>
                 <line number="78" hits="1"/>
                 <line number="79" hits="1"/>
-                <line number="80" hits="2"/>
-                <line number="81" hits="2"/>
-                <line number="82" hits="2"/>
-                <line number="83" hits="2"/>
-                <line number="84" hits="0"/>
-                <line number="85" hits="0"/>
+                <line number="80" hits="1"/>
+                <line number="81" hits="1"/>
+                <line number="83" hits="1"/>
+                <line number="84" hits="1"/>
+                <line number="85" hits="2"/>
+                <line number="86" hits="2"/>
+                <line number="87" hits="2"/>
+                <line number="88" hits="2"/>
+                <line number="89" hits="0"/>
+                <line number="90" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $visitId, int $currentUserId, string $studyName" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="91" hits="3"/>
-                <line number="92" hits="3"/>
-                <line number="93" hits="3"/>
-                <line number="94" hits="3"/>
+                <line number="96" hits="3"/>
+                <line number="97" hits="3"/>
+                <line number="98" hits="3"/>
+                <line number="99" hits="3"/>
               </lines>
             </method>
           </methods>
@@ -13273,31 +13285,33 @@
             <line number="56" hits="0"/>
             <line number="59" hits="3"/>
             <line number="61" hits="2"/>
-            <line number="62" hits="2"/>
+            <line number="62" hits="1"/>
             <line number="64" hits="1"/>
-            <line number="65" hits="1"/>
-            <line number="66" hits="1"/>
-            <line number="67" hits="1"/>
+            <line number="67" hits="2"/>
             <line number="69" hits="1"/>
             <line number="70" hits="1"/>
             <line number="71" hits="1"/>
             <line number="72" hits="1"/>
-            <line number="73" hits="1"/>
             <line number="74" hits="1"/>
             <line number="75" hits="1"/>
             <line number="76" hits="1"/>
+            <line number="77" hits="1"/>
             <line number="78" hits="1"/>
             <line number="79" hits="1"/>
-            <line number="80" hits="2"/>
-            <line number="81" hits="2"/>
-            <line number="82" hits="2"/>
-            <line number="83" hits="2"/>
-            <line number="84" hits="0"/>
-            <line number="85" hits="0"/>
-            <line number="91" hits="3"/>
-            <line number="92" hits="3"/>
-            <line number="93" hits="3"/>
-            <line number="94" hits="3"/>
+            <line number="80" hits="1"/>
+            <line number="81" hits="1"/>
+            <line number="83" hits="1"/>
+            <line number="84" hits="1"/>
+            <line number="85" hits="2"/>
+            <line number="86" hits="2"/>
+            <line number="87" hits="2"/>
+            <line number="88" hits="2"/>
+            <line number="89" hits="0"/>
+            <line number="90" hits="0"/>
+            <line number="96" hits="3"/>
+            <line number="97" hits="3"/>
+            <line number="98" hits="3"/>
+            <line number="99" hits="3"/>
           </lines>
         </class>
       </classes>
@@ -28538,9 +28552,9 @@
         </class>
       </classes>
     </package>
-    <package name="Http/Controllers/VisitController.php" line-rate="0.94573643410853" branch-rate="0" complexity="16">
+    <package name="Http/Controllers/VisitController.php" line-rate="0.94488188976378" branch-rate="0" complexity="16">
       <classes>
-        <class name="App\Http\Controllers\VisitController" filename="Http/Controllers/VisitController.php" line-rate="0.94573643410853" branch-rate="0" complexity="16">
+        <class name="App\Http\Controllers\VisitController" filename="Http/Controllers/VisitController.php" line-rate="0.94488188976378" branch-rate="0" complexity="16">
           <methods>
             <method name="createVisit" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateVisit\CreateVisit $createVisit, App\GaelO\UseCases\CreateVisit\CreateVisitRequest $createVisitRequest, App\GaelO\UseCases\CreateVisit\CreateVisitResponse $createVisitResponse, string $visitTypeId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -28681,50 +28695,48 @@
                 <line number="224" hits="3"/>
                 <line number="225" hits="3"/>
                 <line number="226" hits="3"/>
-                <line number="227" hits="3"/>
+                <line number="228" hits="3"/>
                 <line number="229" hits="3"/>
                 <line number="230" hits="3"/>
                 <line number="231" hits="3"/>
                 <line number="232" hits="3"/>
                 <line number="233" hits="3"/>
-                <line number="234" hits="3"/>
                 <line number="235" hits="3"/>
                 <line number="237" hits="3"/>
-                <line number="239" hits="3"/>
-                <line number="240" hits="3"/>
+                <line number="238" hits="3"/>
               </lines>
             </method>
             <method name="getFileOfVisit" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitRequest $getFileOfVisitRequest, App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitResponse $getFileOfVisitResponse, App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisit $getFileOfVisit, int $visitId, string $key" line-rate="1" branch-rate="0" complexity="2">
               <lines>
+                <line number="243" hits="2"/>
+                <line number="244" hits="2"/>
                 <line number="245" hits="2"/>
-                <line number="246" hits="2"/>
                 <line number="247" hits="2"/>
+                <line number="248" hits="2"/>
                 <line number="249" hits="2"/>
                 <line number="250" hits="2"/>
                 <line number="251" hits="2"/>
                 <line number="252" hits="2"/>
-                <line number="253" hits="2"/>
                 <line number="254" hits="2"/>
                 <line number="256" hits="2"/>
-                <line number="258" hits="2"/>
+                <line number="257" hits="1"/>
                 <line number="259" hits="1"/>
-                <line number="261" hits="1"/>
-                <line number="262" hits="1"/>
+                <line number="260" hits="1"/>
               </lines>
             </method>
             <method name="deleteFileOfVisit" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitRequest $deleteFileOfVisitRequest, App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitResponse $deleteFileOfVisitResponse, App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisit $deleteFileOfVisit, int $visitId, string $key" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="266" hits="2"/>
+                <line number="267" hits="2"/>
                 <line number="268" hits="2"/>
-                <line number="269" hits="2"/>
                 <line number="270" hits="2"/>
+                <line number="271" hits="2"/>
                 <line number="272" hits="2"/>
                 <line number="273" hits="2"/>
                 <line number="274" hits="2"/>
                 <line number="275" hits="2"/>
-                <line number="276" hits="2"/>
                 <line number="277" hits="2"/>
                 <line number="279" hits="2"/>
-                <line number="281" hits="2"/>
               </lines>
             </method>
           </methods>
@@ -28822,42 +28834,40 @@
             <line number="224" hits="3"/>
             <line number="225" hits="3"/>
             <line number="226" hits="3"/>
-            <line number="227" hits="3"/>
+            <line number="228" hits="3"/>
             <line number="229" hits="3"/>
             <line number="230" hits="3"/>
             <line number="231" hits="3"/>
             <line number="232" hits="3"/>
             <line number="233" hits="3"/>
-            <line number="234" hits="3"/>
             <line number="235" hits="3"/>
             <line number="237" hits="3"/>
-            <line number="239" hits="3"/>
-            <line number="240" hits="3"/>
+            <line number="238" hits="3"/>
+            <line number="243" hits="2"/>
+            <line number="244" hits="2"/>
             <line number="245" hits="2"/>
-            <line number="246" hits="2"/>
             <line number="247" hits="2"/>
+            <line number="248" hits="2"/>
             <line number="249" hits="2"/>
             <line number="250" hits="2"/>
             <line number="251" hits="2"/>
             <line number="252" hits="2"/>
-            <line number="253" hits="2"/>
             <line number="254" hits="2"/>
             <line number="256" hits="2"/>
-            <line number="258" hits="2"/>
+            <line number="257" hits="1"/>
             <line number="259" hits="1"/>
-            <line number="261" hits="1"/>
-            <line number="262" hits="1"/>
+            <line number="260" hits="1"/>
+            <line number="266" hits="2"/>
+            <line number="267" hits="2"/>
             <line number="268" hits="2"/>
-            <line number="269" hits="2"/>
             <line number="270" hits="2"/>
+            <line number="271" hits="2"/>
             <line number="272" hits="2"/>
             <line number="273" hits="2"/>
             <line number="274" hits="2"/>
             <line number="275" hits="2"/>
-            <line number="276" hits="2"/>
             <line number="277" hits="2"/>
             <line number="279" hits="2"/>
-            <line number="281" hits="2"/>
           </lines>
         </class>
       </classes>
@@ -29370,41 +29380,42 @@
                 <line number="123" hits="0"/>
                 <line number="124" hits="0"/>
                 <line number="125" hits="0"/>
-                <line number="127" hits="0"/>
+                <line number="126" hits="0"/>
+                <line number="128" hits="0"/>
               </lines>
             </method>
             <method name="getSeriesOrthancIds" signature="array $dicomStudyEntity" line-rate="0" branch-rate="0" complexity="6">
               <lines>
-                <line number="132" hits="0"/>
                 <line number="133" hits="0"/>
                 <line number="134" hits="0"/>
                 <line number="135" hits="0"/>
                 <line number="136" hits="0"/>
                 <line number="137" hits="0"/>
-                <line number="139" hits="0"/>
+                <line number="138" hits="0"/>
                 <line number="140" hits="0"/>
                 <line number="141" hits="0"/>
-                <line number="145" hits="0"/>
+                <line number="142" hits="0"/>
                 <line number="146" hits="0"/>
                 <line number="147" hits="0"/>
                 <line number="148" hits="0"/>
+                <line number="149" hits="0"/>
               </lines>
             </method>
             <method name="addCreatedRessource" signature="string $type, string $id" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="153" hits="0"/>
+                <line number="154" hits="0"/>
               </lines>
             </method>
             <method name="deleteCreatedRessources" signature="" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="158" hits="0"/>
                 <line number="159" hits="0"/>
+                <line number="160" hits="0"/>
               </lines>
             </method>
             <method name="failed" signature="Throwable $exception" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="165" hits="0"/>
                 <line number="166" hits="0"/>
+                <line number="167" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -29473,25 +29484,26 @@
             <line number="123" hits="0"/>
             <line number="124" hits="0"/>
             <line number="125" hits="0"/>
-            <line number="127" hits="0"/>
-            <line number="132" hits="0"/>
+            <line number="126" hits="0"/>
+            <line number="128" hits="0"/>
             <line number="133" hits="0"/>
             <line number="134" hits="0"/>
             <line number="135" hits="0"/>
             <line number="136" hits="0"/>
             <line number="137" hits="0"/>
-            <line number="139" hits="0"/>
+            <line number="138" hits="0"/>
             <line number="140" hits="0"/>
             <line number="141" hits="0"/>
-            <line number="145" hits="0"/>
+            <line number="142" hits="0"/>
             <line number="146" hits="0"/>
             <line number="147" hits="0"/>
             <line number="148" hits="0"/>
-            <line number="153" hits="0"/>
-            <line number="158" hits="0"/>
+            <line number="149" hits="0"/>
+            <line number="154" hits="0"/>
             <line number="159" hits="0"/>
-            <line number="165" hits="0"/>
+            <line number="160" hits="0"/>
             <line number="166" hits="0"/>
+            <line number="167" hits="0"/>
           </lines>
         </class>
       </classes>
