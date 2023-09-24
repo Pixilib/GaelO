@@ -28,7 +28,7 @@ class JobRadiomicsReport implements ShouldQueue
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
-    private array $createdFiles;
+    private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
 
     public function __construct(int $visitId)
@@ -119,7 +119,7 @@ class JobRadiomicsReport implements ShouldQueue
 
         //TODO API key access via les env ?
         //Send file to store using API as job worker may not access to the storage backend
-        $user = User::where('email', 'salim.kanoun@gmail.com')->sole();
+        $user = User::findOrFail(1);
         $tokenResult = $user->createToken('GaelO');
         $gaeloClientService->setAuthorizationToken($tokenResult);
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', $maskdicom);
