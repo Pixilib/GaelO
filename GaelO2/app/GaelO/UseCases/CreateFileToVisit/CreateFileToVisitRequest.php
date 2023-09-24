@@ -9,5 +9,6 @@ class CreateFileToVisitRequest
     public string $studyName;
     public string $key;
     public string $contentType;
-    public string $binaryData;
+    public string $content;
+    public ?string $extension = null;
 }

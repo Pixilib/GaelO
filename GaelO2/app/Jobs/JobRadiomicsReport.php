@@ -120,9 +120,10 @@ class JobRadiomicsReport implements ShouldQueue
         //TODO API key access via les env ?
         //Send file to store using API as job worker may not access to the storage backend
         $user = User::findOrFail(1);
-        $tokenResult = $user->createToken('GaelO');
+        $tokenResult = $user->createToken('GaelO')->plainTextToken;
+        $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
-        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', $maskdicom);
+        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', 'nii.gz', $maskdicom);
 
         $this->deleteCreatedRessources();
     }

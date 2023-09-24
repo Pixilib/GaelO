@@ -40,7 +40,7 @@ class CreateFileToVisit
 
             $visitId = $createFileToVisitRequest->visitId;
             $key = $createFileToVisitRequest->key;
-            $binaryData = $createFileToVisitRequest->binaryData;
+            $content = $createFileToVisitRequest->content;
             $currentUserId = $createFileToVisitRequest->currentUserId;
             $contentType = $createFileToVisitRequest->contentType;
 
@@ -52,14 +52,19 @@ class CreateFileToVisit
                 throw new GaelOForbiddenException('Should be called from original study');
             }
 
-            if (!Util::isBase64Encoded($binaryData)) {
+            if (!Util::isBase64Encoded($content)) {
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 
             $this->checkAuthorization($visitId, $currentUserId, $studyName);
 
-            $extension = $this->mimeInterface::getExtensionsFromMime($createFileToVisitRequest->contentType)[0];
-            $filename = $this->visitService->attachFile($key, $contentType, $extension, base64_decode($binaryData));
+            if ($createFileToVisitRequest->extension == null) {
+                $extension = $this->mimeInterface::getExtensionsFromMime($createFileToVisitRequest->contentType)[0];
+            } else {
+                $extension = $createFileToVisitRequest->extension;
+            }
+
+            $filename = $this->visitService->attachFile($key, $contentType, $extension, base64_decode($content));
 
             $actionDetails = [
                 'uploaded_file' => $key,

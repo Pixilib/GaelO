@@ -84,7 +84,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     {
         return [
             'prediction' => new AssociatedFile('prediction', MimeAdapter::getMimesFromExtension('csv'), false),
-            'tmtv41' => new AssociatedFile('tmtv41', ['application/gzip'], false)
+            'tmtv41' => new AssociatedFile('tmtv41', ['application/zip'], false)
         ];
     }
 

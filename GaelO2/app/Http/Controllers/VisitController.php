@@ -224,7 +224,6 @@ class VisitController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-        $payload = $request->getContent();
 
         Util::fillObject($requestData, $createFileToVisitRequest);
         $createFileToVisitRequest->currentUserId = $currentUser['id'];
@@ -232,7 +231,6 @@ class VisitController extends Controller
         $createFileToVisitRequest->visitId = $visitId;
         $createFileToVisitRequest->key = $key;
         $createFileToVisitRequest->contentType = $request->headers->get('Content-Type');
-        $createFileToVisitRequest->binaryData = $payload;
 
         $createFileToVisit->execute($createFileToVisitRequest, $createFileToVisitResponse);
 
