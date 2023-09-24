@@ -11,6 +11,7 @@ use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -118,9 +119,11 @@ class JobRadiomicsReport implements ShouldQueue
 
         //TODO API key access via les env ?
         //Send file to store using API as job worker may not access to the storage backend
-        $gaeloClientService->login('username', 'password');
+        $user = User::where('email', 'salim.kanoun@gmail.com')->sole();
+        $tokenResult = $user->createToken('GaelO');
+        $gaeloClientService->setAuthorizationToken($tokenResult);
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', $maskdicom);
-        
+
         $this->deleteCreatedRessources();
     }
 
