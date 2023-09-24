@@ -13,7 +13,7 @@ interface HttpClientInterface
 
     public function setBasicAuthentication(string $login, string $password): void;
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface;
+    public function rawRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface;
 
     public function uploadFile(string $method, string $uri, string $filename) : Psr7ResponseInterface;
     /**

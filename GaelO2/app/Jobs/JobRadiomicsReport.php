@@ -6,10 +6,11 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Services\GaelOClientService;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
-use App\GaelO\Services\VisitService;
+use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,6 +27,8 @@ class JobRadiomicsReport implements ShouldQueue
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
+    private array $createdFiles;
+    private GaelOProcessingService $gaelOProcessingService;
 
     public function __construct(int $visitId)
     {
@@ -33,8 +36,9 @@ class JobRadiomicsReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, VisitService $visitService): void
+    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, GaelOClientService $gaeloClientService): void
     {
+        $this->gaelOProcessingService = $gaelOProcessingService;
         $orthancService->setOrthancServer(true);
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];
@@ -55,10 +59,14 @@ class JobRadiomicsReport implements ShouldQueue
         $orthancService->getZipStreamToFile([$orthancSeriesIdCt], fopen($downloadedFilePathCT, 'r+'));
 
         $gaelOProcessingService->createDicom($downloadedFilePathPT);
+        $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->createDicom($downloadedFilePathCT);
+        $this->addCreatedRessource('dicoms', $orthancSeriesIdCt);
 
         $idPT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
+        $this->addCreatedRessource('series', $idPT);
         $idCT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
+        $this->addCreatedRessource('series', $idCT);
 
         $inferencePayload = [
             'idPT' => $idPT,
@@ -66,10 +74,13 @@ class JobRadiomicsReport implements ShouldQueue
         ];
         $inferenceResponse = $gaelOProcessingService->executeInference('attentionunet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
+        $this->addCreatedRessource('masks', $maskId);
 
         #Do Mask Fragmentation and threshold
         $fragmentedMaskId = $gaelOProcessingService->fragmentMask($idPT, $maskId);
+        $this->addCreatedRessource('masks', $fragmentedMaskId);
         $threshold41MaskId = $gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
+        $this->addCreatedRessource('masks', $threshold41MaskId);
 
         #Fragmented Mip
         $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
@@ -78,17 +89,19 @@ class JobRadiomicsReport implements ShouldQueue
 
         #get Rtss
         $rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
+        $this->addCreatedRessource('rtss', $rtssId);
         $rtssFile = $gaelOProcessingService->getRtss($rtssId);
         $frameworkInterface->storeFile('rtss_41.dcm', fopen($rtssFile, 'r'));
 
         #get Seg
         $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
+        $this->addCreatedRessource('seg', $segId);
         $segFile = $gaelOProcessingService->getSeg($segId);
         $frameworkInterface->storeFile('seg_41.dcm', fopen($segFile, 'r'));
 
         #get .nii.gz Mask Dicom (not thrsholded)
         $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
-        $maskDicomRessource= fopen($maskdicom, 'rb');
+        $maskDicomRessource = fopen($maskdicom, 'rb');
         $frameworkInterface->storeFile('mask_inference_dicom.nii.gz', $maskDicomRessource);
 
         #get Stats
@@ -103,20 +116,12 @@ class JobRadiomicsReport implements ShouldQueue
             $creatorUserId
         );
 
-        $visitService->setVisitId($this->visitId);
-        rewind($maskDicomRessource);
-        //TODO ecrasement à verifier
-        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', $maskDicomRessource);
-
-        $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
-        $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
-        $gaelOProcessingService->deleteRessource('series', $idPT);
-        $gaelOProcessingService->deleteRessource('series', $idCT);
-        $gaelOProcessingService->deleteRessource('masks', $maskId);
-        $gaelOProcessingService->deleteRessource('masks', $fragmentedMaskId);
-        $gaelOProcessingService->deleteRessource('masks', $threshold41MaskId);
-        $gaelOProcessingService->deleteRessource('rtss', $rtssId);
-        $gaelOProcessingService->deleteRessource('seg', $segId);
+        //TODO API key access via les env ?
+        //Send file to store using API as job worker may not access to the storage backend
+        $gaeloClientService->login('username', 'password');
+        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'application/zip', $maskdicom);
+        
+        $this->deleteCreatedRessources();
     }
 
     private function getSeriesOrthancIds(array $dicomStudyEntity)
@@ -140,8 +145,21 @@ class JobRadiomicsReport implements ShouldQueue
         ];
     }
 
+    private function addCreatedRessource(string $type, string $id)
+    {
+        $this->createdFiles[] = new GaelOProcessingFile($type, $id);
+    }
+
+    private function deleteCreatedRessources()
+    {
+        foreach ($this->createdFiles as $gaeloProcessingFile) {
+            $this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
+        }
+    }
+
     public function failed(Throwable $exception)
     {
+        $this->deleteCreatedRessources();
         Log::error($exception);
     }
 }
