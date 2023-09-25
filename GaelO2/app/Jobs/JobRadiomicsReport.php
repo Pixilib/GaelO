@@ -12,6 +12,7 @@ use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use App\Models\User;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -163,7 +164,10 @@ class JobRadiomicsReport implements ShouldQueue
     private function deleteCreatedRessources()
     {
         foreach ($this->createdFiles as $gaeloProcessingFile) {
-            $this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
+            try {
+                $this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
+            } catch (Exception) {
+            }
         }
     }
 
