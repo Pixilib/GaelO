@@ -28,13 +28,15 @@ class JobRadiomicsReport implements ShouldQueue
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
+    private string $behalfUserEmail;
     private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
 
-    public function __construct(int $visitId)
+    public function __construct(int $visitId, string $behalfUserEmail)
     {
         $this->onQueue('processing');
         $this->visitId = $visitId;
+        $this->behalfUserEmail = $behalfUserEmail;
     }
 
     public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, GaelOClientService $gaeloClientService): void
@@ -46,7 +48,7 @@ class JobRadiomicsReport implements ShouldQueue
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
         $creatorUserId = $visitEntity['creator_user_id'];
-
+        $existingFiles = $visitEntity['sent_files'];
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
         $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
@@ -117,12 +119,16 @@ class JobRadiomicsReport implements ShouldQueue
             $creatorUserId
         );
 
-        //TODO API key access via les env ?
         //Send file to store using API as job worker may not access to the storage backend
-        $user = User::findOrFail(1);
+        $user = User::where('email', $this->behalfUserEmail)->sole();
         $tokenResult = $user->createToken('GaelO')->plainTextToken;
         $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
+        //In case of changed upload remove the last mask
+        if (array_key_exists('tmtv41', $existingFiles)) {
+            $gaeloClientService->deleteFileToVisit($studyName, $this->visitId, 'tmtv41');
+        }
+        //Store the file for review availability
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'nii.gz', $maskdicom);
 
         $this->deleteCreatedRessources();

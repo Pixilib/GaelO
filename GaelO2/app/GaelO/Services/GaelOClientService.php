@@ -47,4 +47,9 @@ class GaelOClientService
         ];
         $this->httpClientInterface->requestJson("POST", '/api/visits/' . $visitId . '/files/' . $key . '?studyName=' . $studyName . '&role=Supervisor', $payload);
     }
+
+    public function deleteFileToVisit(string $studyName, int $visitId, string $key)
+    {
+        $this->httpClientInterface->rawRequest('DELETE', '/api/visits/' . $visitId . '/files/' . $key . '?studyName=' . $studyName . '&role=Supervisor', null, null);
+    }
 }
