@@ -122,11 +122,12 @@ class GaelOProcessingService
         return $request->getBody();
     }
 
-    public function fragmentMask(string $seriesId, string $maskId): string
+    public function fragmentMask(string $seriesId, string $maskId, bool $output3D): string
     {
         $payload = [
             'maskId' => $maskId,
-            'seriesId' => $seriesId
+            'seriesId' => $seriesId,
+            'ouput3D' => $output3D
         ];
 
         $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-fragmentation", $payload);

@@ -76,12 +76,12 @@ class JobRadiomicsReport implements ShouldQueue
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
-        $inferenceResponse = $gaelOProcessingService->executeInference('attentionunet_model', $inferencePayload);
+        $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $this->addCreatedRessource('masks', $maskId);
 
         #Do Mask Fragmentation and threshold
-        $fragmentedMaskId = $gaelOProcessingService->fragmentMask($idPT, $maskId);
+        $fragmentedMaskId = $gaelOProcessingService->fragmentMask($idPT, $maskId, true);
         $this->addCreatedRessource('masks', $fragmentedMaskId);
         $threshold41MaskId = $gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
         $this->addCreatedRessource('masks', $threshold41MaskId);
