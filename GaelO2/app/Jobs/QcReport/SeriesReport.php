@@ -3,6 +3,7 @@
 namespace App\Jobs\QcReport;
 
 use App\GaelO\DicomUtils;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use Throwable;
@@ -108,21 +109,31 @@ class SeriesReport
 
     private function getPreviewType(): ImageType
     {
+        if (!$this->instanceReport) {
+            throw new GaelOException("Instance Report need to be set first");
+        }
+
         $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
         $gifIDs = [
             '1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
             '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
         ];
-        #TODO : Si une seule instance faire l'api d'orthanc
-        if ($this->instanceReport != null && $this->instanceReport->numberOfFrames > 1) {
+
+        if ($this->instanceReport->numberOfFrames > 1) {
+            //Multi frame image series
             return ImageType::MULTIFRAME;
-        } else if (in_array($this->SOPClassUID, $mosaicIDs)) {
-            return ImageType::MOSAIC;
-        } else if (in_array($this->SOPClassUID, $gifIDs)) {
-            return ImageType::MIP;
-        } else {
-            return ImageType::DEFAULT;
         }
+
+        if (sizeof($this->orthancInstanceIds) > 1) {
+            if (in_array($this->SOPClassUID, $mosaicIDs)) {
+                return ImageType::MOSAIC;
+            } else if (in_array($this->SOPClassUID, $gifIDs)) {
+                return ImageType::MIP;
+            }
+        }
+
+        #All others case use default rendering of the first instance
+        return ImageType::DEFAULT;
     }
 
     public function loadSeriesPreview(OrthancService $orthancService): void
@@ -134,7 +145,7 @@ class SeriesReport
         try {
             switch ($imageType) {
                 case ImageType::MIP:
-                    //Mosaic for now
+                    //Mosaic for now as mip need significant computation and memory backend
                     $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
                     break;
                 case ImageType::MOSAIC:
@@ -149,7 +160,8 @@ class SeriesReport
                     $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
                     break;
             }
-        } catch (Throwable $t) { }
+        } catch (Throwable $t) {
+        }
 
         $this->previewImagePath = $imagePath;
     }
