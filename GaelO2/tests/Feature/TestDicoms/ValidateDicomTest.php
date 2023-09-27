@@ -3,8 +3,10 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Services\TusService;
 use App\Models\ReviewStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
@@ -13,21 +15,35 @@ class ValidateDicomTest extends TestCase
 
     use RefreshDatabase;
 
+    private ReviewStatus $reviewStatus;
+    private string $studyName;
+    private int $visitId;
+    private array $tusIdArray;
+    private int $numberOfInstances;
+
     protected function setUp() : void{
 
-        $this->markTestSkipped('Ces tests son a revoir et necessitent le reste de la stack technique');
+        $this->markTestSkipped('Needs both Orthanc servers to run');
         parent::setUp();
         $this->artisan('db:seed');
         $this->reviewStatus = ReviewStatus::factory()->create();
-
         $this->studyName = $this->reviewStatus->visit->patient->study->name;
         $this->visitId = $this->reviewStatus->visitId;
 
+        $mockTusService = $this->partialMock(TusService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getFile')
+            ->andReturnUsing(function () {
+                copy((getcwd() . "/tests/data/MR.zip"), (getcwd() . "/tests/data/MR2.zip"));
+                chmod((getcwd() . "/tests/data/MR2.zip"),0777); 
+                return (getcwd() . "/tests/data/MR2.zip");
+            });
+            $mock->shouldReceive('deleteFile')
+            ->andReturn(null);
+        });
+        app()->instance(TusService::class, $mockTusService);
+
         $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
-        $this->numberOfInstances = 326;
-
-        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
-
+        $this->numberOfInstances = 22;
     }
 
 

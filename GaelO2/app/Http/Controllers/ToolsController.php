@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTus;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusRequest;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusResponse;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCenters;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersRequest;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersResponse;
@@ -75,5 +78,17 @@ class ToolsController extends Controller
     {
         $getReadiness->execute($getReadinessRequest, $getReadinessResponse);
         return $this->getJsonResponse($getReadinessResponse->body, $getReadinessResponse->status, $getReadinessResponse->statusText);
+    }
+
+    public function createFormFileFromTus(Request $request, CreateFileToFormFromTus $createFileToFormFromTus, CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createFileToFormFromTusRequest = Util::fillObject($requestData, $createFileToFormFromTusRequest);
+        $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
+        $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
+
+        return $this->getJsonResponse($createFileToFormFromTusResponse->body, $createFileToFormFromTusResponse->status, $createFileToFormFromTusResponse->statusText);
     }
 }
