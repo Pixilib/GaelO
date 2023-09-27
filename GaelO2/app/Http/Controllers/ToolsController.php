@@ -85,7 +85,7 @@ class ToolsController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
-        $createFileToFormFromTusRequest = Util::fillObject($requestData, $createFileToFormFromTusRequest);
+        Util::fillObject($requestData, $createFileToFormFromTusRequest);
         $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
         $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
 
