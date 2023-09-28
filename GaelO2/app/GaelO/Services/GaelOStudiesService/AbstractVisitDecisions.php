@@ -43,6 +43,12 @@ abstract class AbstractVisitDecisions
         return $this->visitContext['patient_id'];
     }
 
+
+    public function getPatientCode()
+    {
+        return $this->visitContext['patient']['code'];
+    }
+
     /**
      * Must return the review status for each action on review (send, delete, unlock), 
      * needs to handle backward and forward
