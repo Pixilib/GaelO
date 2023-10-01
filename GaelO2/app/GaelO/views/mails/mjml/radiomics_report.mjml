@@ -16,6 +16,14 @@
       </mj-column>
     </mj-section>
     <mj-section>
+      <mj-column>
+        <mj-text align="center" css-class="text-color"> Visit {{$visitType}} of the patient {{$patientCode}} from the {{$studyName}}.</mj-text>
+        <mj-text align="center" line-height="16px">
+          Visit Date: {{$visitDate}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
       <mj-raw>
         @foreach($image_path as $path)
       </mj-raw>

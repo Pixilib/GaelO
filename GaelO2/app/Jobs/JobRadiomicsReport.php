@@ -12,6 +12,7 @@ use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use App\Models\User;
+use DateTime;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,6 +51,8 @@ class JobRadiomicsReport implements ShouldQueue
         $patientCode = $visitEntity['patient']['code'];
         $creatorUserId = $visitEntity['creator_user_id'];
         $existingFiles = $visitEntity['sent_files'];
+        $visitDate = new DateTime($visitEntity['visit_date']);
+        $formattedVisitDate = $visitDate->format('m/d/Y');
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
         $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
@@ -115,6 +118,7 @@ class JobRadiomicsReport implements ShouldQueue
             $studyName,
             $patientCode,
             $visitType,
+            $formattedVisitDate,
             $mipMask,
             $statValue,
             $creatorUserId

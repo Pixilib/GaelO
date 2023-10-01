@@ -595,12 +595,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $imagePath, array $stats, int $uploaderId)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, int $uploaderId)
     {
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
             'study' => $studyName,
+            'visitDate' => $visitDate,
             'image_path' => [$imagePath],
             'stats' => $stats
         ];
