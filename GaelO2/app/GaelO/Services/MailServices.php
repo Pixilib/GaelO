@@ -600,7 +600,7 @@ class MailServices
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
-            'study' => $studyName,
+            'studyName' => $studyName,
             'visitDate' => $visitDate,
             'image_path' => [$imagePath],
             'stats' => $stats
