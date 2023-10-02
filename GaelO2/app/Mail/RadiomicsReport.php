@@ -27,7 +27,7 @@ class RadiomicsReport extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->parameters['study'] . " - Radiomics Report Patient - " . $this->parameters['patientCode'] . " - Visit - " . $this->parameters['visitType']
+            subject: $this->parameters['studyName'] . " - Radiomics Report Patient - " . $this->parameters['patientCode'] . " - Visit - " . $this->parameters['visitType']
         );
     }
 
