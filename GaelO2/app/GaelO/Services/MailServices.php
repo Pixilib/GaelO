@@ -616,4 +616,21 @@ class MailServices
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);
         $this->mailInterface->send();
     }
+
+
+    public function sendJobFailure(string $jobType, array $details, string $errorMessage)
+    {
+        $parameters = [
+            'jobType' => $jobType,
+            'details' => $details,
+            'errorMessage' => $errorMessage
+        ];
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface, $this->studyRepositoryInterface);
+        $mailListBuilder->withAdminsEmails();
+        $this->mailInterface->setTo($mailListBuilder->get());
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_JOB_FAILURE);
+        $this->mailInterface->send();
+    }
 }

@@ -29,6 +29,7 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\QcReport;
 use App\Mail\ImportPatient;
+use App\Mail\JobFailure;
 use App\Mail\MagicLink;
 use App\Mail\RadiomicsReport;
 use App\Mail\RequestPatientCreation;
@@ -161,6 +162,9 @@ class MailerAdapter implements MailerInterface
                 break;
             case MailConstants::EMAIL_RADIOMICS_REPORT:
                 $model = new RadiomicsReport($this->parameters);
+                break;
+            case MailConstants::EMAIL_JOB_FAILURE:
+                $model = new JobFailure($this->parameters);
                 break;
             default:
                 throw new GaelOException("Unkown Mail Type");

@@ -19,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -90,7 +91,7 @@ class JobRadiomicsReport implements ShouldQueue
         $this->addCreatedRessource('masks', $threshold41MaskId);
 
         #Fragmented Mip
-        $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3 , 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
+        $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
         $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
 
@@ -175,9 +176,15 @@ class JobRadiomicsReport implements ShouldQueue
         }
     }
 
+    public function sendFailureEmail(Throwable $exception)
+    {
+        $mailServices = App::make(MailServices::class);
+        $mailServices->sendJobFailure('RadiomicsReport', ['visitId' => $this->visitId, 'behalfUser' => $this->behalfUserEmail], $exception->getMessage());
+    }
+
     public function failed(Throwable $exception)
     {
-        $this->deleteCreatedRessources();
         Log::error($exception);
+        $this->sendFailureEmail($exception);
     }
 }
