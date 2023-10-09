@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\GetFileOfVisit;
 
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
@@ -32,6 +33,9 @@ class GetFileOfVisit
             $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($visitId, $currentUserId, $role, $studyName);
+            if(!array_key_exists($fileKey, $visitEntity['sent_files'])){
+                throw new GaelONotFoundException("File key not found");
+            }
 
             $getFileOfVisitResponse->status = 200;
             $getFileOfVisitResponse->statusText = 'OK';

@@ -8,6 +8,7 @@ use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
@@ -194,7 +195,7 @@ class VisitService
         $visitEntity = $this->getVisitContext($this->visitId);
 
         if (empty($visitEntity['sent_files'][$key])) {
-            throw new GaelOBadRequestException('Non exisiting key file in review');
+            throw new GaelONotFoundException('Non exisiting key file in review');
         }
 
         $targetedFile = $visitEntity['sent_files'][$key];
