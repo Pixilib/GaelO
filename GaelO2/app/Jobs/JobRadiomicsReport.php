@@ -10,6 +10,7 @@ use App\GaelO\Services\GaelOClientService;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
+use App\GaelO\Services\PdfServices;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use App\Models\User;
 use DateTime;
@@ -42,7 +43,7 @@ class JobRadiomicsReport implements ShouldQueue
         $this->behalfUserEmail = $behalfUserEmail;
     }
 
-    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, GaelOClientService $gaeloClientService): void
+    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, PdfServices $pdfServices, GaelOClientService $gaeloClientService): void
     {
         $this->gaelOProcessingService = $gaelOProcessingService;
         $orthancService->setOrthancServer(true);
@@ -93,24 +94,19 @@ class JobRadiomicsReport implements ShouldQueue
         #Fragmented Mip
         $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
-        $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
 
         #get Rtss
-        $rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        $this->addCreatedRessource('rtss', $rtssId);
-        $rtssFile = $gaelOProcessingService->getRtss($rtssId);
-        $frameworkInterface->storeFile('rtss_41.dcm', fopen($rtssFile, 'r'));
+        #$rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
+        #$this->addCreatedRessource('rtss', $rtssId);
+        #$rtssFile = $gaelOProcessingService->getRtss($rtssId);
 
         #get Seg
-        $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        $this->addCreatedRessource('seg', $segId);
-        $segFile = $gaelOProcessingService->getSeg($segId);
-        $frameworkInterface->storeFile('seg_41.dcm', fopen($segFile, 'r'));
+        #$segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
+        #$this->addCreatedRessource('seg', $segId);
+        #$segFile = $gaelOProcessingService->getSeg($segId);
 
         #get .nii.gz Mask Dicom (not thrsholded)
         $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
-        $maskDicomRessource = fopen($maskdicom, 'rb');
-        $frameworkInterface->storeFile('mask_inference_dicom.nii.gz', $maskDicomRessource);
 
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
@@ -124,6 +120,15 @@ class JobRadiomicsReport implements ShouldQueue
             $statValue,
             $creatorUserId
         );
+         $pdfReport  = $pdfServices->saveRadiomicsPdf(
+            $studyName,
+            $patientCode,
+            $visitType,
+            $formattedVisitDate,
+            $mipMask,
+            $statValue
+        );
+        $frameworkInterface->storeFile('report_pdf.pdf', $pdfReport);
 
         //Send file to store using API as job worker may not access to the storage backend
         $user = User::where('email', $this->behalfUserEmail)->sole();
