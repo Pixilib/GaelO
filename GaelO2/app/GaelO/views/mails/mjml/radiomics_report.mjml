@@ -24,7 +24,7 @@
       </mj-column>
     </mj-section>
     <mj-raw>
-      @if($message!=null)
+      @if(!empty($message))
     </mj-raw>
     <mj-section>
       <mj-raw>
