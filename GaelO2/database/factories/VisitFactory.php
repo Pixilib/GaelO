@@ -46,7 +46,8 @@ class VisitFactory extends Factory
             'corrective_action_new_upload' => $this->faker->randomElement([true, false]),
             'corrective_action_investigator_form' => $this->faker->randomElement([true, false]),
             'corrective_action_comment' => $this->faker->word,
-            'corrective_action_applied' => $this->faker->randomElement([true, false])
+            'corrective_action_applied' => $this->faker->randomElement([true, false]),
+            'sent_files' => []
         ];
     }
 
@@ -118,6 +119,15 @@ class VisitFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'upload_status' => 'Done'
+            ];
+        });
+    }
+
+    public function sentFiles(array $sentFiles)
+    {
+        return $this->state(function (array $attributes) use ($sentFiles) {
+            return [
+                'sent_files' => $sentFiles,
             ];
         });
     }

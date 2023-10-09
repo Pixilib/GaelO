@@ -29,5 +29,6 @@ node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_buttons.mjml -
 node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_series.mjml -o ./app/GaelO/views/mails/mail_qc_report_series.blade.php
 node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_study.mjml -o ./app/GaelO/views/mails/mail_qc_report_study.blade.php
 node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_investigator_form.mjml -o ./app/GaelO/views/mails/mail_qc_report_investigator_form.blade.php
+node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/radiomics_report.mjml -o ./app/GaelO/views/mails/mail_radiomics_report.blade.php
 ```
 In blade generated files, edit file to keep only body content (remove header...)

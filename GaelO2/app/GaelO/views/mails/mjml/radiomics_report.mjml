@@ -1,0 +1,55 @@
+<mjml lang="en">
+  <mj-head>
+    <mj-attributes>
+      <mj-class name="text-blue" color="#0495A0" />
+      <mj-include path="./style.css" type="css" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="text-blue">
+          <h3 align="center">
+            Lymphoma Radiomics Report
+          </h3>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-text align="center" css-class="text-color"> Visit {{$visitType}} of the patient {{$patientCode}} from the {{$studyName}}.</mj-text>
+        <mj-text align="center" line-height="16px">
+          Visit Date: {{$visitDate}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-raw>
+        @foreach($image_path as $path)
+      </mj-raw>
+      <mj-column>
+        <mj-image alt="tmtv preview" src="{{$message->embed($path ?? public_path('static/media/ban-image-photo-icon.png'))}}" align="center"></mj-image>
+      </mj-column>
+      <mj-raw>
+        @endforeach
+      </mj-raw>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-table css-class="table-striped" role="presentation">
+          @foreach($stats as $key => $value)
+          <tr>
+            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
+            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
+          </tr>
+          @endforeach
+        </mj-table>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-divider border-width="1px" border-color="#616161"></mj-divider>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

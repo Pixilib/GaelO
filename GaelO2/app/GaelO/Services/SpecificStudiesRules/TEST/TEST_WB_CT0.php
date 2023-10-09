@@ -29,6 +29,11 @@ class TEST_WB_CT0 extends AbstractVisitRules
         ];
     }
 
+    public static function getAssociatedFilesVisit(): array
+    {
+        return [];
+    }
+
     public static function getAssociatedFilesInvestigator(): array
     {
         return [];

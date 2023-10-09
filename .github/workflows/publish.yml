@@ -5,6 +5,7 @@ on:
     branches:
       - GaelO2
       - GaelO2-dev
+      - tmtv-inference
     tags:
       - '*'
 
@@ -22,6 +23,7 @@ jobs:
         with:
           images: ghcr.io/pixilib/gaelo
           tags: |
+            type=ref,event=branch
             type=ref,event=tag
             v2-latest
             

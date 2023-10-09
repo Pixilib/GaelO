@@ -21,11 +21,11 @@ class VisitTypeController extends Controller
         CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse, int $visitGroupId){
 
         $currentUser = Auth::user();
+        $requestData = $request->all();
+        
+        Util::fillObject($requestData, $createVisitTypeRequest);
         $createVisitTypeRequest->currentUserId = $currentUser['id'];
         $createVisitTypeRequest->visitGroupId = $visitGroupId;
-
-        $requestData = $request->all();
-        $createVisitTypeRequest = Util::fillObject($requestData, $createVisitTypeRequest);
 
         $createVisitType->execute($createVisitTypeRequest, $createVisitTypeResponse);
         return $this->getJsonResponse($createVisitTypeResponse->body, $createVisitTypeResponse->status, $createVisitTypeResponse->statusText);

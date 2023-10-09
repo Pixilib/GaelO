@@ -82,9 +82,10 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
-        $createStudyRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
-        $createStudyRequest = Util::fillObject($requestData, $createStudyRequest);
+
+        Util::fillObject($requestData, $createStudyRequest);
+        $createStudyRequest->currentUserId = $currentUser['id'];
 
         $createStudy->execute($createStudyRequest, $createStudyResponse);
 
@@ -119,12 +120,11 @@ class StudyController extends Controller
     public function deleteStudy(Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse, String $studyName)
     {
         $currentUser = Auth::user();
-
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $deleteStudyRequest);
         $deleteStudyRequest->currentUserId = $currentUser['id'];
         $deleteStudyRequest->studyName = $studyName;
-        $deleteStudyRequest = Util::fillObject($requestData, $deleteStudyRequest);
 
         $deleteStudy->execute($deleteStudyRequest, $deleteStudyResponse);
 
@@ -136,10 +136,10 @@ class StudyController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
-
+        Util::fillObject($requestData, $reactivateStudyRequest);
         $reactivateStudyRequest->currentUserId = $currentUser['id'];
         $reactivateStudyRequest->studyName = $studyName;
-        $reactivateStudyRequest = Util::fillObject($requestData, $reactivateStudyRequest);
+
         $reactivateStudy->execute($reactivateStudyRequest, $reactivateStudyResponse);
         return $this->getJsonResponse($reactivateStudyResponse->body, $reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
     }
@@ -307,10 +307,12 @@ class StudyController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+
+        Util::fillObject($requestData, $sendReminderRequest);
         $sendReminderRequest->currentUserId = $currentUser['id'];
         $sendReminderRequest->studyName = $studyName;
-        $reminderRequest = Util::fillObject($requestData, $sendReminderRequest);
-        $sendReminder->execute($reminderRequest, $sendReminderResponse);
+
+        $sendReminder->execute($sendReminderRequest, $sendReminderResponse);
         return $this->getJsonResponse($sendReminderResponse->body, $sendReminderResponse->status, $sendReminderResponse->statusText);
     }
 
@@ -320,11 +322,11 @@ class StudyController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        Util::fillObject($requestData, $requestPatientCreationRequest);
         $requestPatientCreationRequest->studyName = $studyName;
         $requestPatientCreationRequest->role = $queryParam['role'];
         $requestPatientCreationRequest->currentUserId = $currentUser['id'];
 
-        $requestPatientCreationRequest = Util::fillObject($requestData, $requestPatientCreationRequest);
         $requestPatientCreation->execute($requestPatientCreationRequest, $requestPatientCreationResponse);
 
         return $this->getJsonResponse($requestPatientCreationResponse->body, $requestPatientCreationResponse->status, $requestPatientCreationResponse->statusText);
@@ -336,9 +338,10 @@ class StudyController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        Util::fillObject($requestData, $sendMailRequest);
         $sendMailRequest->currentUserId = $currentUser['id'];
         $sendMailRequest->studyName = key_exists('studyName', $queryParam) ?  $queryParam['studyName'] : null;
-        $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
+
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
     }

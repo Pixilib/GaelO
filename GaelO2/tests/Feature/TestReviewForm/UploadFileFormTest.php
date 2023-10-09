@@ -1,6 +1,5 @@
 <?php
 
-use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\Review;
@@ -46,7 +45,7 @@ class UploadFileFormTest extends TestCase
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $currentVisit['studyName'] );
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response = $this->post('api/reviews/' . $review->id . '/files/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertSuccessful();
     }
 
@@ -55,7 +54,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response = $this->post('api/reviews/' . $review->id . '/files/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertStatus(403);
     }
 
@@ -67,7 +66,7 @@ class UploadFileFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'image/png']);
+        $response = $this->post('api/reviews/' . $review->id . '/files/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'image/png']);
         $response->assertStatus(400);
     }
 

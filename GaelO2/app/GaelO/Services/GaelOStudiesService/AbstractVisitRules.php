@@ -33,6 +33,11 @@ abstract class AbstractVisitRules
     /**
      * @return AssociatedFile[]
      */
+    abstract public static function getAssociatedFilesVisit() : array;
+
+    /**
+     * @return AssociatedFile[]
+     */
     abstract public static function getAssociatedFilesInvestigator(): array;
 
     /**

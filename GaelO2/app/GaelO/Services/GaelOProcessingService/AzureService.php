@@ -48,7 +48,7 @@ class AzureService
     {
         $this->setAccessToken();
         $uri = "/start?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
+        $response = $this->httpClientInterface->rawRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
 
         return $response === 202;
     }
@@ -57,7 +57,7 @@ class AzureService
     {
         $this->setAccessToken();
         $uri = "/stop?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
+        $response = $this->httpClientInterface->rawRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
 
         return $response === 204;
     }
@@ -66,7 +66,7 @@ class AzureService
     {
         $this->setAccessToken();
         $uri = "?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('GET', $uri, null, ['Accept' => 'application/json'])->getJsonBody();
+        $response = $this->httpClientInterface->rawRequest('GET', $uri, null, ['Accept' => 'application/json'])->getJsonBody();
 
         /*3 states disponible
         * Pending -> Creation en cours

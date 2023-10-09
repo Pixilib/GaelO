@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisit;
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitRequest;
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitResponse;
 use App\GaelO\UseCases\CreateVisit\CreateVisit;
 use App\GaelO\UseCases\CreateVisit\CreateVisitRequest;
 use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisit;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitRequest;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitResponse;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisit;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitRequest;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
@@ -38,21 +47,22 @@ use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class VisitController extends Controller
 {
     public function createVisit(Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse, String $visitTypeId)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $requestData = $request->all();
 
+        Util::fillObject($requestData, $createVisitRequest);
         $createVisitRequest->currentUserId = $currentUser['id'];
         $createVisitRequest->visitTypeId = $visitTypeId;
-        $queryParam = $request->query();
         $createVisitRequest->role = $queryParam['role'];
         $createVisitRequest->studyName = $queryParam['studyName'];
 
-        $requestData = $request->all();
-        $createVisitRequest = Util::fillObject($requestData, $createVisitRequest);
         $createVisit->execute($createVisitRequest, $createVisitResponse);
         return $this->getJsonResponse($createVisitResponse->body, $createVisitResponse->status, $createVisitResponse->statusText);
     }
@@ -80,7 +90,7 @@ class VisitController extends Controller
         $queryParam = $request->query();
         $getVisitsFromStudyRequest->currentUserId = $currentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        if(isset($queryParam['visitType'])) $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
+        if (isset($queryParam['visitType'])) $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
         return $this->getJsonResponse($getVisitsFromStudyResponse->body, $getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
@@ -90,10 +100,12 @@ class VisitController extends Controller
     {
 
         $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        Util::fillObject($requestData, $validateDicomUploadRequest);
         $validateDicomUploadRequest->currentUserId = $currentUser['id'];
         $validateDicomUploadRequest->visitId = $visitId;
-        $requestData = $request->all();
-        $validateDicomUploadRequest = Util::fillObject($requestData, $validateDicomUploadRequest);
+
         $validateDicomUpload->execute($validateDicomUploadRequest, $validateDicomUploadResponse);
 
         return $this->getJsonResponse($validateDicomUploadResponse->body, $validateDicomUploadResponse->status, $validateDicomUploadResponse->statusText);
@@ -104,7 +116,8 @@ class VisitController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-        $deleteVisitRequest = Util::fillObject($requestData, $deleteVisitRequest);
+
+        Util::fillObject($requestData, $deleteVisitRequest);
         $deleteVisitRequest->currentUserId = $currentUser['id'];
         $deleteVisitRequest->visitId = $visitId;
         $deleteVisitRequest->role = $queryParam['role'];
@@ -121,7 +134,7 @@ class VisitController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
-        $modifyQualityControlRequest = Util::fillObject($requestData, $modifyQualityControlRequest);
+        Util::fillObject($requestData, $modifyQualityControlRequest);
         $modifyQualityControlRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlRequest->visitId = $visitId;
         $modifyQualityControlRequest->studyName = $queryParam['studyName'];
@@ -137,10 +150,10 @@ class VisitController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        Util::fillObject($requestData, $modifyQualityControlResetRequest);
         $modifyQualityControlResetRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlResetRequest->visitId = $visitId;
         $modifyQualityControlResetRequest->studyName = $queryParam['studyName'];
-        $modifyQualityControlResetRequest = Util::fillObject($requestData, $modifyQualityControlResetRequest);
 
         $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
 
@@ -153,7 +166,7 @@ class VisitController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
-        $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyCorrectiveActionRequest);
+        Util::fillObject($requestData, $modifyCorrectiveActionRequest);
         $modifyCorrectiveActionRequest->currentUserId = $currentUser['id'];
         $modifyCorrectiveActionRequest->studyName = $queryParam['studyName'];
         $modifyCorrectiveActionRequest->visitId = $visitId;
@@ -163,15 +176,16 @@ class VisitController extends Controller
         return $this->getJsonResponse($modifyCorrectiveActionResponse->body, $modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
     }
 
-    public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId){
+    public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
 
-        $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyVisitDateRequest);
-        $modifyCorrectiveActionRequest->currentUserId = $currentUser['id'];
-        $modifyCorrectiveActionRequest->visitId = $visitId;
-        $modifyCorrectiveActionRequest->studyName = $queryParam['studyName'];
+        Util::fillObject($requestData, $modifyVisitDateRequest);
+        $modifyVisitDateRequest->currentUserId = $currentUser['id'];
+        $modifyVisitDateRequest->visitId = $visitId;
+        $modifyVisitDateRequest->studyName = $queryParam['studyName'];
 
         $modifyVisitDate->execute($modifyVisitDateRequest, $modifyVisitDateResponse);
 
@@ -190,18 +204,79 @@ class VisitController extends Controller
         return $this->getJsonResponse($reactivateVisitResponse->body, $reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
     }
 
-    public function unlockQc(Request $request, RequestUnlockQC $requestUnlockQC, RequestUnlockQCRequest $requestUnlockQCRequest, RequestUnlockQCResponse $requestUnlockQCResponse, int $visitId){
+    public function unlockQc(Request $request, RequestUnlockQC $requestUnlockQC, RequestUnlockQCRequest $requestUnlockQCRequest, RequestUnlockQCResponse $requestUnlockQCResponse, int $visitId)
+    {
 
         $currentUser = Auth::user();
         $requestData = $request->all();
 
-        $requestUnlockRequest = Util::fillObject($requestData, $requestUnlockQCRequest);
-        $requestUnlockRequest->currentUserId = $currentUser['id'];
-        $requestUnlockRequest->visitId = $visitId;
+        Util::fillObject($requestData, $requestUnlockQCRequest);
+        $requestUnlockQCRequest->currentUserId = $currentUser['id'];
+        $requestUnlockQCRequest->visitId = $visitId;
 
-        $requestUnlockQC->execute($requestUnlockRequest, $requestUnlockQCResponse);
+        $requestUnlockQC->execute($requestUnlockQCRequest, $requestUnlockQCResponse);
 
         return $this->getJsonResponse($requestUnlockQCResponse->body, $requestUnlockQCResponse->status, $requestUnlockQCResponse->statusText);
-
     }
+
+    public function createFileOfVisit(Request $request, CreateFileToVisit $createFileToVisit, CreateFileToVisitRequest $createFileToVisitRequest, CreateFileToVisitResponse $createFileToVisitResponse, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        Util::fillObject($requestData, $createFileToVisitRequest);
+        $createFileToVisitRequest->currentUserId = $currentUser['id'];
+        $createFileToVisitRequest->studyName = $queryParam['studyName'];
+        $createFileToVisitRequest->visitId = $visitId;
+        $createFileToVisitRequest->key = $key;
+        $createFileToVisitRequest->contentType = $request->headers->get('Content-Type');
+
+        $createFileToVisit->execute($createFileToVisitRequest, $createFileToVisitResponse);
+
+        return response()->json($createFileToVisitResponse->body)
+            ->setStatusCode($createFileToVisitResponse->status, $createFileToVisitResponse->statusText);
+    }
+
+    public function getFileOfVisit(Request $request, GetFileOfVisitRequest $getFileOfVisitRequest, GetFileOfVisitResponse $getFileOfVisitResponse, GetFileOfVisit $getFileOfVisit, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        Util::fillObject($requestData, $getFileOfVisitRequest);
+        $getFileOfVisitRequest->visitId = $visitId;
+        $getFileOfVisitRequest->key = $key;
+        $getFileOfVisitRequest->currentUserId = $currentUser['id'];
+        $getFileOfVisitRequest->role = $queryParam['role'];
+        $getFileOfVisitRequest->studyName = $queryParam['studyName'];
+
+        $getFileOfVisit->execute($getFileOfVisitRequest, $getFileOfVisitResponse);
+
+        if ($getFileOfVisitResponse->status === 200) {
+            return Storage::download($getFileOfVisitResponse->filePath, $getFileOfVisitResponse->filename);
+        } else {
+            return response()->json($getFileOfVisitResponse->body)
+                ->setStatusCode($getFileOfVisitResponse->status, $getFileOfVisitResponse->statusText);
+        }
+    }
+
+    public function deleteFileOfVisit(Request $request, DeleteFileOfVisitRequest $deleteFileOfVisitRequest, DeleteFileOfVisitResponse $deleteFileOfVisitResponse, DeleteFileOfVisit $deleteFileOfVisit, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        Util::fillObject($requestData, $deleteFileOfVisitRequest);
+        $deleteFileOfVisitRequest->currentUserId = $currentUser['id'];
+        $deleteFileOfVisitRequest->key = $key;
+        $deleteFileOfVisitRequest->visitId = $visitId;
+        $deleteFileOfVisitRequest->role = $queryParam['role'];
+        $deleteFileOfVisitRequest->studyName = $queryParam['studyName'];
+
+        $deleteFileOfVisit->execute($deleteFileOfVisitRequest, $deleteFileOfVisitResponse);
+
+        return $this->getJsonResponse($deleteFileOfVisitResponse->body, $deleteFileOfVisitResponse->status, $deleteFileOfVisitResponse->statusText);
+    }
+    
 }

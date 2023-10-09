@@ -17,7 +17,7 @@ class AskUnlockController extends Controller
         $queryParam = $request->query();
 
         $requestData = $request->all();
-        $requestUnlockRequest = Util::fillObject($requestData, $requestUnlockRequest);
+        Util::fillObject($requestData, $requestUnlockRequest);
 
         $requestUnlockRequest->studyName = $queryParam['studyName'];
         $requestUnlockRequest->currentUserId = $currentUser['id'];

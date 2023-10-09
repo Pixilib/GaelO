@@ -459,4 +459,11 @@ class VisitRepositoryTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
         $this->visitRepository->getVisitOfPatientByVisitTypeName($patientId, $visitGroupName, $visitTypeName.'wrong', true, $studyName);
     }
+
+    public function testUpdateVisitFiles(){
+        $visit = Visit::factory()->create();
+        $this->visitRepository->updateVisitFile($visit->id, ['myKey' => 'myFile.pdf'] );
+        $updatedVisit = Visit::find($visit->id);
+        $this->assertArrayHasKey('myKey', $updatedVisit['sent_files']);
+    }
 }

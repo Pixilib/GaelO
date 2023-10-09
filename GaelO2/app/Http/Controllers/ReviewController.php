@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToForm;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormRequest;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormResponse;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTus;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusRequest;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusResponse;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
@@ -78,13 +81,12 @@ class ReviewController extends Controller
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
+        $requestData = $request->all();
 
+        Util::fillObject($requestData, $deleteInvestigatorFormRequest);
         $deleteInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $deleteInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $deleteInvestigatorFormRequest->visitId = $visitId;
-
-        $requestData = $request->all();
-        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $deleteInvestigatorFormRequest);
 
         $deleteInvestigatorForm->execute($deleteInvestigatorFormRequest, $deleteInvestigatorFormResponse);
 
@@ -95,13 +97,12 @@ class ReviewController extends Controller
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
+        $requestData = $request->all();
 
+        Util::fillObject($requestData, $unlockInvestigatorFormRequest);
         $unlockInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $unlockInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $unlockInvestigatorFormRequest->visitId = $visitId;
-
-        $requestData = $request->all();
-        $unlockInvestigatorFormRequest = Util::fillObject($requestData, $unlockInvestigatorFormRequest);
 
         $unlockInvestigatorForm->execute($unlockInvestigatorFormRequest, $unlockInvestigatorFormResponse);
 
@@ -112,12 +113,11 @@ class ReviewController extends Controller
     {
 
         $currentUser = Auth::user();
-
+        $requestData = $request->all();
+        
+        Util::fillObject($requestData, $createInvestigatorFormRequest);
         $createInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $createInvestigatorFormRequest->visitId = $visitId;
-
-        $requestData = $request->all();
-        $createInvestigatorFormRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
 
         $createInvestigatorForm->execute($createInvestigatorFormRequest, $createInvestigatorFormResponse);
 
@@ -128,14 +128,13 @@ class ReviewController extends Controller
     {
 
         $currentUser = Auth::user();
+        $requestData = $request->all();
 
+        Util::fillObject($requestData, $modifyInvestigatorFormRequest);
         $modifyInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $modifyInvestigatorFormRequest->visitId = $visitId;
 
-        $requestData = $request->all();
-        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $modifyInvestigatorFormRequest);
-
-        $modifyInvestigatorForm->execute($deleteInvestigatorFormRequest, $modifyInvestigatorFormResponse);
+        $modifyInvestigatorForm->execute($modifyInvestigatorFormRequest, $modifyInvestigatorFormResponse);
 
         return $this->getJsonResponse($modifyInvestigatorFormResponse->body, $modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
     }
@@ -147,10 +146,9 @@ class ReviewController extends Controller
         $queryParam = $request->query();
         $createReviewFormRequest->studyName = $queryParam['studyName'];
 
+        Util::fillObject($requestData, $createReviewFormRequest);
         $createReviewFormRequest->visitId = $visitId;
         $createReviewFormRequest->currentUserId = $currentUser['id'];
-
-        $createReviewFormRequest = Util::fillObject($requestData, $createReviewFormRequest);
 
         $createReviewForm->execute($createReviewFormRequest, $createReviewFormResponse);
 
@@ -163,9 +161,9 @@ class ReviewController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $modifyReviewFormRequest);
         $modifyReviewFormRequest->reviewId = $reviewId;
         $modifyReviewFormRequest->currentUserId = $currentUser['id'];
-        $modifyReviewFormRequest = Util::fillObject($requestData, $modifyReviewFormRequest);
 
         $modifyReviewForm->execute($modifyReviewFormRequest, $modifyReviewFormResponse);
 
@@ -205,10 +203,9 @@ class ReviewController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $deleteReviewFormRequest);
         $deleteReviewFormRequest->currentUserId = $currentUser['id'];
         $deleteReviewFormRequest->reviewId = $reviewId;
-
-        $deleteReviewFormRequest = Util::fillObject($requestData, $deleteReviewFormRequest);
 
         $deleteReviewForm->execute($deleteReviewFormRequest, $deleteReviewFormResponse);
 
@@ -220,12 +217,11 @@ class ReviewController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $unlockReviewFormRequest);
         $unlockReviewFormRequest->currentUserId = $currentUser['id'];
         $unlockReviewFormRequest->reviewId = $reviewId;
 
-        $deleteReviewFormRequest = Util::fillObject($requestData, $unlockReviewFormRequest);
-
-        $unlockReviewForm->execute($deleteReviewFormRequest, $unlockReviewFormResponse);
+        $unlockReviewForm->execute($unlockReviewFormRequest, $unlockReviewFormResponse);
 
         return $this->getJsonResponse($unlockReviewFormResponse->body, $unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
     }
@@ -245,6 +241,19 @@ class ReviewController extends Controller
         $createFileToForm->execute($createFileToFormRequest, $createFileToFormResponse);
 
         return $this->getJsonResponse($createFileToFormResponse->body, $createFileToFormResponse->status, $createFileToFormResponse->statusText);
+    }
+
+    public function createReviewFileFromTus(Request $request, CreateFileToFormFromTus $createFileToFormFromTus, CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        Util::fillObject($requestData, $createFileToFormFromTusRequest);
+        $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
+        
+        $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
+
+        return $this->getJsonResponse($createFileToFormFromTusResponse->body, $createFileToFormFromTusResponse->status, $createFileToFormFromTusResponse->statusText);
     }
 
     public function deleteReviewFile(DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse, int $reviewId, string $key)

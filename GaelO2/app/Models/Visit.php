@@ -39,7 +39,13 @@ class Visit extends Model
         'corrective_action_new_upload' => 'boolean',
         'corrective_action_investigator_form' => 'boolean',
         'corrective_action_comment' => 'string',
-        'corrective_action_applied' => 'boolean'
+        'corrective_action_applied' => 'boolean',
+        'sent_files' => 'array'
+    ];
+
+    //Default value because db does not accept default value json
+    protected $attributes = [
+        'sent_files' => '{}'
     ];
 
     public function reviews()

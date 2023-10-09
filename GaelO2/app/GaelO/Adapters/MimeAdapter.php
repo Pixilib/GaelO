@@ -3,20 +3,21 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\MimeInterface;
-use Mimey\MimeTypes;
+use League\MimeTypeDetection\ExtensionMimeTypeDetector;
+use League\MimeTypeDetection\GeneratedExtensionToMimeTypeMap;
 
 class MimeAdapter implements MimeInterface
 {
 
     public static function getExtensionsFromMime(string $mime): array
     {
-        $mimes = new MimeTypes();
-        return $mimes->getAllExtensions($mime);
+        $mimes = new ExtensionMimeTypeDetector();
+        return $mimes->lookupAllExtensions($mime);
     }
 
-    public static function getMimesFromExtension(string $extension): array
+    public static function getMimesFromExtension(string $extension): string
     {
-        $mimes = new MimeTypes();
-        return $mimes->getAllMimeTypes($extension);
+        $mimes = new GeneratedExtensionToMimeTypeMap();
+        return $mimes->lookupMimeType($extension);
     }
 }

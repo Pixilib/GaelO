@@ -14,7 +14,7 @@ class RequestController extends Controller
     public function sendRequest(Request $request, RequestRequest $requestRequest, RequestResponse $requestResponse, SendRequest $sendRequest)
     {
         $requestData = $request->all();
-        $requestRequest = Util::fillObject($requestData, $requestRequest);
+        Util::fillObject($requestData, $requestRequest);
         $sendRequest->execute($requestRequest, $requestResponse);
         return $this->getJsonResponse($requestResponse->body, $requestResponse->status, $requestResponse->statusText);
     }

@@ -11,6 +11,9 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\Events\AwaitingAdjudicationEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\VisitConcludedEvent;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 
@@ -103,18 +106,16 @@ class ReviewFormService extends FormService
 
         //Send Notification emails
         if ($reviewStatus === ReviewStatusEnum::WAIT_ADJUDICATION->value) {
-            $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId, $this->patientCode,  $this->visitType, $this->visitId);
-        } else if ($reviewStatus === ReviewStatusEnum::DONE->value  ) {
+            $awaitingAdjudicationEvent = new AwaitingAdjudicationEvent($this->visitContext);
+            $studyObject = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
+            $studyObject->onEventStudy($awaitingAdjudicationEvent);
+        } else if ($reviewStatus === ReviewStatusEnum::DONE->value) {
             //In case of conclusion reached send conclusion (but not to uploader if ancillary study)
-            $this->mailServices->sendVisitConcludedMessage(
-                $this->visitId,
-                $this->studyEntity->isAncillaryStudy() ? null : $this->uploaderId,
-                $this->studyName,
-                $this->patientId,
-                $this->patientCode,
-                $this->visitType,
-                $conclusion
-            );
+            $visitConcludedEvent = new VisitConcludedEvent($this->visitContext);
+            $visitConcludedEvent->setConclusion($conclusion);
+            $visitConcludedEvent->setUploaderUserId($this->studyEntity->isAncillaryStudy() ? null : $this->uploaderId);
+            $studyObject = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
+            $studyObject->onEventStudy($visitConcludedEvent);
         }
     }
 }

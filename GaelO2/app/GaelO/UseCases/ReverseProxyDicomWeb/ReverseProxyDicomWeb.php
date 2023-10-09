@@ -60,7 +60,7 @@ class ReverseProxyDicomWeb
 
             $headers['Forwarded'] = [$forwardedRule];
 
-            $response = $this->httpClientInterface->rowRequest('GET', $calledUrl, null, $headers);
+            $response = $this->httpClientInterface->rawRequest('GET', $calledUrl, null, $headers);
 
             $responseHeaders  = $response->getHeaders();
             $responseHeaders['Cross-Origin-Embedder-Policy'] = ['require-corp'];

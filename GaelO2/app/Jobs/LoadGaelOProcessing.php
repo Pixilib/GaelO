@@ -47,7 +47,7 @@ class LoadGaelOProcessing implements ShouldQueue
 
         //Get IP of the ACI
         $ip = $azureService->getIP();
-
+        /*
         Bus::batch(
             [
                 new JobGaelOProcessing(
@@ -68,6 +68,7 @@ class LoadGaelOProcessing implements ShouldQueue
         })
         ->allowFailures()
         ->dispatch();
+        */
     }
 
     /**

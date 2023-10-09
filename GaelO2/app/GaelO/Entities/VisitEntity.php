@@ -30,6 +30,7 @@ class VisitEntity
     public ?bool $correctiveActionInvestigatorForm;
     public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
+    public array $files;
     public ?string $deletedAt;
 
     public VisitGroupEntity $visitGroup;
@@ -70,6 +71,7 @@ class VisitEntity
         $visitEntity->correctiveActionInvestigatorForm = $array['corrective_action_investigator_form'];
         $visitEntity->correctiveActionOther = $array['corrective_action_comment'];
         $visitEntity->correctiveActionDecision = $array['corrective_action_applied'];
+        $visitEntity->files = $array['sent_files'] ?? [];
         $visitEntity->deletedAt = $array['deleted_at'];
         return $visitEntity;
     }
