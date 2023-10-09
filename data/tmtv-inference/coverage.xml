@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66286897980321" branch-rate="0" lines-covered="7680" lines-valid="11586" branches-covered="0" branches-valid="0" complexity="2791" version="0.4" timestamp="1696366935">
+<coverage line-rate="0.66281177181324" branch-rate="0" lines-covered="7680" lines-valid="11587" branches-covered="0" branches-valid="0" complexity="2792" version="0.4" timestamp="1696834964">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -7683,9 +7683,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.72727272727273" branch-rate="0" complexity="10">
+    <package name="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.66666666666667" branch-rate="0" complexity="11">
       <classes>
-        <class name="App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions" filename="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.72727272727273" branch-rate="0" complexity="10">
+        <class name="App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions" filename="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.66666666666667" branch-rate="0" complexity="11">
           <methods>
             <method name="setFormData" signature="array $data" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -7717,21 +7717,26 @@
                 <line number="43" hits="0"/>
               </lines>
             </method>
+            <method name="getPatientCode" signature="" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="49" hits="0"/>
+              </lines>
+            </method>
             <method name="getAssociatedDataForInvestigatorForm" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="63" hits="0"/>
+                <line number="69" hits="0"/>
               </lines>
             </method>
             <method name="getAssociatedDataForReviewForm" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="72" hits="0"/>
+                <line number="78" hits="0"/>
               </lines>
             </method>
             <method name="getReviewAvailability" signature="string $reviewStatus" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="79" hits="6"/>
-                <line number="81" hits="3"/>
-                <line number="84" hits="3"/>
+                <line number="85" hits="6"/>
+                <line number="87" hits="3"/>
+                <line number="90" hits="3"/>
               </lines>
             </method>
           </methods>
@@ -7742,11 +7747,12 @@
             <line number="33" hits="8"/>
             <line number="38" hits="8"/>
             <line number="43" hits="0"/>
-            <line number="63" hits="0"/>
-            <line number="72" hits="0"/>
-            <line number="79" hits="6"/>
-            <line number="81" hits="3"/>
-            <line number="84" hits="3"/>
+            <line number="49" hits="0"/>
+            <line number="69" hits="0"/>
+            <line number="78" hits="0"/>
+            <line number="85" hits="6"/>
+            <line number="87" hits="3"/>
+            <line number="90" hits="3"/>
           </lines>
         </class>
       </classes>
