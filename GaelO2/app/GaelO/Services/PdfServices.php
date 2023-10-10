@@ -14,14 +14,13 @@ class PdfServices
         $this->pdfInterface = $pdfInterface;
     }
 
-    public function saveRadiomicsPdf(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats): string
+    public function saveRadiomicsPdf(string $studyName, string $patientCode, string $visitType, string $visitDate, array $stats): string
     {
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
             'studyName' => $studyName,
             'visitDate' => $visitDate,
-            'image_path' => [$imagePath],
             'stats' => $stats
         ];
 

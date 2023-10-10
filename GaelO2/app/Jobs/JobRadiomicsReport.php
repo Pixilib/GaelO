@@ -120,15 +120,13 @@ class JobRadiomicsReport implements ShouldQueue
             $statValue,
             $creatorUserId
         );
-         $pdfReport  = $pdfServices->saveRadiomicsPdf(
+        $pdfReport  = $pdfServices->saveRadiomicsPdf(
             $studyName,
             $patientCode,
             $visitType,
             $formattedVisitDate,
-            $mipMask,
             $statValue
         );
-        $frameworkInterface->storeFile('report_pdf.pdf', $pdfReport);
 
         //Send file to store using API as job worker may not access to the storage backend
         $user = User::where('email', $this->behalfUserEmail)->sole();
@@ -139,8 +137,16 @@ class JobRadiomicsReport implements ShouldQueue
         if (array_key_exists('tmtv41', $existingFiles)) {
             $gaeloClientService->deleteFileToVisit($studyName, $this->visitId, 'tmtv41');
         }
+        if (array_key_exists('tmtvReport', $existingFiles)) {
+            $gaeloClientService->deleteFileToVisit($studyName, $this->visitId, 'tmtvReport');
+        }
+        if (array_key_exists('mipSegmentation', $existingFiles)) {
+            $gaeloClientService->deleteFileToVisit($studyName, $this->visitId, 'mipSegmentation');
+        }
         //Store the file for review availability
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtv41', 'nii.gz', $maskdicom);
+        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtvReport', 'pdf', $pdfReport);
+        $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'mipSegmentation', 'gif', $mipMask);
 
         $this->deleteCreatedRessources();
     }
