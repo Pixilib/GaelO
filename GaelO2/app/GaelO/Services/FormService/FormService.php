@@ -54,6 +54,7 @@ abstract class FormService
     public function setCurrentUserId(int $currentUserId): void
     {
         $this->currentUserId = $currentUserId;
+        $this->visitService->setCurrentUserId($currentUserId);
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void

@@ -88,13 +88,15 @@ abstract class AbstractGaelOStudy
         $qcNeeded = $visitUploadedEvent->isQcNeeded();
         $visitType = $visitUploadedEvent->getVisitTypeName();
         $creatorUserId = $visitUploadedEvent->getCreatorUserId();
+        $uploaderUserId = $visitUploadedEvent->getUploaderUserId();
         $reviewNeeded = $visitUploadedEvent->isReviewNeeded();
 
         //Send to supervisors and monitors of the study
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
         $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
             ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR)
-            ->withUserEmail($creatorUserId);
+            ->withUserEmail($creatorUserId)
+            ->withUserEmail($uploaderUserId);
 
         //If QC is awaiting add controllers
         if ($qcNeeded) {

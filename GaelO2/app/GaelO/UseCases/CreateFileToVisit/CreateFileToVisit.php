@@ -45,6 +45,7 @@ class CreateFileToVisit
             $contentType = $createFileToVisitRequest->contentType;
 
             $this->visitService->setVisitId($visitId);
+            $this->visitService->setCurrentUserId($currentUserId);
             $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['patient']['study_name'];
 

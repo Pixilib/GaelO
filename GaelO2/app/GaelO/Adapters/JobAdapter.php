@@ -13,8 +13,8 @@ class JobAdapter implements JobInterface
         JobQcReport::dispatch($visitId);
     }
 
-    public function sendRadiomicsReport(int $visitId, string $behalfUserEmail): void
+    public function sendRadiomicsReport(int $visitId, int $behalfUserId): void
     {
-        JobRadiomicsReport::dispatch($visitId, $behalfUserEmail);
+        JobRadiomicsReport::dispatch($visitId, $behalfUserId);
     }
 }

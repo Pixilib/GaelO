@@ -161,7 +161,6 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
 
     public function failed(Throwable $exception)
     {
-        Log::error($exception);
         $mailServices = App::make(MailServices::class);
         $mailServices->sendJobFailure('QcReport', ['visitId' => $this->visitId], $exception->getMessage());
     }

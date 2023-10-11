@@ -25,6 +25,7 @@ class VisitService
     private FrameworkInterface $frameworkInterface;
 
     private int $visitId;
+    private int $currentUserId;
 
     public function __construct(
         FrameworkInterface $frameworkInterface,
@@ -41,6 +42,11 @@ class VisitService
     public function setVisitId(int $visitId)
     {
         $this->visitId = $visitId;
+    }
+
+    public function setCurrentUserId(int $currentUserId)
+    {
+        $this->currentUserId = $currentUserId;
     }
 
     public function getVisitContext(): array
@@ -100,6 +106,7 @@ class VisitService
         //Notify of the upload done
         $visitUploadedEvent = new VisitUploadedEvent($visitEntity);
         $visitUploadedEvent->setReviewNeeded($reviewNeeded);
+        $visitUploadedEvent->setUploaderUserId($this->currentUserId);
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $studyObject->onEventStudy($visitUploadedEvent);
     }

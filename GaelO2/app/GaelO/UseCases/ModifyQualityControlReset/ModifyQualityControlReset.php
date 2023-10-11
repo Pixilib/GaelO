@@ -36,6 +36,7 @@ class ModifyQualityControlReset
             $currentUserId = $modifyQualityControlResetRequest->currentUserId;
 
             $this->visitService->setVisitId($visitId);
+            $this->visitService->setCurrentUserId($currentUserId);
             $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['patient']['study_name'];
 

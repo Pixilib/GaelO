@@ -32,16 +32,16 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
-    private string $behalfUserEmail;
+    private int $behalfUserId;
     private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
     private OrthancService $orthancService;
 
-    public function __construct(int $visitId, string $behalfUserEmail)
+    public function __construct(int $visitId, int $behalfUserId)
     {
         $this->onQueue('processing');
         $this->visitId = $visitId;
-        $this->behalfUserEmail = $behalfUserEmail;
+        $this->behalfUserId = $behalfUserId;
     }
 
     public function handle(
@@ -134,7 +134,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         );
 
         //Send file to store using API as job worker may not access to the storage backend
-        $user = User::where('email', $this->behalfUserEmail)->sole();
+        $user = User::find($this->behalfUserId);
         $tokenResult = $user->createToken('GaelO')->plainTextToken;
         $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
@@ -206,8 +206,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
 
     public function failed(Throwable $exception)
     {
-        Log::error($exception);
         $mailServices = App::make(MailServices::class);
-        $mailServices->sendJobFailure('RadiomicsReport', ['visitId' => $this->visitId, 'behalfUser' => $this->behalfUserEmail], $exception->getMessage());
+        $mailServices->sendJobFailure('RadiomicsReport', ['visitId' => $this->visitId, 'behalfUserId' => $this->behalfUserId], $exception->getMessage());
     }
 }

@@ -81,14 +81,6 @@ class TEST extends AbstractGaelOStudy {
 
     }
 
-    public function onEventStudy(BaseStudyEvent $studyEvent): void
-    {
-        parent::onEventStudy($studyEvent);
-        if ($studyEvent instanceof VisitUploadedEvent) {
-           $this->jobInterface->sendRadiomicsReport($studyEvent->getVisitId(), 'administrator@gaelo.fr');
-        }
-    }
-
 }
 
 
