@@ -112,6 +112,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     //VisitType Routes
     Route::post('visit-groups/{visitGroupId}/visit-types', [VisitTypeController::class, 'createVisitType']);
     Route::get('visit-types/{visitTypeId}', [VisitTypeController::class, 'getVisitType']);
+    Route::get('visit-types/{visitTypeId}/files/metadata', [VisitTypeController::class, 'getFileMetadataFromVisitType']);
     Route::delete('visit-types/{visitTypeId}', [VisitTypeController::class, 'deleteVisitType']);
 
     //Patients Routes
