@@ -67,9 +67,9 @@ class CreateFileToVisit
                     $finalExtension = strrchr($extension, '.');
                     //remove first dot
                     $finalExtension = substr($finalExtension, 1);
-                    $contentType = $this->mimeInterface::getMimesFromExtension($finalExtension);
+                    $contentType = $this->mimeInterface::getMimeFromExtension($finalExtension);
                 }else{
-                    $contentType = $this->mimeInterface::getMimesFromExtension($extension);
+                    $contentType = $this->mimeInterface::getMimeFromExtension($extension);
                 }
                 
             }
