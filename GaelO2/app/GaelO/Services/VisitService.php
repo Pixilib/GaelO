@@ -181,7 +181,7 @@ class VisitService
 
         $associatiedFile = $associatedFilesVisit[$key];
 
-        if ($mimeType !== $associatiedFile->mimes) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("Mime Not Allowed");
         }
 

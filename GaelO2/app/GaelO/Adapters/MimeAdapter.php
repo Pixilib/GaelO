@@ -15,9 +15,9 @@ class MimeAdapter implements MimeInterface
         return $mimes->lookupAllExtensions($mime);
     }
 
-    public static function getMimesFromExtension(string $extension): string
+    public static function getMimesFromExtension(string $extension): array
     {
         $mimes = new GeneratedExtensionToMimeTypeMap();
-        return $mimes->lookupMimeType($extension);
+        return $mimes->lookupAllExtensions($extension);
     }
 }

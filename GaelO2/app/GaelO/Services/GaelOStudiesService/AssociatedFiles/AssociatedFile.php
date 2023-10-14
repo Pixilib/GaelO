@@ -5,10 +5,10 @@ namespace App\GaelO\Services\GaelOStudiesService\AssociatedFiles;
 class AssociatedFile
 {
     public string $key;
-    public string $mimes;
+    public array $mimes;
     public bool $mandatory;
 
-    public function __construct(string $key, string $mimes, bool $mandatory)
+    public function __construct(string $key, array $mimes, bool $mandatory)
     {
         $this->key = $key;
         $this->mimes = $mimes;
