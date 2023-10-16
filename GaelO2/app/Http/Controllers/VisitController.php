@@ -225,8 +225,7 @@ class VisitController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-
-        Log::info($requestData);
+        
         Util::fillObject($requestData, $createFileToVisitRequest);
         $createFileToVisitRequest->currentUserId = $currentUser['id'];
         $createFileToVisitRequest->studyName = $queryParam['studyName'];

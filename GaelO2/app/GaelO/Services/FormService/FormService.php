@@ -107,7 +107,7 @@ abstract class FormService
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if (in_array($mimeType, $associatiedFile->mimes)) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 

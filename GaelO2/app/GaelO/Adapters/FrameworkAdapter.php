@@ -59,7 +59,7 @@ class FrameworkAdapter implements FrameworkInterface
     public static function sendResetPasswordLink(string $email): bool
     {
         $status = Password::sendResetLink(
-            ['email' => $email]
+            ['email' => strtolower($email)]
         );
 
         return $status === Password::RESET_LINK_SENT;
