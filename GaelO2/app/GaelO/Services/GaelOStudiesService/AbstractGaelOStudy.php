@@ -62,6 +62,14 @@ abstract class AbstractGaelOStudy
     }
 
     /**
+     * If needed to predifine creatable patient code
+     */
+    public function getCreatablePatientsCode(): null|array
+    {
+        return null;
+    }
+
+    /**
      * To make specific study action on study event, can be overriden to avoid some automatic mails
      */
     public function onEventStudy(BaseStudyEvent $studyEvent): void
