@@ -4,7 +4,7 @@ namespace Tests\Feature\TestStudy;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\GaelOStudiesService\CreatablePatient\CreatablePatient;
+use App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient;
 use App\GaelO\Services\SpecificStudiesRules\TEST\TEST;
 use App\Models\Study;
 use Tests\TestCase;
@@ -24,8 +24,8 @@ class GetCreatablePatientsTest extends TestCase
         Study::factory()->name('TEST')->create();
 
         $mockTestStudy = $this->partialMock(TEST::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getCreatablePatientsCode')
-                ->andReturn([new CreatablePatient('1234', 0, 'Included')]);
+            $mock->shouldReceive('getExpectedPatients')
+                ->andReturn([new ExpectedPatient('1234', 0, 'Included')]);
         });
 
         $mockFramework = $this->partialMock(FrameworkAdapter::class, function (MockInterface $mock) use ($mockTestStudy) {

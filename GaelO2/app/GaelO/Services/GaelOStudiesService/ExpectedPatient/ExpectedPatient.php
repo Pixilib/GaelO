@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\Services\GaelOStudiesService\CreatablePatient;
+namespace App\GaelO\Services\GaelOStudiesService\ExpectedPatient;
 
-class CreatablePatient
+class ExpectedPatient
 {
     public string $code;
     public int $centerCode;

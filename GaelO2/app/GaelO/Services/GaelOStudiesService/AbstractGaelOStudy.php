@@ -62,9 +62,10 @@ abstract class AbstractGaelOStudy
     }
 
     /**
-     * If needed to predifine creatable patient code
+     * If needed to predifine expected patients
+     * return 
      */
-    public function getCreatablePatientsCode(): null|array
+    public function getExpectedPatients(): null|array
     {
         return null;
     }

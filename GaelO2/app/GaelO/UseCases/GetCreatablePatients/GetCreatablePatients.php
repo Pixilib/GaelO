@@ -5,18 +5,23 @@ namespace App\GaelO\UseCases\GetCreatablePatients;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient;
 use Exception;
 
 class GetCreatablePatients
 {
 
     private AuthorizationStudyService $authorizationStudyService;
+    private PatientRepositoryInterface $patientRepositoryInterface;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, PatientRepositoryInterface $patientRepositoryInterface)
     {
         $this->authorizationStudyService = $authorizationStudyService;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
     }
 
     public function execute(GetCreatablePatientsRequest $getCreatablePatientsRequest, GetCreatablePatientsResponse $getCreatablePatientsResponse)
@@ -30,9 +35,19 @@ class GetCreatablePatients
             $this->checkAuthorization($currentUserId, $studyName, $role);
 
             $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-            $answer = $studyRule->getCreatablePatientsCode();
+            $expectedPatients = $studyRule->getExpectedPatients();
 
-            $getCreatablePatientsResponse->body = $answer;
+            if ($expectedPatients) {
+                $createdPatients = $this->patientRepositoryInterface->getPatientsInStudy($studyName, false);
+                $createdPatientsCode = array_column($createdPatients, 'code');
+                $creatablePatients = array_filter($expectedPatients, function (ExpectedPatient $expectedPatient) use ($createdPatientsCode) {
+                    return !in_array($expectedPatient->code, $createdPatientsCode);
+                });
+                $getCreatablePatientsResponse->body = $creatablePatients;
+            } else {
+                $getCreatablePatientsResponse->body = null;
+            }
+
             $getCreatablePatientsResponse->status = 200;
             $getCreatablePatientsResponse->statusText = 'OK';
         } catch (AbstractGaelOException $e) {
