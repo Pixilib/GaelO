@@ -30,7 +30,6 @@ class GetCreatablePatients
             $this->checkAuthorization($currentUserId, $studyName, $role);
 
             $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-
             $answer = $studyRule->getCreatablePatientsCode();
 
             $getCreatablePatientsResponse->body = $answer;

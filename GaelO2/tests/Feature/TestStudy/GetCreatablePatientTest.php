@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\TestStudy;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\GaelOStudiesService\CreatablePatient\CreatablePatient;
 use App\GaelO\Services\SpecificStudiesRules\TEST\TEST;
 use App\Models\Study;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\App;
 use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
@@ -24,20 +26,25 @@ class GetCreatablePatientTest extends TestCase
 
         $mockTestStudy = $this->partialMock(TEST::class, function (MockInterface $mock) {
             $mock->shouldReceive('getCreatablePatientsCode')
-            ->andReturn([new CreatablePatient('1234', 0, 'Included')]);
+                ->andReturn([new CreatablePatient('1234', 0, 'Included')]);
         });
 
-        app()->instance(TEST::class, $mockTestStudy);
+        $mockFramework = $this->partialMock(FrameworkAdapter::class, function (MockInterface $mock) use ($mockTestStudy) {
+            $mock->shouldReceive('make')
+                ->andReturn($mockTestStudy);
+        });
 
+
+        $this->instance(FrameworkAdapter::class, $mockFramework);
     }
 
     public function testGetCreatablePatient()
     {
+
         $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, "TEST");
         $answer = $this->json('GET', '/api/studies/TEST/creatable-patients?role=Investigator');
-        //dd($answer->content());
+        dd($answer->content());
         //->assertNoContent(201);
     }
-
 }
