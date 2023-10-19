@@ -149,8 +149,11 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
-        $importPatientsRequest->patients = $request->all();
+
+        $queryParam = $request->query();
+        $importPatientsRequest->patients = $request->post();
         $importPatientsRequest->studyName = $studyName;
+        $importPatientsRequest->role = $queryParam['role'];
         $importPatientsRequest->currentUserId = $currentUser['id'];
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
         return $this->getJsonResponse($importPatientsResponse->body, $importPatientsResponse->status, $importPatientsResponse->statusText);
