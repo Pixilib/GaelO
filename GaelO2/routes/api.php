@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('studies/{studyName}/ask-patient-creation', [StudyController::class, 'requestPatientCreation']);
+    Route::get('studies/{studyName}/creatable-patients', [StudyController::class, 'getCreatablePatients']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
