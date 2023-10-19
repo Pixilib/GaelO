@@ -9,11 +9,10 @@ use App\GaelO\Services\SpecificStudiesRules\TEST\TEST;
 use App\Models\Study;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\App;
 use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
-class GetCreatablePatientTest extends TestCase
+class GetCreatablePatientsTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -44,7 +43,6 @@ class GetCreatablePatientTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, "TEST");
         $answer = $this->json('GET', '/api/studies/TEST/creatable-patients?role=Investigator');
-        dd($answer->content());
-        //->assertNoContent(201);
+        $answer->assertSuccessful();
     }
 }
