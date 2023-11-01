@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         if ($loginResponse->status === 200) {
 
-            $user = User::where('email', $request->email)->sole();
+            $user = User::where('email', strtolower($request->email))->sole();
 
             $tokenResult = $user->createToken('GaelO');
             return response()->json([

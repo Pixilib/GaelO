@@ -161,6 +161,13 @@ class UserRepositoryTest extends TestCase
         $this->assertNotNull($userEntity['deleted_at']);
     }
 
+    public function testGetUserByEmailInsensitive()
+    {
+        $user = User::factory()->job(JobEnum::SUPERVISION->value)->create();
+        $userEntity = $this->userRepository->getUserByEmail(strtoupper($user->email), false);
+        $this->assertIsArray($userEntity);
+    }
+
     public function testIsExistingEmail()
     {
 
@@ -173,6 +180,18 @@ class UserRepositoryTest extends TestCase
 
         $this->assertTrue($testExisting);
         $this->assertFalse($testNotExisting);
+    }
+
+    public function testIsExistingEmailInsensitive()
+    {
+
+        $user = User::factory()->create();
+        //Username test even if soft deleted user
+        $user->delete();
+
+        $testExisting = $this->userRepository->isExistingEmail(strtoupper($user->email));
+
+        $this->assertTrue($testExisting);
     }
 
     public function testGetAdministrators()

@@ -65,7 +65,7 @@ class UserRepository implements UserRepositoryInterface
         $user = new User();
         $user->lastname = $lastname;
         $user->firstname = $firstname;
-        $user->email = $email;
+        $user->email = strtolower($email);
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -98,7 +98,7 @@ class UserRepository implements UserRepositoryInterface
         $user = $this->userModel->findOrFail($id);
         $user->lastname = $lastname;
         $user->firstname = $firstname;
-        $user->email = $email;
+        $user->email = strtolower($email);
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -136,9 +136,9 @@ class UserRepository implements UserRepositoryInterface
     public function getUserByEmail(String $email, bool $withTrashed = false): array
     {
         if ($withTrashed) {
-            $user = $this->userModel->withTrashed()->where('email', $email)->sole();
+            $user = $this->userModel->withTrashed()->where('email', strtolower($email))->sole();
         } else {
-            $user = $this->userModel->where('email', $email)->sole();
+            $user = $this->userModel->where('email', strtolower($email))->sole();
         }
 
         return $user->toArray();
@@ -146,7 +146,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function isExistingEmail(String $email): bool
     {
-        $user = $this->userModel->withTrashed()->where('email', $email);
+        $user = $this->userModel->withTrashed()->where('email', strtolower($email));
         return $user->count() > 0 ? true : false;
     }
 
@@ -157,8 +157,8 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAdministrators(): array
     {
-        $emails = $this->userModel->where('administrator', true)->get();
-        return empty($emails) ? [] : $emails->toArray();
+        $administrators = $this->userModel->where('administrator', true)->get();
+        return empty($administrators) ? [] : $administrators->toArray();
     }
 
     /**
@@ -168,7 +168,7 @@ class UserRepository implements UserRepositoryInterface
     public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array
     {
 
-        $emails = $this->userModel
+        $investigators = $this->userModel
             ->with('affiliatedCenters')
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
@@ -188,7 +188,7 @@ class UserRepository implements UserRepositoryInterface
             })
             ->get();
 
-        return empty($emails) ? [] : $emails->toArray();
+        return empty($investigators) ? [] : $investigators->toArray();
     }
 
     public function getUsersByRolesInStudy(string $study, string $role): array

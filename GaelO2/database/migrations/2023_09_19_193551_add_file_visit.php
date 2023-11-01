@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,6 +15,12 @@ return new class extends Migration
         Schema::table('visits', function (Blueprint $table) {
             $table->json('sent_files')->nullable(true);
         });
+
+        DB::table('visits')->whereNull('sent_files')->update(['sent_files'=>'{}']);
+        
+        Schema::table('visits', function (Blueprint $table) {
+            $table->json('sent_files')->nullable(false)->change();
+        });
     }
 
     /**
@@ -22,7 +29,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('visits', function (Blueprint $table) {
-            Schema::dropIfExists('sent_files');
+            $table->dropColumn('sent_files');
         });
     }
 };

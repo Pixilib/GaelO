@@ -8,6 +8,7 @@ use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
@@ -24,6 +25,7 @@ class VisitService
     private FrameworkInterface $frameworkInterface;
 
     private int $visitId;
+    private int $currentUserId;
 
     public function __construct(
         FrameworkInterface $frameworkInterface,
@@ -40,6 +42,11 @@ class VisitService
     public function setVisitId(int $visitId)
     {
         $this->visitId = $visitId;
+    }
+
+    public function setCurrentUserId(int $currentUserId)
+    {
+        $this->currentUserId = $currentUserId;
     }
 
     public function getVisitContext(): array
@@ -99,6 +106,7 @@ class VisitService
         //Notify of the upload done
         $visitUploadedEvent = new VisitUploadedEvent($visitEntity);
         $visitUploadedEvent->setReviewNeeded($reviewNeeded);
+        $visitUploadedEvent->setUploaderUserId($this->currentUserId);
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $studyObject->onEventStudy($visitUploadedEvent);
     }
@@ -173,7 +181,7 @@ class VisitService
 
         $associatiedFile = $associatedFilesVisit[$key];
 
-        if ($mimeType !== $associatiedFile->mimes) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("Mime Not Allowed");
         }
 
@@ -194,7 +202,7 @@ class VisitService
         $visitEntity = $this->getVisitContext($this->visitId);
 
         if (empty($visitEntity['sent_files'][$key])) {
-            throw new GaelOBadRequestException('Non exisiting key file in review');
+            throw new GaelONotFoundException('Non exisiting key file in review');
         }
 
         $targetedFile = $visitEntity['sent_files'][$key];

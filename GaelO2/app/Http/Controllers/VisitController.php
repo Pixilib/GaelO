@@ -47,6 +47,7 @@ use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class VisitController extends Controller
@@ -224,13 +225,12 @@ class VisitController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-
+        
         Util::fillObject($requestData, $createFileToVisitRequest);
         $createFileToVisitRequest->currentUserId = $currentUser['id'];
         $createFileToVisitRequest->studyName = $queryParam['studyName'];
         $createFileToVisitRequest->visitId = $visitId;
         $createFileToVisitRequest->key = $key;
-        $createFileToVisitRequest->contentType = $request->headers->get('Content-Type');
 
         $createFileToVisit->execute($createFileToVisitRequest, $createFileToVisitResponse);
 

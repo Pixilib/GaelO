@@ -74,6 +74,24 @@ class ForgotPasswordTest extends TestCase
         $this->assertTrue(Hash::check($password, $user->fresh()->password));
     }
 
+    public function testUpdatePasswordShouldPassEvenUppercase()
+    {
+        $user = User::factory()->create();
+
+        $token = Password::createToken($user);
+
+        $password = '>=5KBhxE=wWC';
+
+        $response = $this->post('api/tools/reset-password', [
+            'token' => $token,
+            'email' => strtoupper($user->email),
+            'password' => $password,
+            'password_confirmation' => $password
+        ]);
+
+        $this->assertTrue(Hash::check($password, $user->fresh()->password));
+    }
+
     public function testUpdatePasswordShouldFailWrongToken()
     {
         $user = User::factory()->create();

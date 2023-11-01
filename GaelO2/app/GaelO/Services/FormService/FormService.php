@@ -54,6 +54,7 @@ abstract class FormService
     public function setCurrentUserId(int $currentUserId): void
     {
         $this->currentUserId = $currentUserId;
+        $this->visitService->setCurrentUserId($currentUserId);
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void
@@ -106,7 +107,7 @@ abstract class FormService
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if ($mimeType !== $associatiedFile->mimes) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 

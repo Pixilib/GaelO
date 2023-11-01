@@ -46,6 +46,7 @@ class GetUsersFromStudy
 
                 } else if ($role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
+                    $userEntity->setMainCenter(CenterEntity::fillFromDBReponseArray($data['main_center']));
                 }
                 $userEntity->addRoles($data['roles']);
                 $responseArray[] = $userEntity;

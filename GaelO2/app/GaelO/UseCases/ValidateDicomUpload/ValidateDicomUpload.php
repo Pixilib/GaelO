@@ -76,6 +76,7 @@ class ValidateDicomUpload
             $originalOrthancId = $validateDicomUploadRequest->originalOrthancId;
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
+            $this->visitService->setCurrentUserId($currentUserId);
 
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);

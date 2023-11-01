@@ -45,6 +45,7 @@ class CreateFileToVisit
             $contentType = $createFileToVisitRequest->contentType;
 
             $this->visitService->setVisitId($visitId);
+            $this->visitService->setCurrentUserId($currentUserId);
             $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['patient']['study_name'];
 
@@ -66,9 +67,9 @@ class CreateFileToVisit
                     $finalExtension = strrchr($extension, '.');
                     //remove first dot
                     $finalExtension = substr($finalExtension, 1);
-                    $contentType = $this->mimeInterface::getMimesFromExtension($finalExtension);
+                    $contentType = $this->mimeInterface::getMimeFromExtension($finalExtension);
                 }else{
-                    $contentType = $this->mimeInterface::getMimesFromExtension($extension);
+                    $contentType = $this->mimeInterface::getMimeFromExtension($extension);
                 }
                 
             }

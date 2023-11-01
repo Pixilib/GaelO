@@ -41,6 +41,7 @@ class CreateStudy
             $documentationMandatory = $createStudyRequest->documentationMandatory;
             $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
+            $creatablePatientsInvestigator = $createStudyRequest->creatablePatientsInvestigator;
 
             if (preg_match('/[^A-Z0-9]/', $studyName)) {
                 throw new GaelOBadRequestException('Only uppercase alphanumerical name allowed, no space or special characters');
@@ -70,7 +71,11 @@ class CreateStudy
                 throw new GaelOBadRequestException('Missing Monitor Show All');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll, $documentationMandatory, $ancillaryOf);
+            if (!isset($creatablePatientsInvestigator)) {
+                throw new GaelOBadRequestException('Missing Creatable Patient Investigator');
+            }
+
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll, $documentationMandatory, $ancillaryOf, $creatablePatientsInvestigator);
 
             $currentUserId = $createStudyRequest->currentUserId;
             $actionDetails = [

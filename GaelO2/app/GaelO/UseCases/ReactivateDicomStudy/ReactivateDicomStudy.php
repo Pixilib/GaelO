@@ -56,6 +56,7 @@ class ReactivateDicomStudy
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //Change dicom study Activation
+            $this->dicomService->setCurrentUserId($currentUserId);
             $this->dicomService->reactivateDicomStudy($studyData['study_uid']);
 
             //Tracker

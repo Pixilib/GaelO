@@ -23,6 +23,9 @@
         </mj-text>
       </mj-column>
     </mj-section>
+    <mj-raw>
+      @if(!empty($message))
+    </mj-raw>
     <mj-section>
       <mj-raw>
         @foreach($image_path as $path)
@@ -34,6 +37,9 @@
         @endforeach
       </mj-raw>
     </mj-section>
+    <mj-raw>
+      @endif
+    </mj-raw>
     <mj-section>
       <mj-column>
         <mj-table css-class="table-striped" role="presentation">

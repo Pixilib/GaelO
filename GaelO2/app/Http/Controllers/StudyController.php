@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
+use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatients;
+use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsRequest;
+use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsResponse;
 use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudy;
 use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudyRequest;
 use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudyResponse;
@@ -74,8 +77,6 @@ use App\GaelO\UseCases\SendMail\SendMailResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-
 class StudyController extends Controller
 {
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse)
@@ -148,8 +149,11 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
-        $importPatientsRequest->patients = $request->all();
+
+        $queryParam = $request->query();
+        $importPatientsRequest->patients = $request->post();
         $importPatientsRequest->studyName = $studyName;
+        $importPatientsRequest->role = $queryParam['role'];
         $importPatientsRequest->currentUserId = $currentUser['id'];
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
         return $this->getJsonResponse($importPatientsResponse->body, $importPatientsResponse->status, $importPatientsResponse->statusText);
@@ -365,5 +369,17 @@ class StudyController extends Controller
         $getStudyRequest->studyName = $studyName;
         $getStudy->execute($getStudyRequest, $getStudyResponse);
         return $this->getJsonResponse($getStudyResponse->body, $getStudyResponse->status, $getStudyResponse->statusText);
+    }
+
+    public function getCreatablePatients(Request $request, GetCreatablePatients $getCreatablePatients, GetCreatablePatientsRequest $getCreatablePatientsRequest, GetCreatablePatientsResponse $getCreatablePatientsResponse, string $studyName)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getCreatablePatientsRequest->currentUserId = $currentUser['id'];
+        $getCreatablePatientsRequest->studyName = $studyName;
+        $getCreatablePatientsRequest->role = $queryParam['role'];
+        $getCreatablePatients->execute($getCreatablePatientsRequest, $getCreatablePatientsResponse);
+        return $this->getJsonResponse($getCreatablePatientsResponse->body, $getCreatablePatientsResponse->status, $getCreatablePatientsResponse->statusText);
     }
 }

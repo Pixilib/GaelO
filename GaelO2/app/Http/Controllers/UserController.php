@@ -108,7 +108,12 @@ class UserController extends Controller
         ]);
 
         $status = FacadePassword::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            [
+                'email' => strtolower($request->input('email')),
+                'password' => $request->input('password'),
+                'password_confirmation' => $request->input('password_confirmation'),
+                'token' => $request->input('token')
+            ],
             function ($user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password)
@@ -262,7 +267,7 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        
+
         Util::fillObject($requestData, $modifyValidatedDocumentationForRoleRequest);
         $modifyValidatedDocumentationForRoleRequest->currentUserId = $currentUser['id'];
         $modifyValidatedDocumentationForRoleRequest->userId = $userId;
@@ -345,7 +350,7 @@ class UserController extends Controller
         Util::fillObject($requestData, $modifyUserOnboardingRequest);
         $modifyUserOnboardingRequest->currentUserId = $currentUser['id'];
         $modifyUserOnboardingRequest->userId = $id;
-        
+
         $modifyUserOnboarding->execute($modifyUserOnboardingRequest, $modifyUserOnboardingResponse);
         return $this->getJsonResponse($modifyUserOnboardingResponse->body, $modifyUserOnboardingResponse->status, $modifyUserOnboardingResponse->statusText);
     }
@@ -356,7 +361,7 @@ class UserController extends Controller
         $queryParam = $request->query();
         $getUserNotificationsRequest->currentUserId = $currentUser['id'];
         $getUserNotificationsRequest->userId = $userId;
-        if (key_exists('unread', $queryParam) ) {
+        if (key_exists('unread', $queryParam)) {
             $getUserNotificationsRequest->onlyUnread = true;
         } else {
             $getUserNotificationsRequest->onlyUnread = false;
@@ -382,7 +387,7 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        
+
         Util::fillObject($requestData, $deleteUserNotificationsRequest);
         $deleteUserNotificationsRequest->currentUserId = $currentUser['id'];
         $deleteUserNotificationsRequest->userId = $userId;

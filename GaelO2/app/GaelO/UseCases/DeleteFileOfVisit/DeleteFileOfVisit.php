@@ -42,6 +42,7 @@ class DeleteFileOfVisit
             }
 
             $this->visitService->setVisitId($visitId);
+            $this->visitService->setCurrentUserId($currentUserId);
             $visitContext = $this->visitService->getVisitContext();
 
             if ($deleteFileOfVisitRequest->studyName !== $visitContext['patient']['study_name']) {

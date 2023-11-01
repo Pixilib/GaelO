@@ -87,7 +87,7 @@ class FileVisitTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
-        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent"), "extension" => 'csv'], ['CONTENT_TYPE' => 'text/csv']);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent"), "extension" => 'csv', 'contentType'=>'text/csv']);
         $response->assertStatus(201);
     }
 
@@ -97,7 +97,7 @@ class FileVisitTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
-        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/wrong?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/wrong?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent"), 'contentType'=>'text/csv']);
         $response->assertStatus(403);
     }
 
@@ -106,7 +106,7 @@ class FileVisitTest extends TestCase
 
         $currentVisit = $this->createVisit();
         AuthorizationTools::actAsAdmin(false);
-        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent"), 'contentType'=>'text/csv']);
         $response->assertStatus(403);
     }
 }

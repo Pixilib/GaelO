@@ -13,6 +13,7 @@ class StudyEntity
     public bool $monitorShowAll;
     public bool $documentationMandatory;
     public bool $deleted;
+    public bool $creatablePatientsInvestigator;
     public ?string $ancillaryOf;
 
     //Array of VisitGroupEntities
@@ -29,6 +30,7 @@ class StudyEntity
         $studyEntity->monitorShowAll = $array['monitor_show_all'];
         $studyEntity->ancillaryOf = $array['ancillary_of'];
         $studyEntity->documentationMandatory = $array['documentation_mandatory'];
+        $studyEntity->creatablePatientsInvestigator = $array['creatable_patients_investigator'];
         $studyEntity->deleted = $array['deleted_at'] !== null;
 
         return $studyEntity;

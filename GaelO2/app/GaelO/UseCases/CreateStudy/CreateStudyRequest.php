@@ -13,4 +13,5 @@ class CreateStudyRequest
     public bool $controllerShowAll;
     public bool $documentationMandatory;
     public ?string $ancillaryOf = null;
+    public bool $creatablePatientsInvestigator;
 }

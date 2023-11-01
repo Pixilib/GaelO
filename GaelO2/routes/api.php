@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('studies/{studyName}/ask-patient-creation', [StudyController::class, 'requestPatientCreation']);
+    Route::get('studies/{studyName}/creatable-patients', [StudyController::class, 'getCreatablePatients']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
@@ -112,6 +113,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     //VisitType Routes
     Route::post('visit-groups/{visitGroupId}/visit-types', [VisitTypeController::class, 'createVisitType']);
     Route::get('visit-types/{visitTypeId}', [VisitTypeController::class, 'getVisitType']);
+    Route::get('visit-types/{visitTypeId}/files/metadata', [VisitTypeController::class, 'getFileMetadataFromVisitType']);
     Route::delete('visit-types/{visitTypeId}', [VisitTypeController::class, 'deleteVisitType']);
 
     //Patients Routes
