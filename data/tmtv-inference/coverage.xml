@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66427656850192" branch-rate="0" lines-covered="7782" lines-valid="11715" branches-covered="0" branches-valid="0" complexity="2824" version="0.4" timestamp="1697751422">
+<coverage line-rate="0.66430522362581" branch-rate="0" lines-covered="7783" lines-valid="11716" branches-covered="0" branches-valid="0" complexity="2824" version="0.4" timestamp="1698827086">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1800,20 +1800,20 @@
           <methods>
             <method name="fillFromDBReponseArray" signature="array $array" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="13" hits="17"/>
-                <line number="14" hits="17"/>
-                <line number="15" hits="17"/>
-                <line number="16" hits="17"/>
-                <line number="18" hits="17"/>
+                <line number="13" hits="18"/>
+                <line number="14" hits="18"/>
+                <line number="15" hits="18"/>
+                <line number="16" hits="18"/>
+                <line number="18" hits="18"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="17"/>
-            <line number="14" hits="17"/>
-            <line number="15" hits="17"/>
-            <line number="16" hits="17"/>
-            <line number="18" hits="17"/>
+            <line number="13" hits="18"/>
+            <line number="14" hits="18"/>
+            <line number="15" hits="18"/>
+            <line number="16" hits="18"/>
+            <line number="18" hits="18"/>
           </lines>
         </class>
       </classes>
@@ -2390,7 +2390,7 @@
             </method>
             <method name="setMainCenter" signature="App\GaelO\Entities\CenterEntity $mainCenter" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="79" hits="3"/>
+                <line number="79" hits="4"/>
               </lines>
             </method>
             <method name="setAffiliatedCenters" signature="array $affiliatedCenters" line-rate="1" branch-rate="0" complexity="1">
@@ -2432,7 +2432,7 @@
             <line number="68" hits="5"/>
             <line number="69" hits="5"/>
             <line number="74" hits="2"/>
-            <line number="79" hits="3"/>
+            <line number="79" hits="4"/>
             <line number="84" hits="1"/>
           </lines>
         </class>
@@ -21609,9 +21609,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/GetUsersFromStudy/GetUsersFromStudy.php" line-rate="0.91666666666667" branch-rate="0" complexity="12">
+    <package name="GaelO/UseCases/GetUsersFromStudy/GetUsersFromStudy.php" line-rate="0.91891891891892" branch-rate="0" complexity="12">
       <classes>
-        <class name="App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudy" filename="GaelO/UseCases/GetUsersFromStudy/GetUsersFromStudy.php" line-rate="0.91666666666667" branch-rate="0" complexity="12">
+        <class name="App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudy" filename="GaelO/UseCases/GetUsersFromStudy/GetUsersFromStudy.php" line-rate="0.91891891891892" branch-rate="0" complexity="12">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Repositories\UserRepositoryInterface $userRepositoryInterface, App\GaelO\Services\AuthorizationService\AuthorizationStudyService $authorizationStudyService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -21619,7 +21619,7 @@
                 <line number="23" hits="3"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyRequest $getUsersFromStudyRequest, App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyResponse $getUsersFromStudyResponse" line-rate="0.92307692307692" branch-rate="0" complexity="6">
+            <method name="execute" signature="App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyRequest $getUsersFromStudyRequest, App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyResponse $getUsersFromStudyResponse" line-rate="0.92592592592593" branch-rate="0" complexity="6">
               <lines>
                 <line number="30" hits="3"/>
                 <line number="31" hits="3"/>
@@ -21636,29 +21636,30 @@
                 <line number="45" hits="1"/>
                 <line number="47" hits="1"/>
                 <line number="48" hits="1"/>
-                <line number="50" hits="2"/>
+                <line number="49" hits="1"/>
                 <line number="51" hits="2"/>
-                <line number="54" hits="2"/>
+                <line number="52" hits="2"/>
                 <line number="55" hits="2"/>
                 <line number="56" hits="2"/>
-                <line number="57" hits="1"/>
+                <line number="57" hits="2"/>
                 <line number="58" hits="1"/>
                 <line number="59" hits="1"/>
                 <line number="60" hits="1"/>
-                <line number="61" hits="0"/>
+                <line number="61" hits="1"/>
                 <line number="62" hits="0"/>
+                <line number="63" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId, string $askedRole, string $studyName" line-rate="0.875" branch-rate="0" complexity="5">
               <lines>
-                <line number="68" hits="3"/>
                 <line number="69" hits="3"/>
-                <line number="71" hits="3"/>
-                <line number="72" hits="2"/>
+                <line number="70" hits="3"/>
+                <line number="72" hits="3"/>
                 <line number="73" hits="2"/>
-                <line number="75" hits="1"/>
+                <line number="74" hits="2"/>
                 <line number="76" hits="1"/>
-                <line number="77" hits="0"/>
+                <line number="77" hits="1"/>
+                <line number="78" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -21680,25 +21681,26 @@
             <line number="45" hits="1"/>
             <line number="47" hits="1"/>
             <line number="48" hits="1"/>
-            <line number="50" hits="2"/>
+            <line number="49" hits="1"/>
             <line number="51" hits="2"/>
-            <line number="54" hits="2"/>
+            <line number="52" hits="2"/>
             <line number="55" hits="2"/>
             <line number="56" hits="2"/>
-            <line number="57" hits="1"/>
+            <line number="57" hits="2"/>
             <line number="58" hits="1"/>
             <line number="59" hits="1"/>
             <line number="60" hits="1"/>
-            <line number="61" hits="0"/>
+            <line number="61" hits="1"/>
             <line number="62" hits="0"/>
-            <line number="68" hits="3"/>
+            <line number="63" hits="0"/>
             <line number="69" hits="3"/>
-            <line number="71" hits="3"/>
-            <line number="72" hits="2"/>
+            <line number="70" hits="3"/>
+            <line number="72" hits="3"/>
             <line number="73" hits="2"/>
-            <line number="75" hits="1"/>
+            <line number="74" hits="2"/>
             <line number="76" hits="1"/>
-            <line number="77" hits="0"/>
+            <line number="77" hits="1"/>
+            <line number="78" hits="0"/>
           </lines>
         </class>
       </classes>
