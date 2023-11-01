@@ -65,9 +65,9 @@ abstract class AbstractGaelOStudy
      * If needed to predifine expected patients
      * return 
      */
-    public function getExpectedPatients(): null|array
+    public function getExpectedPatients(): array
     {
-        return null;
+        return [];
     }
 
     /**

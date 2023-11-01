@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient;
@@ -37,7 +36,7 @@ class GetCreatablePatients
             $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
             $expectedPatients = $studyRule->getExpectedPatients();
 
-            if ($expectedPatients) {
+            if (sizeof($expectedPatients) > 0) {
                 $createdPatients = $this->patientRepositoryInterface->getPatientsInStudy($studyName, false);
                 $createdPatientsCode = array_column($createdPatients, 'code');
                 $creatablePatients = array_filter($expectedPatients, function (ExpectedPatient $expectedPatient) use ($createdPatientsCode) {
@@ -45,7 +44,7 @@ class GetCreatablePatients
                 });
                 $getCreatablePatientsResponse->body = $creatablePatients;
             } else {
-                $getCreatablePatientsResponse->body = null;
+                $getCreatablePatientsResponse->body = [];
             }
 
             $getCreatablePatientsResponse->status = 200;
