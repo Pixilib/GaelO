@@ -4,6 +4,8 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\DefaultVisitRules;
+use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 
 class TEST extends AbstractGaelOStudy {
 

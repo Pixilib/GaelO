@@ -17,7 +17,8 @@ class StudyFactory extends Factory
             'controller_show_all' => false,
             'monitor_show_all' => false,
             'documentation_mandatory' => false,
-            'ancillary_of' => null
+            'ancillary_of' => null,
+            'creatable_patients_investigator' => false,
         ];
     }
 
@@ -75,14 +76,21 @@ class StudyFactory extends Factory
         });
     }
 
-    public function documentationMandatory() 
+    public function documentationMandatory()
     {
         return $this->state(function (array $attributes) {
             return [
                 'documentation_mandatory' => true,
             ];
         });
+    }
 
-        
+    public function creatablePatientsInvestigator()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'creatable_patients_investigator' => true,
+            ];
+        });
     }
 }

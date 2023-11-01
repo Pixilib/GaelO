@@ -31,6 +31,7 @@ class ValidateDicomUpload
     private PatientRepositoryInterface $patientRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
+    private bool $markedProcessing = false;
 
     public function __construct(
         AuthorizationVisitService $authorizationService,
@@ -75,15 +76,16 @@ class ValidateDicomUpload
             $originalOrthancId = $validateDicomUploadRequest->originalOrthancId;
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
-            
+            $this->visitService->setCurrentUserId($currentUserId);
+
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);
+            $this->markedProcessing = true;
 
             //Set Time Limit at 30min as operation could be really long
             set_time_limit(1800);
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
-            
             //Get uploaded Zips from TUS and upzip it in a temporary folder
             foreach ($validateDicomUploadRequest->uploadedFileTusId as $tusFileId) {
                 $tusTempZip = $this->tusService->getFile($tusFileId);
@@ -111,7 +113,7 @@ class ValidateDicomUpload
 
             if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
                 $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
-                throw new GaelOValidateDicomException("Imported DICOM (".$importedNumberOfInstances.") not matching announced number of Instances (".$expectedNumberOfInstances.")");
+                throw new GaelOValidateDicomException("Imported DICOM (" . $importedNumberOfInstances . ") not matching announced number of Instances (" . $expectedNumberOfInstances . ")");
             }
 
             //Anonymize and store new anonymized study Orthanc ID
@@ -154,6 +156,7 @@ class ValidateDicomUpload
 
             //Change Visit status
             $this->visitService->updateUploadStatus(UploadStatusEnum::DONE->value);
+            $this->markedProcessing = false;
 
             //Write success in Tracker
             $actionDetails = [
@@ -223,7 +226,10 @@ class ValidateDicomUpload
     private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  ?string $unzipedPath, string $studyName, int $userId)
     {
 
-        $this->visitService->updateUploadStatus(UploadStatusEnum::NOT_DONE->value);
+        //Restore upload not done status if it has been updated to processing status
+        if ($this->markedProcessing) {
+            $this->visitService->updateUploadStatus(UploadStatusEnum::NOT_DONE->value);
+        }
 
         $actionDetails = [
             'reason' => $errorMessage

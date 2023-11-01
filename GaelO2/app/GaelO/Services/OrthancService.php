@@ -86,7 +86,7 @@ class OrthancService
      */
     public function deletePeer(string $name)
     {
-        $this->httpClientInterface->rowRequest('DELETE', '/peers/' . $name, null, null);
+        $this->httpClientInterface->rawRequest('DELETE', '/peers/' . $name, null, null);
     }
 
     /**
@@ -132,13 +132,13 @@ class OrthancService
 
     public function deleteFromOrthanc(string $level, string $uid)
     {
-        $this->httpClientInterface->rowRequest('DELETE', '/' . $level . '/' . $uid, null, null);
+        $this->httpClientInterface->rawRequest('DELETE', '/' . $level . '/' . $uid, null, null);
     }
 
     public function isPeerAccelerated(string $peer): bool
     {
 
-        $peers = $this->httpClientInterface->rowRequest('GET', '/transfers/peers', null, null)->getJsonBody();
+        $peers = $this->httpClientInterface->rawRequest('GET', '/transfers/peers', null, null)->getJsonBody();
 
         if ($peers[$peer] == "installed") {
             return true;
@@ -376,7 +376,7 @@ class OrthancService
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
-    public function getOrthancZipStreamAsString(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null): Psr7ResponseAdapter
+    public function getOrthancZipAsStream(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null): Psr7ResponseAdapter
     {
         $payload = [
             'Resources' => $seriesOrthancIDs

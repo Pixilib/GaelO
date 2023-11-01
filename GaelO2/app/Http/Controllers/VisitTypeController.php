@@ -8,6 +8,9 @@ use App\GaelO\UseCases\CreateVisitType\CreateVisitTypeResponse;
 use App\GaelO\UseCases\DeleteVisitType\DeleteVisitType;
 use App\GaelO\UseCases\DeleteVisitType\DeleteVisitTypeRequest;
 use App\GaelO\UseCases\DeleteVisitType\DeleteVisitTypeResponse;
+use App\GaelO\UseCases\GetFilesMetadataFromVisitType\GetFilesMetadataFromVisitTypeRequest;
+use App\GaelO\UseCases\GetFilesMetadataFromVisitType\GetFilesMetadataFromVisitTypeResponse;
+use App\GaelO\UseCases\GetFilesMetadataFromVisitType\GetFilesMetadataFromVisitType;
 use App\GaelO\UseCases\GetVisitType\GetVisitType;
 use App\GaelO\UseCases\GetVisitType\GetVisitTypeRequest;
 use App\GaelO\UseCases\GetVisitType\GetVisitTypeResponse;
@@ -17,21 +20,27 @@ use Illuminate\Support\Facades\Auth;
 
 class VisitTypeController extends Controller
 {
-    public function createVisitType(Request $request, CreateVisitType $createVisitType,
-        CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse, int $visitGroupId){
+    public function createVisitType(
+        Request $request,
+        CreateVisitType $createVisitType,
+        CreateVisitTypeRequest $createVisitTypeRequest,
+        CreateVisitTypeResponse $createVisitTypeResponse,
+        int $visitGroupId
+    ) {
 
         $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        Util::fillObject($requestData, $createVisitTypeRequest);
         $createVisitTypeRequest->currentUserId = $currentUser['id'];
         $createVisitTypeRequest->visitGroupId = $visitGroupId;
-
-        $requestData = $request->all();
-        $createVisitTypeRequest = Util::fillObject($requestData, $createVisitTypeRequest);
 
         $createVisitType->execute($createVisitTypeRequest, $createVisitTypeResponse);
         return $this->getJsonResponse($createVisitTypeResponse->body, $createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
     }
 
-    public function getVisitType(GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse, int $visitTypeId){
+    public function getVisitType(GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse, int $visitTypeId)
+    {
         $currentUser = Auth::user();
         $getVisitTypeRequest->currentUserId = $currentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
@@ -39,11 +48,25 @@ class VisitTypeController extends Controller
         return $this->getJsonResponse($getVisitTypeResponse->body, $getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
     }
 
-    public function deleteVisitType(DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse, int $visitTypeId){
+    public function deleteVisitType(DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse, int $visitTypeId)
+    {
         $currentUser = Auth::user();
         $deleteVisitTypeRequest->currentUserId = $currentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;
         $deleteVisitType->execute($deleteVisitTypeRequest, $deleteVisitTypeResponse);
         return $this->getJsonResponse($deleteVisitTypeResponse->body, $deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);
+    }
+
+    public function getFileMetadataFromVisitType(Request $request, GetFilesMetadataFromVisitType $getFilesMetadataFromVisitType, GetFilesMetadataFromVisitTypeRequest $getFilesMetadataFromVisitTypeRequest, GetFilesMetadataFromVisitTypeResponse $getFilesMetadataFromVisitTypeResponse, int $visitTypeId)
+    {
+        $currentUser = Auth::user();
+
+        $queryParam = $request->query();
+        $getFilesMetadataFromVisitTypeRequest->studyName = $queryParam['studyName'];
+        $getFilesMetadataFromVisitTypeRequest->role = $queryParam['role'];
+        $getFilesMetadataFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getFilesMetadataFromVisitTypeRequest->visitTypeId = $visitTypeId;
+        $getFilesMetadataFromVisitType->execute($getFilesMetadataFromVisitTypeRequest, $getFilesMetadataFromVisitTypeResponse);
+        return $this->getJsonResponse($getFilesMetadataFromVisitTypeResponse->body, $getFilesMetadataFromVisitTypeResponse->status, $getFilesMetadataFromVisitTypeResponse->statusText);
     }
 }

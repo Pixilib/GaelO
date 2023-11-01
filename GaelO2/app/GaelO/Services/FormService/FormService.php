@@ -5,6 +5,7 @@ namespace App\GaelO\Services\FormService;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -53,6 +54,7 @@ abstract class FormService
     public function setCurrentUserId(int $currentUserId): void
     {
         $this->currentUserId = $currentUserId;
+        $this->visitService->setCurrentUserId($currentUserId);
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void
@@ -79,13 +81,13 @@ abstract class FormService
     public abstract function unlockForm(int $reviewId);
     public abstract function deleteForm(int $reviewId);
 
-    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
+    public function attachFile(array $reviewEntity, string $key, string $mimeType, string $extension, $binaryData): string
     {
 
         $associatedFiles = [];
 
         //Safty check
-        if($reviewEntity['local']!== $this->local) throw new GaelOException("Form Service Unconsitancy");
+        if ($reviewEntity['local'] !== $this->local) throw new GaelOException("Form Service Unconsitancy");
 
         if ($reviewEntity['local']) {
             $associatedFiles = $this->abstractVisitRules->getAssociatedFilesInvestigator();
@@ -95,24 +97,32 @@ abstract class FormService
             else $associatedFiles = $this->abstractVisitRules->getAssociatedFilesReview();
         }
 
+        if (!array_key_exists($key, $associatedFiles)) {
+            throw new GaelOForbiddenException("Unexpected file key");
+        }
+
         $associatiedFile = $associatedFiles[$key];
 
         if (!empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if ( !in_array($mimeType, $associatiedFile->mimes) ) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
+        $filename = 'review_' . $reviewEntity['id'] . '_' . $key . '.' . $extension;
         $destinationFileName = $destinationPath . '/' . $filename;
+
         $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
 
         $reviewEntity['sent_files'][$key] = $destinationFileName;
 
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
+
+        return $filename;
     }
 
     public function removeFile(array $reviewEntity, string $key): void
@@ -133,7 +143,7 @@ abstract class FormService
         return $this->abstractVisitRules;
     }
 
-    public function getVisitDecisionObject() : AbstractVisitDecisions
+    public function getVisitDecisionObject(): AbstractVisitDecisions
     {
         return $this->abstractVisitRules->getVisitDecisionObject();
     }

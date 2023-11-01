@@ -46,6 +46,19 @@ class HttpClientAdapter implements HttpClientInterface
         $this->password = $password;
     }
 
+    public function uploadFile(string $method, string $uri, string $filename): Psr7ResponseInterface
+    {
+        $fileHandler = fopen($filename, 'rb');
+        $headers = [
+            'auth' => [$this->login, $this->password],
+            'content-type' => 'application/zip',
+            'body' => $fileHandler
+        ];
+
+        $response = $this->client->request($method, $this->address . $uri, $headers);
+        return new Psr7ResponseAdapter($response);
+    }
+
     public function requestUploadArrayDicom(string $method, string $uri, array $files): array
     {
 
@@ -71,7 +84,7 @@ class HttpClientAdapter implements HttpClientInterface
             },
             'rejected' => function (RequestException $exception, $index) {
                 $reason = "Error sending dicom to orthanc";
-                
+
                 if ($exception->hasResponse()) {
                     $reason = $exception->getResponse()->getStatusCode();
                     Log::error($exception->getResponse()->getBody()->getContents());
@@ -79,7 +92,7 @@ class HttpClientAdapter implements HttpClientInterface
                     $reason = $exception->getMessage();
                 }
                 // this is delivered each failed request
-                Log::error('DICOM Import Failed in Orthanc Temporary: '.$reason. ' index: '.$index);
+                Log::error('DICOM Import Failed in Orthanc Temporary: ' . $reason . ' index: ' . $index);
             },
         ]);
 
@@ -95,7 +108,14 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function requestJson(string $method, string $uri, array $body = []): Psr7ResponseInterface
     {
-        $authenticationOption = ['auth' => [$this->login, $this->password]];
+        if ($this->login !== '' && $this->password !== '') {
+            $authenticationOption['auth'] = [$this->login, $this->password];
+        }
+
+        if ($this->authorizationToken != null) {
+            $authenticationOption['headers']['Authorization'] = 'Bearer ' . $this->authorizationToken;
+        }
+
         $bodyOption = ['json' => $body];
         $options = array_merge($authenticationOption, $bodyOption);
         $response = $this->client->request($method, $this->address . $uri, $options);
@@ -135,7 +155,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface
+    public function rawRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface
     {
         $options = [];
 

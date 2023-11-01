@@ -14,7 +14,6 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -489,7 +488,10 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitEntity = $this->visitModel->findOrFail($visitId);
 
-        $visitEntity['state_quality_control'] = QualityControlStateEnum::NOT_DONE->value;
+        //If status Qc Not needed keep the not needed status
+        if ($visitEntity['state_quality_control'] !== QualityControlStateEnum::NOT_NEEDED) {
+            $visitEntity['state_quality_control'] = QualityControlStateEnum::NOT_DONE;
+        }
         $visitEntity['controller_user_id'] = null;
         $visitEntity['control_date'] = null;
         $visitEntity['image_quality_control'] = null;
@@ -557,5 +559,13 @@ class VisitRepository implements VisitRepositoryInterface
     public function reactivateVisit(int $visitId): void
     {
         $this->visitModel->withTrashed()->findOrFail($visitId)->restore();
+    }
+
+    public function updateVisitFile(int $visitId, array $associatedFile): void
+    {
+
+        $review = $this->visitModel->findOrFail($visitId);
+        $review->sent_files = $associatedFile;
+        $review->save();
     }
 }

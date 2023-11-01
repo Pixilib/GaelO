@@ -8,4 +8,5 @@ class ReactivateDicomSeriesRequest
     public string $seriesInstanceUID;
     public string $reason;
     public string $role;
+    public string $studyName;
 }

@@ -85,8 +85,8 @@ class UserController extends Controller
     public function forgotPassword(Request $request, ForgotPasswordRequest $forgotPasswordRequest, ForgotPasswordResponse $forgotPasswordResponse, ForgotPassword $forgotPassword)
     {
         $requestData = $request->all();
-        $requestRequest = Util::fillObject($requestData, $forgotPasswordRequest);
-        $forgotPassword->execute($requestRequest, $forgotPasswordResponse);
+        Util::fillObject($requestData, $forgotPasswordRequest);
+        $forgotPassword->execute($forgotPasswordRequest, $forgotPasswordResponse);
         return $this->getJsonResponse($forgotPasswordResponse->body, $forgotPasswordResponse->status, $forgotPasswordResponse->statusText);
     }
 
@@ -108,7 +108,12 @@ class UserController extends Controller
         ]);
 
         $status = FacadePassword::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            [
+                'email' => strtolower($request->input('email')),
+                'password' => $request->input('password'),
+                'password_confirmation' => $request->input('password_confirmation'),
+                'token' => $request->input('token')
+            ],
             function ($user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password)
@@ -147,13 +152,12 @@ class UserController extends Controller
     {
         //Get current user requesting the API
         $currentUser = Auth::user();
-        //Add current user ID in Request DTO
-        $createUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $queryParam = $request->query();
-        //Fill DTO with all other request data
+        //Fill DTO
+        Util::fillObject($requestData, $createUserRequest);
         $createUserRequest->studyName = $queryParam['studyName'] ?? null;
-        $createUserRequest = Util::fillObject($requestData, $createUserRequest);
+        $createUserRequest->currentUserId = $currentUser['id'];
         //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
         //Output result comming from usecase, here no content has to be shown (only http status code and text)
@@ -163,10 +167,10 @@ class UserController extends Controller
     public function modifyUser(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser, int $id)
     {
         $currentUser = Auth::user();
-        $modifyUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
-        $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
+        Util::fillObject($requestData, $modifyUserRequest);
+        $modifyUserRequest->currentUserId = $currentUser['id'];
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return $this->getJsonResponse($modifyUserResponse->body, $modifyUserResponse->status, $modifyUserResponse->statusText);
     }
@@ -174,10 +178,12 @@ class UserController extends Controller
     public function modifyUserIdentification(Request $request, ModifyUserIdentificationRequest $modifyUserRequest, ModifyUserIdentificationResponse $modifyUserResponse, ModifyUserIdentification $modifyUser, int $id)
     {
         $currentUser = Auth::user();
-        $modifyUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
-        $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
+
+        Util::fillObject($requestData, $modifyUserRequest);
+        $modifyUserRequest->currentUserId = $currentUser['id'];
+
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return $this->getJsonResponse($modifyUserResponse->body, $modifyUserResponse->status, $modifyUserResponse->statusText);
     }
@@ -187,9 +193,11 @@ class UserController extends Controller
         $user = Auth::user();
 
         $requestData = get_object_vars($request);
+
+        Util::fillObject($requestData, $deleteUserRequest);
         $deleteUserRequest->id = $id;
         $deleteUserRequest->currentUserId = $user['id'];
-        $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
+
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
         return $this->getJsonResponse($deleteUserResponse->body, $deleteUserResponse->status, $deleteUserResponse->statusText);
     }
@@ -221,10 +229,12 @@ class UserController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
+
+        Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRoleRequest->studyName = $queryParam['studyName'];
         $createUserRoleRequest->userId = $id;
         $createUserRoleRequest->currentUserId = $currentUser['id'];
-        $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
+
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
         return $this->getJsonResponse($createUserRoleResponse->body, $createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
@@ -257,11 +267,13 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $modifyValidatedDocumentationForRoleRequest = Util::fillObject($requestData, $modifyValidatedDocumentationForRoleRequest);
+
+        Util::fillObject($requestData, $modifyValidatedDocumentationForRoleRequest);
         $modifyValidatedDocumentationForRoleRequest->currentUserId = $currentUser['id'];
         $modifyValidatedDocumentationForRoleRequest->userId = $userId;
         $modifyValidatedDocumentationForRoleRequest->studyName = $studyName;
         $modifyValidatedDocumentationForRoleRequest->role = $roleName;
+
         $modifyValidatedDocumentationForRole->execute($modifyValidatedDocumentationForRoleRequest, $modifyValidatedDocumentationForRoleResponse);
         return $this->getJsonResponse($modifyValidatedDocumentationForRoleResponse->body, $modifyValidatedDocumentationForRoleResponse->status, $modifyValidatedDocumentationForRoleResponse->statusText);
     }
@@ -269,8 +281,9 @@ class UserController extends Controller
     public function addAffiliatedCenter(Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse, int $userId)
     {
         $requestData = $request->all();
-        $addAffiliatedCenterRequest = Util::fillObject($requestData, $addAffiliatedCenterRequest);
         $currentUser = Auth::user();
+
+        Util::fillObject($requestData, $addAffiliatedCenterRequest);
         $addAffiliatedCenterRequest->currentUserId = $currentUser['id'];
         $addAffiliatedCenterRequest->userId = $userId;
 
@@ -333,9 +346,11 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $modifyUserOnboardingRequest = Util::fillObject($requestData, $modifyUserOnboardingRequest);
+
+        Util::fillObject($requestData, $modifyUserOnboardingRequest);
         $modifyUserOnboardingRequest->currentUserId = $currentUser['id'];
         $modifyUserOnboardingRequest->userId = $id;
+
         $modifyUserOnboarding->execute($modifyUserOnboardingRequest, $modifyUserOnboardingResponse);
         return $this->getJsonResponse($modifyUserOnboardingResponse->body, $modifyUserOnboardingResponse->status, $modifyUserOnboardingResponse->statusText);
     }
@@ -346,7 +361,7 @@ class UserController extends Controller
         $queryParam = $request->query();
         $getUserNotificationsRequest->currentUserId = $currentUser['id'];
         $getUserNotificationsRequest->userId = $userId;
-        if (key_exists('unread', $queryParam) ) {
+        if (key_exists('unread', $queryParam)) {
             $getUserNotificationsRequest->onlyUnread = true;
         } else {
             $getUserNotificationsRequest->onlyUnread = false;
@@ -359,9 +374,11 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $modifyUserNotificationsRequest = Util::fillObject($requestData, $modifyUserNotificationsRequest);
+
+        Util::fillObject($requestData, $modifyUserNotificationsRequest);
         $modifyUserNotificationsRequest->currentUserId = $currentUser['id'];
         $modifyUserNotificationsRequest->userId = $userId;
+
         $modifyUserNotifications->execute($modifyUserNotificationsRequest, $modifyUserNotificationsResponse);
         return $this->getJsonResponse($modifyUserNotificationsResponse->body, $modifyUserNotificationsResponse->status, $modifyUserNotificationsResponse->statusText);
     }
@@ -370,9 +387,11 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $deleteUserNotificationsRequest = Util::fillObject($requestData, $deleteUserNotificationsRequest);
+
+        Util::fillObject($requestData, $deleteUserNotificationsRequest);
         $deleteUserNotificationsRequest->currentUserId = $currentUser['id'];
         $deleteUserNotificationsRequest->userId = $userId;
+
         $deleteUserNotifications->execute($deleteUserNotificationsRequest, $deleteUserNotificationsResponse);
         return $this->getJsonResponse($deleteUserNotificationsResponse->body, $deleteUserNotificationsResponse->status, $deleteUserNotificationsResponse->statusText);
     }

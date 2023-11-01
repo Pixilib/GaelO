@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('studies/{studyName}/ask-patient-creation', [StudyController::class, 'requestPatientCreation']);
+    Route::get('studies/{studyName}/creatable-patients', [StudyController::class, 'getCreatablePatients']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
@@ -112,6 +113,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     //VisitType Routes
     Route::post('visit-groups/{visitGroupId}/visit-types', [VisitTypeController::class, 'createVisitType']);
     Route::get('visit-types/{visitTypeId}', [VisitTypeController::class, 'getVisitType']);
+    Route::get('visit-types/{visitTypeId}/files/metadata', [VisitTypeController::class, 'getFileMetadataFromVisitType']);
     Route::delete('visit-types/{visitTypeId}', [VisitTypeController::class, 'deleteVisitType']);
 
     //Patients Routes
@@ -133,6 +135,9 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('visits/{id}/activate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('visits/{id}', [VisitController::class, 'getVisit']);
+    Route::get('visits/{id}/files/{key}', [VisitController::class, 'getFileOfVisit']);
+    Route::post('visits/{id}/files/{key}', [VisitController::class, 'createFileOfVisit']);
+    Route::delete('visits/{id}/files/{key}', [VisitController::class, 'deleteFileOfVisit']);
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
@@ -148,8 +153,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('reviews/{id}', [ReviewController::class, 'getReviewForm']);
     Route::delete('reviews/{id}', [ReviewController::class, 'deleteReviewForm']);
     Route::patch('reviews/{id}/unlock', [ReviewController::class, 'unlockReviewForm']);
-    Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
-    Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
+    Route::post('reviews/{id}/files/{key}', [ReviewController::class, 'createReviewFile']);
+    Route::delete('reviews/{id}/files/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
     Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForReviewer']);
 
@@ -194,7 +199,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
-    Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
+    Route::get('reviews/{id}/files/{key}', [ReviewController::class, 'getReviewFile']);
     Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
 });
 

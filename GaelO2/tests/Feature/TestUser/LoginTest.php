@@ -33,7 +33,20 @@ class LoginTest extends TestCase
         $this->assertEquals($content['onboarded'], true);
     }
 
-    public function testLoginSuccessButNotOnboaded()
+    public function testLoginShouldPassInsensitive()
+    {
+        $data = ['email'=> strtoupper('administrator@gaelo.fr'),
+        'password'=> 'administrator'];
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->onboarding_version= Config::get('app.onboarding_version');
+        $adminDefaultUser->save();
+        $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
+        $content= json_decode($response->content(), true);
+        $this->assertArrayHasKey('access_token', $content);
+        $this->assertEquals($content['onboarded'], true);
+    }
+
+    public function testLoginSuccessButNotOnboarded()
     {
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];

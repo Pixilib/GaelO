@@ -70,11 +70,11 @@ class DicomController extends Controller
         $queryParam = $request->query();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $deleteSeriesRequest);
         $deleteSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $deleteSeriesRequest->role = $queryParam['role'];
         $deleteSeriesRequest->studyName = $queryParam['studyName'];
         $deleteSeriesRequest->currentUserId = $currentUser['id'];
-        $deleteSeriesRequest = Util::fillObject($requestData, $deleteSeriesRequest);
 
         $deleteSeries->execute($deleteSeriesRequest, $deleteSeriesResponse);
 
@@ -87,11 +87,11 @@ class DicomController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        Util::fillObject($requestData, $reactivateDicomSeriesRequest);
         $reactivateDicomSeriesRequest->studyName = $queryParam['studyName'];
         $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
         $reactivateDicomSeriesRequest->role = $queryParam['role'];
-        $reactivateDicomSeriesRequest = Util::fillObject($requestData, $reactivateDicomSeriesRequest);
 
         $reactivateDicomSeries->execute($reactivateDicomSeriesRequest, $reactivateDicomSeriesResponse);
 
@@ -105,10 +105,10 @@ class DicomController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        Util::fillObject($requestData, $reactivateDicomStudyRequest);
         $reactivateDicomStudyRequest->studyName = $queryParam['studyName'];
         $reactivateDicomStudyRequest->studyInstanceUID = $studyInstanceUID;
         $reactivateDicomStudyRequest->currentUserId = $currentUser['id'];
-        $reactivateDicomStudyRequest = Util::fillObject($requestData, $reactivateDicomStudyRequest);
 
         $reactivateDicomStudy->execute($reactivateDicomStudyRequest, $reactivateDicomStudyResponse);
 
@@ -120,9 +120,9 @@ class DicomController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $getDicomsFileSupervisorRequest);
         $getDicomsFileSupervisorRequest->currentUserId = $currentUser['id'];
         $getDicomsFileSupervisorRequest->studyName = $studyName;
-        $getDicomsFileSupervisorRequest = Util::fillObject($requestData, $getDicomsFileSupervisorRequest);
 
         $getDicomsFileSupervisor->execute($getDicomsFileSupervisorRequest, $getDicomsFileSupervisorResponse);
 

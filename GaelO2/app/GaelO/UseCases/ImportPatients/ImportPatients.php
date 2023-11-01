@@ -44,8 +44,10 @@ class ImportPatients
             $studyName = $importPatientsRequest->studyName;
             $currentUserId = $importPatientsRequest->currentUserId;
             $patients = $importPatientsRequest->patients;
+            $role = $importPatientsRequest->role;
 
-            $this->checkAuthorization($currentUserId, $studyName);
+            $this->checkAuthorization($currentUserId, $studyName, $role);
+
             $arrayPatients = [];
             foreach ($patients as $patient) {
 
@@ -83,14 +85,20 @@ class ImportPatients
         }
     }
 
-    private function checkAuthorization(int $userId, string $studyName)
+    private function checkAuthorization(int $userId, string $studyName, string $role)
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
         if ($this->authorizationStudyService->getStudyEntity()->isAncillaryStudy()) {
             throw new GaelOForbiddenException("Forbidden for ancillary studies");
         }
-        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
+        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR])) {
+            throw new GaelOForbiddenException("Role forbidden");
+        }
+        if ($role === Constants::ROLE_INVESTIGATOR && !$this->authorizationStudyService->getStudyEntity()->creatablePatientsInvestigator) {
+            throw new GaelOForbiddenException("Patient creation disallowed for investigator");
+        }
+        if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
         }
     }

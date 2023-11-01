@@ -11,7 +11,6 @@ use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class GetReviewsMetadataFromVisitType
 {

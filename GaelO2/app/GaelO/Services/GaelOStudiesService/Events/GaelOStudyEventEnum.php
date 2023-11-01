@@ -1,0 +1,12 @@
+<?php
+
+namespace App\GaelO\Services\GaelOStudiesService\Events;
+
+enum GaelOStudyEventEnum: string
+{
+    case UPLOAD_VISIT_EVENT = 'UPLOAD_VISIT_EVENT';
+    case QC_MODIFIED_EVENT = 'QC_MODIFIFED_EVENT';
+    case CORRECTIVE_ACTION_EVENT = 'CORRECTIVE_ACTION_EVENT';
+    case AWAITING_ADJUDICATION_EVENT = 'AWAITING_ADJUDICATION_EVENT';
+    case VISIT_CONCLUDED_EVENT = 'VISIT_CONCLUDED_EVENT';
+}

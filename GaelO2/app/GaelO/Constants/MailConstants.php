@@ -27,4 +27,6 @@ class MailConstants {
     const EMAIL_UNLOCK_QC_REQUEST=22;
     const EMAIL_QC_REPORT = 23;
     const EMAIL_REQUEST_PATIENT_CREATION = 24;
+    const EMAIL_RADIOMICS_REPORT = 25;
+    const EMAIL_JOB_FAILURE = 26;
 }

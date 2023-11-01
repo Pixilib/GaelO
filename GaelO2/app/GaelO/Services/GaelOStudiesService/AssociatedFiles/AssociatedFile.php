@@ -4,7 +4,7 @@ namespace App\GaelO\Services\GaelOStudiesService\AssociatedFiles;
 
 class AssociatedFile
 {
-    public String $key;
+    public string $key;
     public array $mimes;
     public bool $mandatory;
 

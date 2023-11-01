@@ -20,6 +20,8 @@ use Mockery\MockInterface;
 class JobQcReportTest extends TestCase
 {
     use RefreshDatabase;
+    private DicomSeriesRepository $orthancSeriesRepository;
+    private DicomStudy $orthancStudy;
 
     protected function setUp(): void
     {

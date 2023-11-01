@@ -70,8 +70,6 @@ class CreateFileToForm
 
             $extension = $this->mimeInterface::getExtensionsFromMime($createFileToReviewRequest->contentType)[0];
 
-            $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
-
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
             
             $formService = null;
@@ -83,11 +81,12 @@ class CreateFileToForm
             }
 
             $formService->setVisitContextAndStudy($visitContext, $studyName);
-            $formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));
+           
+            $filename = $formService->attachFile($reviewEntity, $key, $createFileToReviewRequest->contentType, $extension, base64_decode($binaryData));
 
             $actionDetails = [
                 'uploaded_file' => $key,
-                'filename' => $fileName,
+                'filename' => $filename,
                 'review_id' => $reviewId
             ];
 

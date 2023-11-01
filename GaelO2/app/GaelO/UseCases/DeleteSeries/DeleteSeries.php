@@ -76,6 +76,7 @@ class DeleteSeries
 
             $this->checkAuthorization($currentUserId, $visitId, $role, $studyName, $visitContext);
 
+            $this->dicomService->setCurrentUserId($currentUserId);
             $this->dicomService->deleteSeries($seriesInstanceUID, $role);
 
             $actionDetails = [

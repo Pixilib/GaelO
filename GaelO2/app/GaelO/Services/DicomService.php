@@ -14,6 +14,7 @@ class DicomService
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private VisitService $visitService;
+    private int $currentUserId;
 
     public function __construct(
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
@@ -24,6 +25,11 @@ class DicomService
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->visitService = $visitService;
+    }
+
+    public function setCurrentUserId(int $userId)
+    {
+        $this->currentUserId = $userId;
     }
 
     public function deleteSeries(string $seriesInstanceUID, string $role)
@@ -40,6 +46,7 @@ class DicomService
         if (sizeof($remainingSeries) === 0) {
             $this->dicomStudyRepositoryInterface->delete($seriesData['dicom_study']['study_uid']);
             $this->visitService->setVisitId($visitId);
+            $this->visitService->setCurrentUserId($this->currentUserId);
             $this->visitService->updateUploadStatus(UploadStatusEnum::NOT_DONE->value);
             //Reset QC only if suppervisor, we don't change QC status for investigator and controller (as it still ongoing)
             if ($role === Constants::ROLE_SUPERVISOR) {
@@ -67,6 +74,7 @@ class DicomService
 
         //Update upload status to Done
         $this->visitService->setVisitId($visitId);
+        $this->visitService->setCurrentUserId($this->currentUserId);
         $this->visitService->updateUploadStatus(UploadStatusEnum::DONE->value);
     }
 }

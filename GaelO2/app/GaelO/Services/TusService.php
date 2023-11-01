@@ -32,7 +32,7 @@ class TusService{
     }
 
     public function deleteFile(string $tusFileId) : void {
-        $this->httpClientInterface->rowRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
+        $this->httpClientInterface->rawRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
     }
 
 }
