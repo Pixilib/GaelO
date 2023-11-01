@@ -14,7 +14,6 @@ class StudyEntity
     public bool $documentationMandatory;
     public bool $deleted;
     public bool $creatablePatientsInvestigator;
-    public bool $investigatorOwnVisits;
     public ?string $ancillaryOf;
 
     //Array of VisitGroupEntities
@@ -32,7 +31,6 @@ class StudyEntity
         $studyEntity->ancillaryOf = $array['ancillary_of'];
         $studyEntity->documentationMandatory = $array['documentation_mandatory'];
         $studyEntity->creatablePatientsInvestigator = $array['creatable_patients_investigator'];
-        $studyEntity->investigatorOwnVisits = $array['investigator_own_visits'];
         $studyEntity->deleted = $array['deleted_at'] !== null;
 
         return $studyEntity;

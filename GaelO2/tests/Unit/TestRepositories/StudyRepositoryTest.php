@@ -40,7 +40,6 @@ class StudyRepositoryTest extends TestCase
         $this->assertFalse((bool) $studyEntity->documentation_mandatory);
         $this->assertEquals(null, $studyEntity->ancillary_of);
         $this->assertFalse((bool) $studyEntity->creatable_patients_investigator);
-        $this->assertFalse((bool) $studyEntity->investigator_own_visits);
     }
 
     public function testIsExistingStudy()

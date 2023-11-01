@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('studies', function (Blueprint $table) {
             $table->boolean('creatable_patients_investigator')->default(false);
-            $table->boolean('investigator_own_visits')->default(false);
         });
     }
 
@@ -24,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('studies', function (Blueprint $table) {
             $table->dropColumn('creatable_patients_investigator');
-            $table->dropColumn('investigator_own_visits');
         });
     }
 };

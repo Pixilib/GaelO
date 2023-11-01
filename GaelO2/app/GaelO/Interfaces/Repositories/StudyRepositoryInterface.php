@@ -11,7 +11,7 @@ interface StudyRepositoryInterface
 
     public function delete($name): void;
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, bool $documentationMandatory, ?string $ancillaryOf, bool $creatablePatientsInvestigator, bool $investigatorOwnVisits): void;
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, bool $documentationMandatory, ?string $ancillaryOf, bool $creatablePatientsInvestigator): void;
 
     public function isExistingStudyName(string $name): bool;
 

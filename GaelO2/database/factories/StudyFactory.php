@@ -18,7 +18,6 @@ class StudyFactory extends Factory
             'monitor_show_all' => false,
             'documentation_mandatory' => false,
             'ancillary_of' => null,
-            'investigator_own_visits' => false,
             'creatable_patients_investigator' => false,
         ];
     }
@@ -82,15 +81,6 @@ class StudyFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'documentation_mandatory' => true,
-            ];
-        });
-    }
-
-    public function investigatorOwnVisits()
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'investigator_own_visits' => true,
             ];
         });
     }

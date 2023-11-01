@@ -24,8 +24,7 @@ class CreateStudyTest extends TestCase
             'monitorShowAll' => false,
             'documentationMandatory' => false,
             'contactEmail' => 'test@gaelo.fr',
-            'creatablePatientsInvestigator' => false,
-            'investigatorOwnVisits' => false
+            'creatablePatientsInvestigator' => false
         ];
     }
 

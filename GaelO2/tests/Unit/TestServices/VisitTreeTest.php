@@ -148,8 +148,7 @@ class VisitTreeTest extends TestCase
                 'documentation_mandatory' => false,
                 'ancillary_of' => null,
                 'deleted_at' => null,
-                'creatable_patients_investigator' => false,
-                'investigator_own_visits' => false
+                'creatable_patients_investigator' => false
 
             ]));
 
