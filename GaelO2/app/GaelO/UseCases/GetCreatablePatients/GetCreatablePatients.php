@@ -39,9 +39,9 @@ class GetCreatablePatients
             if (sizeof($expectedPatients) > 0) {
                 $createdPatients = $this->patientRepositoryInterface->getPatientsInStudy($studyName, false);
                 $createdPatientsCode = array_column($createdPatients, 'code');
-                $creatablePatients = array_filter($expectedPatients, function (ExpectedPatient $expectedPatient) use ($createdPatientsCode) {
+                $creatablePatients = array_values(array_filter($expectedPatients, function (ExpectedPatient $expectedPatient) use ($createdPatientsCode) {
                     return !in_array($expectedPatient->code, $createdPatientsCode);
-                });
+                }));
                 $getCreatablePatientsResponse->body = $creatablePatients;
             } else {
                 $getCreatablePatientsResponse->body = [];
