@@ -19,7 +19,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use DateTime;
 use Exception;
 use Throwable;
@@ -159,9 +158,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     private function sendDicomToProcessing(string $orthancSeriesIdPt)
     {
         $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $temporaryZipDicomHandle = fopen($temporaryZipDicom, 'r+');
-
-        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicomHandle);
+        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $this->gaelOProcessingService->createDicom($temporaryZipDicom);
         $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
 
