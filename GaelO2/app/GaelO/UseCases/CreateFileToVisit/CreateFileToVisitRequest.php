@@ -8,7 +8,7 @@ class CreateFileToVisitRequest
     public int $visitId;
     public string $studyName;
     public string $key;
-    public string $contentType;
+    public ?string $contentType = null;
     public string $content;
     public ?string $extension = null;
 }
