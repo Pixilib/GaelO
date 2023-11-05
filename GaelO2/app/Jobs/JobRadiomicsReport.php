@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOClientService;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
@@ -31,12 +32,12 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
-    private int $behalfUserId;
+    private ?int $behalfUserId;
     private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
     private OrthancService $orthancService;
 
-    public function __construct(int $visitId, int $behalfUserId)
+    public function __construct(int $visitId, ?int $behalfUserId)
     {
         $this->onQueue('processing');
         $this->visitId = $visitId;
@@ -45,6 +46,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
 
     public function handle(
         VisitRepositoryInterface $visitRepositoryInterface,
+        StudyRepository $studyRepository,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         OrthancService $orthancService,
         GaelOProcessingService $gaelOProcessingService,
@@ -133,7 +135,13 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         );
 
         //Send file to store using API as job worker may not access to the storage backend
-        $user = User::find($this->behalfUserId);
+        if($this->behalfUserId){
+            $user = User::find($this->behalfUserId);
+        } else{
+            $studyEntity = $studyRepository->find($studyName);
+            $user = User::where('email', $studyEntity->contactEmail)->sole();
+        }
+
         $tokenResult = $user->createToken('GaelO')->plainTextToken;
         $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
