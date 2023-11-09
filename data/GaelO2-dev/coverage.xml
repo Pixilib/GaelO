@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66396381017412" branch-rate="0" lines-covered="7779" lines-valid="11716" branches-covered="0" branches-valid="0" complexity="2825" version="0.4" timestamp="1699226644">
+<coverage line-rate="0.66385048643113" branch-rate="0" lines-covered="7779" lines-valid="11718" branches-covered="0" branches-valid="0" complexity="2827" version="0.4" timestamp="1699525435">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -29792,9 +29792,9 @@
         </class>
       </classes>
     </package>
-    <package name="Jobs/JobRadiomicsReport.php" line-rate="0.051546391752577" branch-rate="0" complexity="18">
+    <package name="Jobs/JobRadiomicsReport.php" line-rate="0.050505050505051" branch-rate="0" complexity="20">
       <classes>
-        <class name="App\Jobs\JobRadiomicsReport" filename="Jobs/JobRadiomicsReport.php" line-rate="0.051546391752577" branch-rate="0" complexity="18">
+        <class name="App\Jobs\JobRadiomicsReport" filename="Jobs/JobRadiomicsReport.php" line-rate="0.050505050505051" branch-rate="0" complexity="20">
           <methods>
             <method name="__construct" signature="int $visitId, ?int $behalfUserId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -29886,7 +29886,7 @@
                 <line number="173" hits="0"/>
               </lines>
             </method>
-            <method name="getSeriesOrthancIds" signature="array $dicomStudyEntity" line-rate="0" branch-rate="0" complexity="6">
+            <method name="getSeriesOrthancIds" signature="array $dicomStudyEntity" line-rate="0" branch-rate="0" complexity="8">
               <lines>
                 <line number="178" hits="0"/>
                 <line number="179" hits="0"/>
@@ -29898,27 +29898,29 @@
                 <line number="186" hits="0"/>
                 <line number="187" hits="0"/>
                 <line number="191" hits="0"/>
-                <line number="192" hits="0"/>
                 <line number="193" hits="0"/>
-                <line number="194" hits="0"/>
+                <line number="196" hits="0"/>
+                <line number="197" hits="0"/>
+                <line number="198" hits="0"/>
+                <line number="199" hits="0"/>
               </lines>
             </method>
             <method name="addCreatedRessource" signature="string $type, string $id" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="199" hits="0"/>
+                <line number="204" hits="0"/>
               </lines>
             </method>
             <method name="deleteCreatedRessources" signature="" line-rate="0" branch-rate="0" complexity="3">
               <lines>
-                <line number="204" hits="0"/>
-                <line number="206" hits="0"/>
-                <line number="207" hits="0"/>
+                <line number="209" hits="0"/>
+                <line number="211" hits="0"/>
+                <line number="212" hits="0"/>
               </lines>
             </method>
             <method name="failed" signature="Throwable $exception" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="214" hits="1"/>
-                <line number="215" hits="1"/>
+                <line number="219" hits="1"/>
+                <line number="220" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -30011,15 +30013,17 @@
             <line number="186" hits="0"/>
             <line number="187" hits="0"/>
             <line number="191" hits="0"/>
-            <line number="192" hits="0"/>
             <line number="193" hits="0"/>
-            <line number="194" hits="0"/>
+            <line number="196" hits="0"/>
+            <line number="197" hits="0"/>
+            <line number="198" hits="0"/>
             <line number="199" hits="0"/>
             <line number="204" hits="0"/>
-            <line number="206" hits="0"/>
-            <line number="207" hits="0"/>
-            <line number="214" hits="1"/>
-            <line number="215" hits="1"/>
+            <line number="209" hits="0"/>
+            <line number="211" hits="0"/>
+            <line number="212" hits="0"/>
+            <line number="219" hits="1"/>
+            <line number="220" hits="1"/>
           </lines>
         </class>
       </classes>
