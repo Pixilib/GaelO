@@ -91,11 +91,17 @@ class ReactivateDicomSeries
     {
         $qcStatus = $visitContext['state_quality_control'];
 
-        //If QC is done, can't reactivate series
-        if (in_array($qcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
-            throw new GaelOForbiddenException();
+        //If QC is performed, can't reactivate series
+        if (in_array($qcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value])) {
+            throw new GaelOForbiddenException("Can't reactivate series on QC performed visit");
         }
 
+        //If QC is not needed we allow supervisor to reactivate series (reactivation after a dicom study delete)
+        if($qcStatus === QualityControlStateEnum::NOT_NEEDED->value && $role !== Constants::ROLE_SUPERVISOR){
+            throw new GaelOForbiddenException("In case of not needed QC only supervisor can reactivate series");
+        }
+
+        //We deny access to all other of than investigator, controller or supervisor
         if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_SUPERVISOR])) {
             throw new GaelOForbiddenException();
         }
