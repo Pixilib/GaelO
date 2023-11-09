@@ -101,8 +101,8 @@ class ReactivateDicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->dicomSeries->dicomStudy->delete();
-        $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Supervisor&studyName='.$this->studyName, []);
+        $this->dicomSeries->delete();
+        $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Supervisor&studyName='.$this->studyName, ['reason' => 'good series']);
 
         $response->assertStatus(200);
 
@@ -117,8 +117,8 @@ class ReactivateDicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
 
-        $this->dicomSeries->dicomStudy->delete();
-        $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Supervisor&studyName='.$this->studyName, []);
+        $this->dicomSeries->delete();
+        $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Supervisor&studyName='.$this->studyName, ['reason' => 'good series']);
 
         $response->assertStatus(403);
 
