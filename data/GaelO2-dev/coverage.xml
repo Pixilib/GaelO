@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66385048643113" branch-rate="0" lines-covered="7779" lines-valid="11718" branches-covered="0" branches-valid="0" complexity="2827" version="0.4" timestamp="1699525435">
+<coverage line-rate="0.66382252559727" branch-rate="0" lines-covered="7780" lines-valid="11720" branches-covered="0" branches-valid="0" complexity="2829" version="0.4" timestamp="1699525698">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -24219,9 +24219,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/ReactivateDicomSeries/ReactivateDicomSeries.php" line-rate="0.9" branch-rate="0" complexity="11">
+    <package name="GaelO/UseCases/ReactivateDicomSeries/ReactivateDicomSeries.php" line-rate="0.88461538461538" branch-rate="0" complexity="13">
       <classes>
-        <class name="App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries" filename="GaelO/UseCases/ReactivateDicomSeries/ReactivateDicomSeries.php" line-rate="0.9" branch-rate="0" complexity="11">
+        <class name="App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries" filename="GaelO/UseCases/ReactivateDicomSeries/ReactivateDicomSeries.php" line-rate="0.88461538461538" branch-rate="0" complexity="13">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Repositories\VisitRepositoryInterface $visitRepositoryInterface, App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface, App\GaelO\Services\AuthorizationService\AuthorizationVisitService $authorizationVisitService, App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface $trackerRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -24270,19 +24270,21 @@
                 <line number="86" hits="0"/>
               </lines>
             </method>
-            <method name="checkAuthorization" signature="int $userId, int $visitId, string $role, string $studyName, array $visitContext" line-rate="0.81818181818182" branch-rate="0" complexity="4">
+            <method name="checkAuthorization" signature="int $userId, int $visitId, string $role, string $studyName, array $visitContext" line-rate="0.76923076923077" branch-rate="0" complexity="6">
               <lines>
                 <line number="92" hits="3"/>
                 <line number="95" hits="3"/>
                 <line number="96" hits="0"/>
-                <line number="99" hits="3"/>
-                <line number="100" hits="0"/>
-                <line number="103" hits="3"/>
-                <line number="104" hits="3"/>
+                <line number="100" hits="3"/>
+                <line number="101" hits="0"/>
                 <line number="105" hits="3"/>
-                <line number="106" hits="3"/>
-                <line number="108" hits="3"/>
-                <line number="109" hits="1"/>
+                <line number="106" hits="0"/>
+                <line number="109" hits="3"/>
+                <line number="110" hits="3"/>
+                <line number="111" hits="3"/>
+                <line number="112" hits="3"/>
+                <line number="114" hits="3"/>
+                <line number="115" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -24329,14 +24331,16 @@
             <line number="92" hits="3"/>
             <line number="95" hits="3"/>
             <line number="96" hits="0"/>
-            <line number="99" hits="3"/>
-            <line number="100" hits="0"/>
-            <line number="103" hits="3"/>
-            <line number="104" hits="3"/>
+            <line number="100" hits="3"/>
+            <line number="101" hits="0"/>
             <line number="105" hits="3"/>
-            <line number="106" hits="3"/>
-            <line number="108" hits="3"/>
-            <line number="109" hits="1"/>
+            <line number="106" hits="0"/>
+            <line number="109" hits="3"/>
+            <line number="110" hits="3"/>
+            <line number="111" hits="3"/>
+            <line number="112" hits="3"/>
+            <line number="114" hits="3"/>
+            <line number="115" hits="1"/>
           </lines>
         </class>
       </classes>
