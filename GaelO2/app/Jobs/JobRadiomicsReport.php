@@ -135,9 +135,9 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         );
 
         //Send file to store using API as job worker may not access to the storage backend
-        if($this->behalfUserId){
+        if ($this->behalfUserId) {
             $user = User::find($this->behalfUserId);
-        } else{
+        } else {
             $studyEntity = $studyRepository->find($studyName);
             $user = User::where('email', $studyEntity->contactEmail)->sole();
         }
@@ -186,6 +186,11 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
                 if ($idCT) throw new GaelOException('Multiple CT Series, unable to perform segmentation');
                 $idCT = $series['orthanc_id'];
             }
+        }
+
+        if (!$idPT || !$idCT) {
+            //Can happen in case of a study reactivation, at reactivation series are softdeleted so we won't run the inference
+            throw new GaelOException("Didn't found CT and PT Series to run the inference");
         }
 
         return [
