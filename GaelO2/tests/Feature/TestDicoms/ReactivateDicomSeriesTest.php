@@ -120,7 +120,7 @@ class ReactivateDicomSeriesTest extends TestCase
         $this->dicomSeries->dicomStudy->delete();
         $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Supervisor&studyName='.$this->studyName, []);
 
-        $response->assertStatus(200);
+        $response->assertStatus(403);
 
     }
 }
