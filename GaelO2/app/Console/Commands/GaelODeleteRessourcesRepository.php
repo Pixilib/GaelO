@@ -71,6 +71,11 @@ class GaelODeleteRessourcesRepository
         $this->tracker->where('study_name', $studyName)->delete();
     }
 
+    public function deleteTrackerOfVisits(array $visitIds, string $studyName)
+    {
+        $this->tracker->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->delete();
+    }
+
     public function deleteDicomsStudies(array $visitId)
     {
         return $this->dicomStudy->whereIn('visit_id', $visitId)->withTrashed()->forceDelete();
@@ -86,6 +91,11 @@ class GaelODeleteRessourcesRepository
     public function deletePatient(string $studyName)
     {
         $this->patient->where('study_name', $studyName)->delete();
+    }
+
+    public function deletePatientsWithNoVisits(string $studyName)
+    {
+        $this->patient->where('study_name', $studyName)->doesntHave('visits')->delete();
     }
 
     public function deleteReviews(array $visitIds, string $studyName)

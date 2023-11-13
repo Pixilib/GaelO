@@ -9,7 +9,6 @@ use App\Models\Visit;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class DeleteOldVisits extends Command
 {
@@ -61,7 +60,7 @@ class DeleteOldVisits extends Command
         }
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
-        
+
         //Check that no ancillary study is remaining on this study
         $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
         if ($ancilariesStudies->count() > 0) {
@@ -69,19 +68,15 @@ class DeleteOldVisits extends Command
             return 0;
         }
 
-        if($studyEntity['ancillary_of']){
+        if ($studyEntity['ancillary_of']) {
             $this->error('Cannot be used for an ancillary study');
             return 0;
         }
 
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
-            //TODO delete tracker doit etre specifique au visites supprimées
-            //$this->gaelODeleteRessourcesRepository->deleteTracker($studyEntity->name);
-
-            //Get Visit ID of Original Study
-            //TODO Doit tenir compte de l'interval de temps depuis la creation
-            $visits = $this->getVisitsOfStudy($studyName);
+            //Get visits created more than 5 day
+            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-5 days")));
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
@@ -89,40 +84,29 @@ class DeleteOldVisits extends Command
 
             $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
             $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
+            $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
 
             $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
             $orthancIdArray = array_map(function ($seriesId) {
                 return $seriesId['orthanc_id'];
             }, $dicomSeries);
 
-            $this->line(implode(" ", $orthancIdArray));
-
-            $this->table(
-                ['orthanc_id'],
-                $dicomSeries
-            );
-
             $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
             $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
             $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
-            //TODO Doit supprimer les patients que si il ne reste pas de visites...
-            //$this->gaelODeleteRessourcesRepository->deletePatient($studyName);
-            
+            //Remove patients with no visits
+            $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($studyName);
+
 
             if ($this->option('deleteDicom') && $this->confirm('Found ' . sizeOf($orthancIdArray) . ' series to delete, do you want to continue ?')) {
                 foreach ($orthancIdArray as $seriesOrthancId) {
                     try {
-                        $this->info('Deleting '.$seriesOrthancId);
+                        $this->info('Deleting ' . $seriesOrthancId);
                         $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
                     } catch (Exception $e) {
                         Log::error($e->getMessage());
                     }
                 }
-            }
-
-            if ($this->option('deleteAssociatedFile') && $this->confirm('Going to delete associated file, do you want to continue ?')) {
-                //TODO doit supprimer que les associated file des visites deleted
-                //Storage::deleteDirectory($studyName);
             }
 
             $this->info('The command was successful !');
@@ -139,12 +123,11 @@ class DeleteOldVisits extends Command
             })->select('orthanc_id')->get()->toArray();
     }
 
-    private function getVisitsOfStudy(string $studyName)
+    private function getOlderVisitsOfStudy(string $studyName, string $datelimit)
     {
-        return $this->visit->withTrashed()->with(['visitType', 'patient'])
+        return $this->visit->withTrashed()->whereDate('creation_date', '<=', $datelimit)->with(['visitType', 'patient'])
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })->get();
     }
-
 }
