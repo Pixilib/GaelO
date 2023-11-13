@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class DeleteStudy extends Command
+class DeleteOldVisits extends Command
 {
 
     private Study $study;
@@ -24,14 +24,14 @@ class DeleteStudy extends Command
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-study {studyName : the study name to delete} {--deleteDicom : delete dicom in Orthanc} { --deleteAssociatedFile : delete associated files}';
+    protected $signature = 'gaelo:delete-old-visits {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete a Study from GaelO (hard delete)';
+    protected $description = 'Delete visits of a Study created later than days threshold (hard delete)';
 
     /**
      * Execute the console command.
@@ -61,13 +61,7 @@ class DeleteStudy extends Command
         }
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
-
-        //Check study have been soft delete before real deletion
-        if (!$studyEntity->trashed()) {
-            $this->error('Study is not soft deleted, terminating');
-            return 0;
-        }
-
+        
         //Check that no ancillary study is remaining on this study
         $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
         if ($ancilariesStudies->count() > 0) {
@@ -75,15 +69,19 @@ class DeleteStudy extends Command
             return 0;
         }
 
+        if($studyEntity['ancillary_of']){
+            $this->error('Cannot be used for an ancillary study');
+            return 0;
+        }
+
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
-            $this->gaelODeleteRessourcesRepository->deleteDocumentation($studyEntity->name);
-            $this->gaelODeleteRessourcesRepository->deleteRoles($studyEntity->name);
-            $this->gaelODeleteRessourcesRepository->deleteTracker($studyEntity->name);
+            //TODO delete tracker doit etre specifique au visites supprimées
+            //$this->gaelODeleteRessourcesRepository->deleteTracker($studyEntity->name);
 
             //Get Visit ID of Original Study
-            $originalStudy = $studyEntity->ancillary_of ?? $studyEntity->name;
-            $visits = $this->getVisitsOfStudy($originalStudy);
+            //TODO Doit tenir compte de l'interval de temps depuis la creation
+            $visits = $this->getVisitsOfStudy($studyName);
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
@@ -92,37 +90,29 @@ class DeleteStudy extends Command
             $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
             $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
 
-            if ($studyEntity['ancillary_of'] === null) {
+            $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
+            $orthancIdArray = array_map(function ($seriesId) {
+                return $seriesId['orthanc_id'];
+            }, $dicomSeries);
 
-                $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
+            $this->line(implode(" ", $orthancIdArray));
 
-                $orthancIdArray = array_map(function ($seriesId) {
-                    return $seriesId['orthanc_id'];
-                }, $dicomSeries);
+            $this->table(
+                ['orthanc_id'],
+                $dicomSeries
+            );
 
-                $this->line(implode(" ", $orthancIdArray));
+            $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
+            $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
+            $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
+            //TODO Doit supprimer les patients que si il ne reste pas de visites...
+            //$this->gaelODeleteRessourcesRepository->deletePatient($studyName);
+            
 
-                $this->table(
-                    ['orthanc_id'],
-                    $dicomSeries
-                );
-
-                $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteVisitGroupAndVisitType($studyName);
-                $this->gaelODeleteRessourcesRepository->deletePatient($studyName);
-            }
-
-            $this->gaelODeleteRessourcesRepository->deleteStudy($studyName);
-
-            $confirmDeleteDicom = $this->confirm('Found ' . sizeOf($orthancIdArray) . ' series to delete, do you want to continue ?');
-            $confirmDeleteAssociatedFiles = $this->confirm('Going to delete associated file, do you want to continue ?');
-
-            if ($this->option('deleteDicom') && $confirmDeleteDicom) {
+            if ($this->option('deleteDicom') && $this->confirm('Found ' . sizeOf($orthancIdArray) . ' series to delete, do you want to continue ?')) {
                 foreach ($orthancIdArray as $seriesOrthancId) {
                     try {
-                        $this->info('Deleting ' . $seriesOrthancId);
+                        $this->info('Deleting '.$seriesOrthancId);
                         $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
                     } catch (Exception $e) {
                         Log::error($e->getMessage());
@@ -130,8 +120,9 @@ class DeleteStudy extends Command
                 }
             }
 
-            if ($this->option('deleteAssociatedFile') && $confirmDeleteAssociatedFiles) {
-                Storage::deleteDirectory($studyName);
+            if ($this->option('deleteAssociatedFile') && $this->confirm('Going to delete associated file, do you want to continue ?')) {
+                //TODO doit supprimer que les associated file des visites deleted
+                //Storage::deleteDirectory($studyName);
             }
 
             $this->info('The command was successful !');
@@ -155,4 +146,5 @@ class DeleteStudy extends Command
                 $query->where('study_name', $studyName);
             })->get();
     }
+
 }

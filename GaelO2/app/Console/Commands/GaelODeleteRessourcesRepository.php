@@ -2,9 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\GaelO\Entities\StudyEntity;
-use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\OrthancService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Documentation;
@@ -17,7 +14,7 @@ use App\Models\Tracker;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 
-class GaelODeleteRessourcesService
+class GaelODeleteRessourcesRepository
 {
 
     private Study $study;
@@ -31,7 +28,6 @@ class GaelODeleteRessourcesService
     private Role $role;
     private VisitGroup $visitGroup;
     private Review $review;
-    private OrthancService $orthancService;
 
     public function __construct(
         Study $study,
@@ -100,6 +96,12 @@ class GaelODeleteRessourcesService
     public function deleteReviewStatus(array $visitIds, String $studyName)
     {
         $this->reviewStatus->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->delete();
+    }
+
+    public function deleteStudy(string $studyName)
+    {
+        $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
+        $studyEntity->forceDelete();
     }
 
     public function deleteVisits(array $visitIds)
