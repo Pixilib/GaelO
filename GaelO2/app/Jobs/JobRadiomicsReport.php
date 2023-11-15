@@ -113,8 +113,16 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
 
         #get Stats
-        $stats = $this->gaelOProcessingService->getStatsMask($threshold41MaskId);
-        $statValue = ['tmtv 41%' => $stats['volume'], 'DmaxVox' => $stats['dMax']];
+        $stats = $this->gaelOProcessingService->getStatsMaskSeries($threshold41MaskId, $idPT);
+        $statValue = [
+            'TMTV 41%' => $stats['volume'],
+            'Dmax (voxel)' => $stats['dmax'],
+            'SUVmax' => $stats['suvmax'],
+            'SUVmean'=> $stats['suvmean'],
+            'SUVpeak' => $stats['suvpeak'],
+            'TLG' => $stats['tlg'],
+            'Dmax Bulk' => $stats['dmaxbulk'],
+        ];
 
         $mailServices->sendRadiomicsReport(
             $studyName,

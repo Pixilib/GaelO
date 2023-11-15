@@ -38,7 +38,8 @@ class GaelOProcessingService
         return $request->getBody();
     }
 
-    public function createDicom(string $filename){
+    public function createDicom(string $filename)
+    {
         $request = $this->httpClientInterface->uploadFile('POST', "/dicoms", $filename);
         return $request->getBody();
     }
@@ -151,6 +152,12 @@ class GaelOProcessingService
     public function getStatsMask(string $maskId): array
     {
         $request = $this->httpClientInterface->requestJson('GET', "/masks/" . $maskId . "/stats");
+        return $request->getJsonBody();
+    }
+
+    public function getStatsMaskSeries(string $maskId, string $seriesId): array
+    {
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/stats-mask-image", ["seriesId" => $seriesId, "maskId" => $maskId]);
         return $request->getJsonBody();
     }
 
