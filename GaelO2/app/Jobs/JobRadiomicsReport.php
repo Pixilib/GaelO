@@ -226,5 +226,8 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     {
         $mailServices = App::make(MailServices::class);
         $mailServices->sendJobFailure('RadiomicsReport', ['visitId' => $this->visitId, 'behalfUserId' => $this->behalfUserId], $exception->getMessage());
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
     }
 }

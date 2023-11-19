@@ -163,5 +163,8 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
     {
         $mailServices = App::make(MailServices::class);
         $mailServices->sendJobFailure('QcReport', ['visitId' => $this->visitId], $exception->getMessage());
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
     }
 }
