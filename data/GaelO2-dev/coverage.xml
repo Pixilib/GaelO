@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66196105110979" branch-rate="0" lines-covered="7784" lines-valid="11759" branches-covered="0" branches-valid="0" complexity="2831" version="0.4" timestamp="1700088166">
+<coverage line-rate="0.66235644406635" branch-rate="0" lines-covered="7786" lines-valid="11755" branches-covered="0" branches-valid="0" complexity="2829" version="0.4" timestamp="1700400283">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -29644,9 +29644,9 @@
         </class>
       </classes>
     </package>
-    <package name="Jobs/JobQcReport.php" line-rate="0" branch-rate="0" complexity="10">
+    <package name="Jobs/JobQcReport.php" line-rate="0" branch-rate="0" complexity="11">
       <classes>
-        <class name="App\Jobs\JobQcReport" filename="Jobs/JobQcReport.php" line-rate="0" branch-rate="0" complexity="10">
+        <class name="App\Jobs\JobQcReport" filename="Jobs/JobQcReport.php" line-rate="0" branch-rate="0" complexity="11">
           <methods>
             <method name="__construct" signature="int $visitId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
@@ -29726,10 +29726,12 @@
                 <line number="159" hits="0"/>
               </lines>
             </method>
-            <method name="failed" signature="Throwable $exception" line-rate="0" branch-rate="0" complexity="1">
+            <method name="failed" signature="Throwable $exception" line-rate="0" branch-rate="0" complexity="2">
               <lines>
                 <line number="164" hits="0"/>
                 <line number="165" hits="0"/>
+                <line number="166" hits="0"/>
+                <line number="167" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -29802,13 +29804,15 @@
             <line number="159" hits="0"/>
             <line number="164" hits="0"/>
             <line number="165" hits="0"/>
+            <line number="166" hits="0"/>
+            <line number="167" hits="0"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Jobs/JobRadiomicsReport.php" line-rate="0.046728971962617" branch-rate="0" complexity="20">
+    <package name="Jobs/JobRadiomicsReport.php" line-rate="0.064220183486239" branch-rate="0" complexity="21">
       <classes>
-        <class name="App\Jobs\JobRadiomicsReport" filename="Jobs/JobRadiomicsReport.php" line-rate="0.046728971962617" branch-rate="0" complexity="20">
+        <class name="App\Jobs\JobRadiomicsReport" filename="Jobs/JobRadiomicsReport.php" line-rate="0.064220183486239" branch-rate="0" complexity="21">
           <methods>
             <method name="__construct" signature="int $visitId, ?int $behalfUserId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -29939,10 +29943,12 @@
                 <line number="220" hits="0"/>
               </lines>
             </method>
-            <method name="failed" signature="Throwable $exception" line-rate="1" branch-rate="0" complexity="1">
+            <method name="failed" signature="Throwable $exception" line-rate="1" branch-rate="0" complexity="2">
               <lines>
                 <line number="227" hits="1"/>
                 <line number="228" hits="1"/>
+                <line number="229" hits="1"/>
+                <line number="230" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -30054,44 +30060,8 @@
             <line number="220" hits="0"/>
             <line number="227" hits="1"/>
             <line number="228" hits="1"/>
-          </lines>
-        </class>
-      </classes>
-    </package>
-    <package name="Jobs/LoadGaelOProcessing.php" line-rate="0" branch-rate="0" complexity="4">
-      <classes>
-        <class name="App\Jobs\LoadGaelOProcessing" filename="Jobs/LoadGaelOProcessing.php" line-rate="0" branch-rate="0" complexity="4">
-          <methods>
-            <method name="__construct" signature="array $orthancSeriesID, string $processingName" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="31" hits="0"/>
-                <line number="32" hits="0"/>
-                <line number="33" hits="0"/>
-              </lines>
-            </method>
-            <method name="handle" signature="App\GaelO\Services\GaelOProcessingService\AzureService $azureService" line-rate="0" branch-rate="0" complexity="2">
-              <lines>
-                <line number="44" hits="0"/>
-                <line number="45" hits="0"/>
-                <line number="49" hits="0"/>
-              </lines>
-            </method>
-            <method name="failed" signature="Throwable $exception" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="79" hits="0"/>
-                <line number="80" hits="0"/>
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="31" hits="0"/>
-            <line number="32" hits="0"/>
-            <line number="33" hits="0"/>
-            <line number="44" hits="0"/>
-            <line number="45" hits="0"/>
-            <line number="49" hits="0"/>
-            <line number="79" hits="0"/>
-            <line number="80" hits="0"/>
+            <line number="229" hits="1"/>
+            <line number="230" hits="1"/>
           </lines>
         </class>
       </classes>
