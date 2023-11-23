@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66235754379997" branch-rate="0" lines-covered="7788" lines-valid="11758" branches-covered="0" branches-valid="0" complexity="2831" version="0.4" timestamp="1700777884">
+<coverage line-rate="0.66232993197279" branch-rate="0" lines-covered="7789" lines-valid="11760" branches-covered="0" branches-valid="0" complexity="2833" version="0.4" timestamp="1700782297">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -27036,20 +27036,24 @@
         </class>
       </classes>
     </package>
-    <package name="Http/Controllers/Controller.php" line-rate="1" branch-rate="0" complexity="3">
+    <package name="Http/Controllers/Controller.php" line-rate="0.75" branch-rate="0" complexity="5">
       <classes>
-        <class name="App\Http\Controllers\Controller" filename="Http/Controllers/Controller.php" line-rate="1" branch-rate="0" complexity="3">
+        <class name="App\Http\Controllers\Controller" filename="Http/Controllers/Controller.php" line-rate="0.75" branch-rate="0" complexity="5">
           <methods>
-            <method name="getJsonResponse" signature="$body, int $statusCode, string $statusText, bool $forceObject" line-rate="1" branch-rate="0" complexity="3">
+            <method name="getJsonResponse" signature="$body, int $statusCode, string $statusText, bool $emptyArrayAsObject" line-rate="0.75" branch-rate="0" complexity="5">
               <lines>
                 <line number="16" hits="396"/>
-                <line number="17" hits="320"/>
+                <line number="18" hits="320"/>
+                <line number="19" hits="0"/>
+                <line number="21" hits="320"/>
               </lines>
             </method>
           </methods>
           <lines>
             <line number="16" hits="396"/>
-            <line number="17" hits="320"/>
+            <line number="18" hits="320"/>
+            <line number="19" hits="0"/>
+            <line number="21" hits="320"/>
           </lines>
         </class>
       </classes>
