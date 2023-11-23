@@ -11,9 +11,9 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function getJsonResponse($body, int $statusCode, string $statusText)
+    public function getJsonResponse($body, int $statusCode, string $statusText, bool $forceObject = false)
     {
         if ($body === null) return response()->noContent()->setStatusCode($statusCode, $statusText);
-        else return response()->json($body)->setStatusCode($statusCode, $statusText);
+        else return response()->json($body, $forceObject ? JSON_FORCE_OBJECT : 0)->setStatusCode($statusCode, $statusText);
     }
 }
