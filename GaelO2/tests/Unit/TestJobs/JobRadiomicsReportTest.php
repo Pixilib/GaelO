@@ -39,7 +39,7 @@ class JobRadiomicsReportTest extends TestCase
 
     public function testTmtvInferenceFailMethods(){
         Mail::fake();
-        $radiomicsReportJob = new JobRadiomicsReport($this->visit->id, 1);
+        $radiomicsReportJob = new JobRadiomicsReport($this->visit->id, 1, null);
         $exception = new Exception('fakeError');
         $radiomicsReportJob->failed($exception);
         Mail::assertQueued(JobFailure::class);
