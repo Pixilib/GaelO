@@ -33,15 +33,17 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     public $tries = 1;
     private int $visitId;
     private ?int $behalfUserId;
+    private ?array $destinatorEmails;
     private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
     private OrthancService $orthancService;
 
-    public function __construct(int $visitId, ?int $behalfUserId)
+    public function __construct(int $visitId, ?int $behalfUserId, ?array $destinatorEmails)
     {
         $this->onQueue('processing');
         $this->visitId = $visitId;
         $this->behalfUserId = $behalfUserId;
+        $this->destinatorEmails = $destinatorEmails;
     }
 
     public function handle(
@@ -124,15 +126,17 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
             'Dmax Bulk' => $stats['dmaxbulk'],
         ];
 
-        $mailServices->sendRadiomicsReport(
-            $studyName,
-            $patientCode,
-            $visitType,
-            $formattedVisitDate,
-            $mipMask,
-            $statValue,
-            $creatorUserId
-        );
+        if($this->destinatorEmails){
+            $mailServices->sendRadiomicsReport(
+                $studyName,
+                $patientCode,
+                $visitType,
+                $formattedVisitDate,
+                $mipMask,
+                $statValue,
+                $this->destinatorEmails
+            );
+        }
 
         $pdfReport  = $pdfServices->saveRadiomicsPdf(
             $studyName,

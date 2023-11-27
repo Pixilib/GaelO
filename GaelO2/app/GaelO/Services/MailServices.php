@@ -595,7 +595,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, int $uploaderId)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, array $emailList)
     {
         $parameters = [
             'patientCode' => $patientCode,
@@ -606,11 +606,7 @@ class MailServices
             'stats' => $stats
         ];
 
-        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface, $this->studyRepositoryInterface);
-        $mailListBuilder->withUserEmail($uploaderId)
-            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR);
-
-        $this->mailInterface->setTo($mailListBuilder->get());
+        $this->mailInterface->setTo($emailList);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);
