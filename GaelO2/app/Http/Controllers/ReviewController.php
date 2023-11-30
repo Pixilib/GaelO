@@ -300,7 +300,7 @@ class ReviewController extends Controller
 
         $getAssociatedDataForReview->execute($getAssociatedDataForReviewRequest, $getAssociatedDataForReviewResponse);
 
-        return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText);
+        return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText, true);
     }
 
     public function getAssociatedDataOfVisitForInvestigator(Request $request, GetAssociatedDataForInvestigator $getAssociatedDataForInvestigator, GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse, int $visitId)
@@ -314,6 +314,6 @@ class ReviewController extends Controller
 
         $getAssociatedDataForInvestigator->execute($getAssociatedDataForInvestigatorRequest, $getAssociatedDataForInvestigatorResponse);
 
-        return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText);
+        return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText, true);
     }
 }

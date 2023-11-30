@@ -14,6 +14,9 @@ return [
         // Capture Laravel logs in breadcrumbs
         'logs' => true,
 
+        // Capture Laravel cache events (hits, writes etc.) as breadcrumbs
+        'cache' => true,
+
         // Capture SQL queries in breadcrumbs
         'sql_queries' => true,
 

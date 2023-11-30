@@ -54,6 +54,14 @@
     </mj-section>
     <mj-section>
       <mj-column>
+        <mj-text align="center" line-height="16px">
+          For Investigational use only<br>
+          These automatic calculations shall be validated by a trained physician<br>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
         <mj-divider border-width="1px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>

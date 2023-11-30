@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOClientService;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
@@ -19,7 +20,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use DateTime;
 use Exception;
 use Throwable;
@@ -32,20 +32,23 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     public $timeout = 1200;
     public $tries = 1;
     private int $visitId;
-    private int $behalfUserId;
+    private ?int $behalfUserId;
+    private ?array $destinatorEmails;
     private array $createdFiles = [];
     private GaelOProcessingService $gaelOProcessingService;
     private OrthancService $orthancService;
 
-    public function __construct(int $visitId, int $behalfUserId)
+    public function __construct(int $visitId, ?int $behalfUserId, ?array $destinatorEmails)
     {
         $this->onQueue('processing');
         $this->visitId = $visitId;
         $this->behalfUserId = $behalfUserId;
+        $this->destinatorEmails = $destinatorEmails;
     }
 
     public function handle(
         VisitRepositoryInterface $visitRepositoryInterface,
+        StudyRepository $studyRepository,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         OrthancService $orthancService,
         GaelOProcessingService $gaelOProcessingService,
@@ -112,18 +115,28 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
 
         #get Stats
-        $stats = $this->gaelOProcessingService->getStatsMask($threshold41MaskId);
-        $statValue = ['tmtv 41%' => $stats['volume'], 'DmaxVox' => $stats['dMax']];
+        $stats = $this->gaelOProcessingService->getStatsMaskSeries($threshold41MaskId, $idPT);
+        $statValue = [
+            'TMTV 41%' => $stats['volume'],
+            'Dmax (voxel)' => $stats['dmax'],
+            'SUVmax' => $stats['suvmax'],
+            'SUVmean'=> $stats['suvmean'],
+            'SUVpeak' => $stats['suvpeak'],
+            'TLG' => $stats['tlg'],
+            'Dmax Bulk' => $stats['dmaxbulk'],
+        ];
 
-        $mailServices->sendRadiomicsReport(
-            $studyName,
-            $patientCode,
-            $visitType,
-            $formattedVisitDate,
-            $mipMask,
-            $statValue,
-            $creatorUserId
-        );
+        if($this->destinatorEmails){
+            $mailServices->sendRadiomicsReport(
+                $studyName,
+                $patientCode,
+                $visitType,
+                $formattedVisitDate,
+                $mipMask,
+                $statValue,
+                $this->destinatorEmails
+            );
+        }
 
         $pdfReport  = $pdfServices->saveRadiomicsPdf(
             $studyName,
@@ -134,7 +147,13 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         );
 
         //Send file to store using API as job worker may not access to the storage backend
-        $user = User::find($this->behalfUserId);
+        if ($this->behalfUserId) {
+            $user = User::find($this->behalfUserId);
+        } else {
+            $studyEntity = $studyRepository->find($studyName);
+            $user = User::where('email', $studyEntity->contactEmail)->sole();
+        }
+
         $tokenResult = $user->createToken('GaelO')->plainTextToken;
         $gaeloClientService->loadUrl();
         $gaeloClientService->setAuthorizationToken($tokenResult);
@@ -159,9 +178,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     private function sendDicomToProcessing(string $orthancSeriesIdPt)
     {
         $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $temporaryZipDicomHandle = fopen($temporaryZipDicom, 'r+');
-
-        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicomHandle);
+        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $this->gaelOProcessingService->createDicom($temporaryZipDicom);
         $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
 
@@ -181,6 +198,11 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
                 if ($idCT) throw new GaelOException('Multiple CT Series, unable to perform segmentation');
                 $idCT = $series['orthanc_id'];
             }
+        }
+
+        if (!$idPT || !$idCT) {
+            //Can happen in case of a study reactivation, at reactivation series are softdeleted so we won't run the inference
+            throw new GaelOException("Didn't found CT and PT Series to run the inference");
         }
 
         return [
@@ -208,5 +230,8 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     {
         $mailServices = App::make(MailServices::class);
         $mailServices->sendJobFailure('RadiomicsReport', ['visitId' => $this->visitId, 'behalfUserId' => $this->behalfUserId], $exception->getMessage());
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
     }
 }
