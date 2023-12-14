@@ -11,7 +11,7 @@ use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use Exception;
 
-class TmtvInferenceService
+class TmtvProcessingService
 {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -20,6 +20,7 @@ class TmtvInferenceService
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private GaelOProcessingService $gaelOProcessingService;
+    private string $rawInferenceMaskId;
     private string $ptOrthancSeriesId;
     private string $ctOrthancSeriesId;
     private array $createdFiles = [];
@@ -43,7 +44,7 @@ class TmtvInferenceService
         $this->orthancService->setOrthancServer(true);
     }
 
-    public function runInference()
+    public function runInference() :void
     {
 
         $this->sendDicomToProcessing($this->ptOrthancSeriesId);
@@ -61,54 +62,15 @@ class TmtvInferenceService
 
         $inferenceResponse = $this->gaelOProcessingService->executeInference('unet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
+        $this->rawInferenceMaskId = $maskId;
         $this->addCreatedRessource('masks', $maskId);
     }
 
-    public function fragmentInference()
+    public function fragmentInference() :string
     {
-        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($idPT, $maskId, true);
+        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->ptOrthancSeriesId, $this->rawInferenceMaskId, true);
         $this->addCreatedRessource('masks', $fragmentedMaskId);
-    }
-
-    public function thresholdMask()
-    {
-        $threshold41MaskId = $this->gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
-        $this->addCreatedRessource('masks', $threshold41MaskId);
-    }
-
-    public function createTepMaskMip()
-    {
-        $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
-        $mipMask = $this->gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
-    }
-
-    public function getMaskAs(string $type, string $orientation = null)
-    {
-        if ($type === 'nifti') {
-            $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
-        } else if ($type === "seg") {
-            $rtssId = $this->gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
-            $this->addCreatedRessource('rtss', $rtssId);
-            $rtssFile = $this->gaelOProcessingService->getRtss($rtssId);
-        } else if ($type === "rtss") {
-            $segId = $this->gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
-            $this->addCreatedRessource('seg', $segId);
-            $segFile = $this->gaelOProcessingService->getSeg($segId);
-        }
-    }
-
-    public function getStatsOfMask()
-    {
-        $stats = $this->gaelOProcessingService->getStatsMaskSeries($threshold41MaskId, $idPT);
-        $statValue = [
-            'TMTV 41%' => $stats['volume'],
-            'Dmax (voxel)' => $stats['dmax'],
-            'SUVmax' => $stats['suvmax'],
-            'SUVmean' => $stats['suvmean'],
-            'SUVpeak' => $stats['suvpeak'],
-            'TLG' => $stats['tlg'],
-            'Dmax Bulk' => $stats['dmaxbulk'],
-        ];
+        return $fragmentedMaskId;
     }
 
     protected function sendDicomToProcessing(string $orthancSeriesIdPt)
