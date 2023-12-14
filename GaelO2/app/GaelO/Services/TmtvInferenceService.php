@@ -8,6 +8,8 @@ use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
+use App\Jobs\RadiomicsReport\GaelOProcessingFile;
+use Exception;
 
 class TmtvInferenceService
 {
@@ -20,6 +22,7 @@ class TmtvInferenceService
     private GaelOProcessingService $gaelOProcessingService;
     private string $ptOrthancSeriesId;
     private string $ctOrthancSeriesId;
+    private array $createdFiles = [];
 
 
     public function __construct(
@@ -40,50 +43,62 @@ class TmtvInferenceService
         $this->orthancService->setOrthancServer(true);
     }
 
-    public function todo()
+    public function runInference()
     {
-        $orthancSeriesIdPT = $dicomSeriesRepositoryInterface->getSeriesOrthancIDsOfSeriesInstanceUIDs([$this->PTSeriesInstanceUID], false)[0];
-        $orthancSeriesIdCT = $dicomSeriesRepositoryInterface->getSeriesOrthancIDsOfSeriesInstanceUIDs([$this->CTSeriesInstanceUID], false)[0];
-        $this->sendDicomToProcessing($orthancSeriesIdPT);
-        $this->sendDicomToProcessing($orthancSeriesIdCT);
 
-        $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPT, true, true);
+        $this->sendDicomToProcessing($this->ptOrthancSeriesId);
+        $this->sendDicomToProcessing($this->ctOrthancSeriesId);
+
+        $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
         $this->addCreatedRessource('series', $idPT);
-        $idCT = $this->gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCT);
+        $idCT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ctOrthancSeriesId);
         $this->addCreatedRessource('series', $idCT);
 
         $inferencePayload = [
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
+
         $inferenceResponse = $this->gaelOProcessingService->executeInference('unet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $this->addCreatedRessource('masks', $maskId);
+    }
 
-        #Do Mask Fragmentation and threshold
+    public function fragmentInference()
+    {
         $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($idPT, $maskId, true);
         $this->addCreatedRessource('masks', $fragmentedMaskId);
+    }
+
+    public function thresholdMask()
+    {
         $threshold41MaskId = $this->gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
         $this->addCreatedRessource('masks', $threshold41MaskId);
+    }
 
-        #Fragmented Mip
+    public function createTepMaskMip()
+    {
         $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $this->gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
+    }
 
-        #Download Rtss
-        #$rtssId = $this->gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        #$this->addCreatedRessource('rtss', $rtssId);
-        #$rtssFile = $this->gaelOProcessingService->getRtss($rtssId);
+    public function getMaskAs(string $type, string $orientation = null)
+    {
+        if ($type === 'nifti') {
+            $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
+        } else if ($type === "seg") {
+            $rtssId = $this->gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
+            $this->addCreatedRessource('rtss', $rtssId);
+            $rtssFile = $this->gaelOProcessingService->getRtss($rtssId);
+        } else if ($type === "rtss") {
+            $segId = $this->gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
+            $this->addCreatedRessource('seg', $segId);
+            $segFile = $this->gaelOProcessingService->getSeg($segId);
+        }
+    }
 
-        #Download Seg
-        #$segId = $this->gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        #$this->addCreatedRessource('seg', $segId);
-        #$segFile = $this->gaelOProcessingService->getSeg($segId);
-
-        #Download .nii.gz Mask Dicom (not thrsholded)
-        $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
-
-        #get Stats
+    public function getStatsOfMask()
+    {
         $stats = $this->gaelOProcessingService->getStatsMaskSeries($threshold41MaskId, $idPT);
         $statValue = [
             'TMTV 41%' => $stats['volume'],
@@ -95,8 +110,6 @@ class TmtvInferenceService
             'Dmax Bulk' => $stats['dmaxbulk'],
         ];
     }
-
-
 
     protected function sendDicomToProcessing(string $orthancSeriesIdPt)
     {
