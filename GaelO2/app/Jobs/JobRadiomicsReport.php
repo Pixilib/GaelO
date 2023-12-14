@@ -2,16 +2,13 @@
 
 namespace App\Jobs;
 
-use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Constants\Enums\ProcessingMaskEnum;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOClientService;
-use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\PdfServices;
-use App\Jobs\RadiomicsReport\GaelOProcessingFile;
+use App\GaelO\Services\TmtvProcessingService;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -21,7 +18,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use DateTime;
-use Exception;
 use Throwable;
 
 class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
@@ -35,8 +31,6 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     private ?int $behalfUserId;
     private ?array $destinatorEmails;
     private array $createdFiles = [];
-    private GaelOProcessingService $gaelOProcessingService;
-    private OrthancService $orthancService;
 
     public function __construct(int $visitId, ?int $behalfUserId, ?array $destinatorEmails)
     {
@@ -47,20 +41,14 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
     }
 
     public function handle(
+        TmtvProcessingService $tmtvProcessingService,
         VisitRepositoryInterface $visitRepositoryInterface,
         StudyRepository $studyRepository,
-        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        OrthancService $orthancService,
-        GaelOProcessingService $gaelOProcessingService,
         MailServices $mailServices,
         PdfServices $pdfServices,
         GaelOClientService $gaeloClientService
     ): void {
-
-        $this->gaelOProcessingService = $gaelOProcessingService;
-        $this->orthancService = $orthancService;
-        $this->orthancService->setOrthancServer(true);
-
+        
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];
         $visitType = $visitEntity['visit_type']['name'];
@@ -69,53 +57,20 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         $existingFiles = $visitEntity['sent_files'];
         $visitDate = new DateTime($visitEntity['visit_date']);
         $formattedVisitDate = $visitDate->format('m/d/Y');
-        $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
+        $tmtvProcessingService->loadPetAndCtSeriesOrthancIdsFromVisit($this->visitId);
+        $rawMaskInference = $tmtvProcessingService->runInference();
+        $fragmentedMask = $rawMaskInference->fragmentMask();
 
-        $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
-        $orthancSeriesIdPt = $orthancIds['orthancSeriesIdPt'];
-        $orthancSeriesIdCt = $orthancIds['orthancSeriesIdCt'];
-
-        $this->sendDicomToProcessing($orthancSeriesIdPt);
-        $this->sendDicomToProcessing($orthancSeriesIdCt);
-
-        $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
-        $this->addCreatedRessource('series', $idPT);
-        $idCT = $this->gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
-        $this->addCreatedRessource('series', $idCT);
-
-        $inferencePayload = [
-            'idPT' => $idPT,
-            'idCT' => $idCT
-        ];
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('unet_model', $inferencePayload);
-        $maskId = $inferenceResponse['id_mask'];
-        $this->addCreatedRessource('masks', $maskId);
-
-        #Do Mask Fragmentation and threshold
-        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($idPT, $maskId, true);
-        $this->addCreatedRessource('masks', $fragmentedMaskId);
-        $threshold41MaskId = $this->gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
-        $this->addCreatedRessource('masks', $threshold41MaskId);
-
-        #Fragmented Mip
-        $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
-        $mipMask = $this->gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
-
-        #Download Rtss
-        #$rtssId = $this->gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        #$this->addCreatedRessource('rtss', $rtssId);
-        #$rtssFile = $this->gaelOProcessingService->getRtss($rtssId);
-
-        #Download Seg
-        #$segId = $this->gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
-        #$this->addCreatedRessource('seg', $segId);
-        #$segFile = $this->gaelOProcessingService->getSeg($segId);
+        $tmtvProcessingService->addCreatedRessource('masks', $fragmentedMask->getMaskId());
+        $fragmentedMask41 =$fragmentedMask->thresholdMaskTo41();
+        $tmtvProcessingService->addCreatedRessource('masks', $fragmentedMask41->getMaskId());
+        $mipMask = $fragmentedMask41->createTepMaskMip();
 
         #Download .nii.gz Mask Dicom (not thrsholded)
-        $maskdicom = $this->gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
+        $maskdicom = $fragmentedMask41->getMaskAs(ProcessingMaskEnum::NIFTI, 'LPI');
 
         #get Stats
-        $stats = $this->gaelOProcessingService->getStatsMaskSeries($threshold41MaskId, $idPT);
+        $stats = $fragmentedMask41->getStatsOfMask();
         $statValue = [
             'TMTV 41%' => $stats['volume'],
             'Dmax (voxel)' => $stats['dmax'],
@@ -172,58 +127,7 @@ class JobRadiomicsReport implements ShouldQueue, ShouldBeUnique
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'tmtvReport', 'pdf', $pdfReport);
         $gaeloClientService->createFileToVisit($studyName, $this->visitId, 'mipSegmentation', 'gif', $mipMask);
 
-        $this->deleteCreatedRessources();
-    }
-
-    private function sendDicomToProcessing(string $orthancSeriesIdPt)
-    {
-        $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
-        $this->gaelOProcessingService->createDicom($temporaryZipDicom);
-        $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
-
-        unlink($temporaryZipDicom);
-    }
-
-    private function getSeriesOrthancIds(array $dicomStudyEntity)
-    {
-        $idPT = null;
-        $idCT = null;
-        foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
-            if ($series['modality'] == 'PT') {
-                if ($idPT) throw new GaelOException('Multiple PET Series, unable to perform segmentation');
-                $idPT = $series['orthanc_id'];
-            }
-            if ($series['modality'] == 'CT') {
-                if ($idCT) throw new GaelOException('Multiple CT Series, unable to perform segmentation');
-                $idCT = $series['orthanc_id'];
-            }
-        }
-
-        if (!$idPT || !$idCT) {
-            //Can happen in case of a study reactivation, at reactivation series are softdeleted so we won't run the inference
-            throw new GaelOException("Didn't found CT and PT Series to run the inference");
-        }
-
-        return [
-            'orthancSeriesIdPt' => $idPT,
-            'orthancSeriesIdCt' => $idCT
-        ];
-    }
-
-    private function addCreatedRessource(string $type, string $id)
-    {
-        $this->createdFiles[] = new GaelOProcessingFile($type, $id);
-    }
-
-    private function deleteCreatedRessources()
-    {
-        foreach ($this->createdFiles as $gaeloProcessingFile) {
-            try {
-                $this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
-            } catch (Exception) {
-            }
-        }
+        $tmtvProcessingService->deleteCreatedRessources();
     }
 
     public function failed(Throwable $exception)

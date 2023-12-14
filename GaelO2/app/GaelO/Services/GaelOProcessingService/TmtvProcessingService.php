@@ -3,48 +3,33 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use Exception;
 
 class TmtvProcessingService
 {
-
-    private VisitRepositoryInterface $visitRepositoryInterface;
-    private StudyRepository $studyRepository;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private GaelOProcessingService $gaelOProcessingService;
-    private string $rawInferenceMaskId;
     private string $ptOrthancSeriesId;
     private string $ctOrthancSeriesId;
     private array $createdFiles = [];
 
 
     public function __construct(
-        VisitRepositoryInterface $visitRepositoryInterface,
-        StudyRepository $studyRepository,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         OrthancService $orthancService,
-        GaelOProcessingService $gaelOProcessingService,
-
+        GaelOProcessingService $gaelOProcessingService
     ) {
-        $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->studyRepository = $studyRepository;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
-        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->gaelOProcessingService = $gaelOProcessingService;
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
     }
 
-    public function runInference() :void
+    public function runInference(): MaskProcessingService
     {
 
         $this->sendDicomToProcessing($this->ptOrthancSeriesId);
@@ -62,16 +47,14 @@ class TmtvProcessingService
 
         $inferenceResponse = $this->gaelOProcessingService->executeInference('unet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
-        $this->rawInferenceMaskId = $maskId;
+        $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
+        $maskProcessingService->setMaskId($maskId);
+        $maskProcessingService->setPetId($idPT, $this->ptOrthancSeriesId);
         $this->addCreatedRessource('masks', $maskId);
+        return $maskProcessingService;
     }
 
-    public function fragmentInference() :string
-    {
-        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->ptOrthancSeriesId, $this->rawInferenceMaskId, true);
-        $this->addCreatedRessource('masks', $fragmentedMaskId);
-        return $fragmentedMaskId;
-    }
+
 
     protected function sendDicomToProcessing(string $orthancSeriesIdPt)
     {
@@ -79,15 +62,16 @@ class TmtvProcessingService
         $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $this->gaelOProcessingService->createDicom($temporaryZipDicom);
         $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
-
         unlink($temporaryZipDicom);
     }
 
-    protected function extractPetAndCtSeriesOrthancIds(array $dicomStudyEntities): void
+    public function loadPetAndCtSeriesOrthancIdsFromVisit($visitId): void
     {
+        $dicomStudyEntity = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visitId, false, false);
+
         $idPT = null;
         $idCT = null;
-        foreach ($dicomStudyEntities[0]['dicom_series'] as $series) {
+        foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             if ($series['modality'] == 'PT') {
                 if ($idPT) throw new GaelOException('Multiple PET Series, unable to perform segmentation');
                 $idPT = $series['orthanc_id'];
@@ -107,12 +91,12 @@ class TmtvProcessingService
         $this->ptOrthancSeriesId = $idPT;
     }
 
-    protected function addCreatedRessource(string $type, string $id)
+    public function addCreatedRessource(string $type, string $id)
     {
         $this->createdFiles[] = new GaelOProcessingFile($type, $id);
     }
 
-    protected function deleteCreatedRessources()
+    public function deleteCreatedRessources()
     {
         foreach ($this->createdFiles as $gaeloProcessingFile) {
             try {

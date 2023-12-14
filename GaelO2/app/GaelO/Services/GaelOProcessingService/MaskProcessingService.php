@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Constants\Enums\ProcessingMaskEnum;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 
 class MaskProcessingService
@@ -27,46 +28,48 @@ class MaskProcessingService
         $this->maskId = $maskId;
     }
 
+    public function getMaskId(): string
+    {
+        return $this->maskId;
+    }
+
     public function setPetId(string $petId, string $petSeriesOrthancId)
     {
         $this->petId = $petId;
         $this->petSeriesOrthancId = $petSeriesOrthancId;
     }
 
-    public function getMaskAs(string $type, string $orientation)
+    public function getMaskAs(ProcessingMaskEnum $type, string $orientation) : string
     {
-        //TODO a passer en enum
-        if ($type === 'nifti') {
+        if ($type === ProcessingMaskEnum::NIFTI) {
             $exportFile = $this->gaelOProcessingService->getMaskDicomOrientation($this->maskId, $orientation, true);
-        } else if ($type === "seg") {
+        } else if ($type === ProcessingMaskEnum::RTSS) {
             $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->petSeriesOrthancId, $this->maskId);
-            //$this->addCreatedRessource('rtss', $rtssId);
             $exportFile = $this->gaelOProcessingService->getRtss($rtssId);
-            //A delete ici ?
-            //$this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
-        } else if ($type === "rtss") {
+            //remove downloaded data from processing
+            $this->gaelOProcessingService->deleteRessource("rtss", $rtssId);
+        } else if ($type === ProcessingMaskEnum::SEG) {
             $segId = $this->gaelOProcessingService->createSegFromMask($this->petSeriesOrthancId, $this->maskId);
-            //$this->addCreatedRessource('seg', $segId);
             $exportFile = $this->gaelOProcessingService->getSeg($segId);
-            //A delete ici ?
-            //$this->gaelOProcessingService->deleteRessource($gaeloProcessingFile->getType(), $gaeloProcessingFile->getId());
+            //remove downloaded data from processing
+            $this->gaelOProcessingService->deleteRessource("seg", $segId);
         }
 
         return $exportFile;
     }
 
-    public function getStatsOfMask()
+    public function getStatsOfMask(): array
     {
-        $stats = $this->gaelOProcessingService->getStatsMaskSeries($this->maskId, $this->petId);
-        $statValue = [
-            'TMTV 41%' => $stats['volume'],
-            'Dmax (voxel)' => $stats['dmax'],
-            'SUVmax' => $stats['suvmax'],
-            'SUVmean' => $stats['suvmean'],
-            'SUVpeak' => $stats['suvpeak'],
-            'TLG' => $stats['tlg'],
-            'Dmax Bulk' => $stats['dmaxbulk'],
-        ];
+        return $this->gaelOProcessingService->getStatsMaskSeries($this->maskId, $this->petId);
+    }
+
+    public function fragmentMask(): MaskProcessingService
+    {
+        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->petSeriesOrthancId, $this->maskId, true);
+        $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
+        $maskProcessingService->setMaskId($fragmentedMaskId);
+        $maskProcessingService->setPetId($this->petId, $this->petSeriesOrthancId);
+        return $maskProcessingService;
     }
 
     public function thresholdMaskTo41(): MaskProcessingService
