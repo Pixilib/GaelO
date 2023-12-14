@@ -84,7 +84,7 @@ class GetDicomsFileSupervisor
             $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $getDicomsFileSupervisorRequest->studyName);
 
             //getOrthancSeriesIdArray
-            $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
+            $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDsOfSeriesInstanceUIDs($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             $getDicomsFileSupervisorResponse->filename = 'DICOM_Export_' . $getDicomsFileSupervisorRequest->studyName . '.zip';

@@ -90,7 +90,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
         return $query->get()->pluck('dicomStudy.visit_id')->unique()->toArray();
     }
 
-    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
+    public function getSeriesOrthancIDsOfSeriesInstanceUIDs(array $seriesInstanceUID, bool $withTrashed): array
     {
         $query = $this->dicomSeriesModel
             ->whereIn('series_uid', $seriesInstanceUID)
