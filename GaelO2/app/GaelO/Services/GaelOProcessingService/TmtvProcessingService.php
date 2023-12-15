@@ -1,10 +1,11 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
+use App\GaelO\Services\OrthancService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use Exception;
 

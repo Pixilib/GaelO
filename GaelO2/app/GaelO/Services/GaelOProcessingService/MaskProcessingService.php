@@ -1,9 +1,10 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Constants\Enums\ProcessingMaskEnum;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
+use App\GaelO\Services\OrthancService;
 
 class MaskProcessingService
 {
@@ -39,7 +40,7 @@ class MaskProcessingService
         $this->petSeriesOrthancId = $petSeriesOrthancId;
     }
 
-    public function getMaskAs(ProcessingMaskEnum $type, string $orientation) : string
+    public function getMaskAs(ProcessingMaskEnum $type, ?string $orientation = null) : string
     {
         if ($type === ProcessingMaskEnum::NIFTI) {
             $exportFile = $this->gaelOProcessingService->getMaskDicomOrientation($this->maskId, $orientation, true);
