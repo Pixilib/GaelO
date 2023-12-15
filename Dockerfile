@@ -1,4 +1,4 @@
-FROM php:8.1.3-apache-bullseye
+FROM php:8.2.13-apache-bullseye
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
@@ -25,7 +25,7 @@ RUN apt-get update -qy && \
     postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pecl install pcov redis memcached-3.1.5
+RUN pecl install pcov redis memcached
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
