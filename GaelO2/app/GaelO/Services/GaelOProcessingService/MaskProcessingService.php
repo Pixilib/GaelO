@@ -66,7 +66,7 @@ class MaskProcessingService
 
     public function fragmentMask(): MaskProcessingService
     {
-        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->petSeriesOrthancId, $this->maskId, true);
+        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->petId, $this->maskId, true);
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($fragmentedMaskId);
         $maskProcessingService->setPetId($this->petId, $this->petSeriesOrthancId);
