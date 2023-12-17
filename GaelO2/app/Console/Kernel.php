@@ -6,6 +6,7 @@ use App\GaelO\CronJobs\GaelOScheduler;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
+use DateTimeZone;
 
 class Kernel extends ConsoleKernel
 {
@@ -34,8 +35,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("Scheduler Probe");
         })
-        ->hourly()
-        ->sentryMonitor('gaelo-scheduler'); 
+            ->hourly()
+            ->sentryMonitor('gaelo-scheduler');
     }
 
     /**
@@ -45,8 +46,13 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
+    }
+
+    protected function scheduleTimezone(): DateTimeZone|string|null
+    {
+        return 'UTC';
     }
 }
