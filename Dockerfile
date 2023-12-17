@@ -1,6 +1,7 @@
 FROM php:8.2.13-apache-bullseye
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
+ENV TZ="UTC"
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
