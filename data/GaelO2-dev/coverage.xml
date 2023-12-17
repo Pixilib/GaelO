@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66228893058161" branch-rate="0" lines-covered="7766" lines-valid="11726" branches-covered="0" branches-valid="0" complexity="2841" version="0.4" timestamp="1702830474">
+<coverage line-rate="0.66228893058161" branch-rate="0" lines-covered="7766" lines-valid="11726" branches-covered="0" branches-valid="0" complexity="2841" version="0.4" timestamp="1702833015">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
