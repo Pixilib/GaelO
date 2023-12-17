@@ -20,7 +20,7 @@ interface DicomSeriesRepositoryInterface {
 
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed) : array ;
 
-    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed) : array ;
+    public function getSeriesOrthancIDsOfSeriesInstanceUIDs(array $seriesInstanceUID, bool $withTrashed) : array ;
 
     public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array ;
 
