@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66234541577825" branch-rate="0" lines-covered="7766" lines-valid="11725" branches-covered="0" branches-valid="0" complexity="2840" version="0.4" timestamp="1702829651">
+<coverage line-rate="0.66228893058161" branch-rate="0" lines-covered="7766" lines-valid="11726" branches-covered="0" branches-valid="0" complexity="2841" version="0.4" timestamp="1702830356">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -409,40 +409,46 @@
         </class>
       </classes>
     </package>
-    <package name="Console/Kernel.php" line-rate="0.2" branch-rate="0" complexity="2">
+    <package name="Console/Kernel.php" line-rate="0.18181818181818" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Console\Kernel" filename="Console/Kernel.php" line-rate="0.2" branch-rate="0" complexity="2">
+        <class name="App\Console\Kernel" filename="Console/Kernel.php" line-rate="0.18181818181818" branch-rate="0" complexity="3">
           <methods>
             <method name="schedule" signature="Illuminate\Console\Scheduling\Schedule $schedule" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="29" hits="0"/>
                 <line number="30" hits="0"/>
-                <line number="32" hits="0"/>
-                <line number="34" hits="0"/>
+                <line number="31" hits="0"/>
+                <line number="33" hits="0"/>
                 <line number="35" hits="0"/>
                 <line number="36" hits="0"/>
                 <line number="37" hits="0"/>
                 <line number="38" hits="0"/>
+                <line number="39" hits="0"/>
               </lines>
             </method>
             <method name="commands" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="48" hits="614"/>
-                <line number="50" hits="614"/>
+                <line number="49" hits="614"/>
+                <line number="51" hits="614"/>
+              </lines>
+            </method>
+            <method name="scheduleTimezone" signature="" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="56" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="29" hits="0"/>
             <line number="30" hits="0"/>
-            <line number="32" hits="0"/>
-            <line number="34" hits="0"/>
+            <line number="31" hits="0"/>
+            <line number="33" hits="0"/>
             <line number="35" hits="0"/>
             <line number="36" hits="0"/>
             <line number="37" hits="0"/>
             <line number="38" hits="0"/>
-            <line number="48" hits="614"/>
-            <line number="50" hits="614"/>
+            <line number="39" hits="0"/>
+            <line number="49" hits="614"/>
+            <line number="51" hits="614"/>
+            <line number="56" hits="0"/>
           </lines>
         </class>
       </classes>
