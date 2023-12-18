@@ -498,6 +498,24 @@ class MailServices
         $this->mailInterface->send();
     }
 
+    public function sendMailToEmails(?int $senderId, array $toEmails, ?string $studyName, string $subject, string $content)
+    {
+        $parameters = [
+            'study' => $studyName,
+            'subject' => $subject,
+            'content' => $content,
+            'canReply' => true
+        ];
+
+        $this->mailInterface->setTo($toEmails);
+        if ($senderId !== null) {
+            $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        }
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER);
+        $this->mailInterface->send();
+    }
+
     public function sendMailToUser(?int $senderId, array $userIds, ?string $studyName, string $subject, string $content)
     {
         $parameters = [
