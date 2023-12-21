@@ -26,7 +26,7 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface
         $this->visitGroupModel->findOrFail($id)->delete();
     }
 
-    public function createVisitGroup(String $studyName, String $name, String $modality): void
+    public function createVisitGroup(String $studyName, String $name, String $modality): array
     {
 
         $visitGroup = new VisitGroup();
@@ -34,6 +34,7 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface
         $visitGroup->study_name = $studyName;
         $visitGroup->modality = $modality;
         $visitGroup->save();
+        return $visitGroup->toArray();
     }
 
     public function hasVisitTypes(int $visitGroupId): bool
