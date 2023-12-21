@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66130542081525" branch-rate="0" lines-covered="7771" lines-valid="11751" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1703199920">
+<coverage line-rate="0.66136170212766" branch-rate="0" lines-covered="7771" lines-valid="11750" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1703199930">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -32212,9 +32212,9 @@
         </class>
       </classes>
     </package>
-    <package name="Providers/AdapterProvider.php" line-rate="0.52941176470588" branch-rate="0" complexity="2">
+    <package name="Providers/AdapterProvider.php" line-rate="0.5625" branch-rate="0" complexity="2">
       <classes>
-        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.52941176470588" branch-rate="0" complexity="2">
+        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.5625" branch-rate="0" complexity="2">
           <methods>
             <method name="register" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -32227,7 +32227,7 @@
                 <line number="42" hits="614"/>
               </lines>
             </method>
-            <method name="boot" signature="" line-rate="0.2" branch-rate="0" complexity="1">
+            <method name="boot" signature="" line-rate="0.22222222222222" branch-rate="0" complexity="1">
               <lines>
                 <line number="52" hits="614"/>
                 <line number="53" hits="0"/>
@@ -32236,9 +32236,8 @@
                 <line number="56" hits="0"/>
                 <line number="57" hits="0"/>
                 <line number="58" hits="0"/>
-                <line number="59" hits="0"/>
-                <line number="61" hits="0"/>
-                <line number="62" hits="614"/>
+                <line number="60" hits="0"/>
+                <line number="61" hits="614"/>
               </lines>
             </method>
           </methods>
@@ -32257,9 +32256,8 @@
             <line number="56" hits="0"/>
             <line number="57" hits="0"/>
             <line number="58" hits="0"/>
-            <line number="59" hits="0"/>
-            <line number="61" hits="0"/>
-            <line number="62" hits="614"/>
+            <line number="60" hits="0"/>
+            <line number="61" hits="614"/>
           </lines>
         </class>
       </classes>
