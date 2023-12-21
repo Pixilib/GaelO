@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66166950596252" branch-rate="0" lines-covered="7768" lines-valid="11740" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1702939100">
+<coverage line-rate="0.6617271333674" branch-rate="0" lines-covered="7770" lines-valid="11742" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1703176141">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -4635,18 +4635,19 @@
                 <line number="34" hits="2"/>
                 <line number="35" hits="2"/>
                 <line number="36" hits="2"/>
+                <line number="37" hits="2"/>
               </lines>
             </method>
             <method name="hasVisitTypes" signature="int $visitGroupId" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="41" hits="3"/>
                 <line number="42" hits="3"/>
+                <line number="43" hits="3"/>
               </lines>
             </method>
             <method name="isExistingVisitGroup" signature="string $studyName, string $name" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="47" hits="3"/>
                 <line number="48" hits="3"/>
+                <line number="49" hits="3"/>
               </lines>
             </method>
           </methods>
@@ -4659,10 +4660,11 @@
             <line number="34" hits="2"/>
             <line number="35" hits="2"/>
             <line number="36" hits="2"/>
-            <line number="41" hits="3"/>
+            <line number="37" hits="2"/>
             <line number="42" hits="3"/>
-            <line number="47" hits="3"/>
+            <line number="43" hits="3"/>
             <line number="48" hits="3"/>
+            <line number="49" hits="3"/>
           </lines>
         </class>
       </classes>
@@ -14932,9 +14934,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94594594594595" branch-rate="0" complexity="9">
+    <package name="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94736842105263" branch-rate="0" complexity="9">
       <classes>
-        <class name="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup" filename="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94594594594595" branch-rate="0" complexity="9">
+        <class name="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup" filename="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94736842105263" branch-rate="0" complexity="9">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Repositories\StudyRepositoryInterface $studyRepositoryInterface, App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface $visitGroupRepositoryInterface, App\GaelO\Interfaces\Repositories\VisitRepositoryInterface $visitRepositoryInterface, App\GaelO\Services\AuthorizationService\AuthorizationUserService $authorizationUserService, App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface $trackerRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -14945,7 +14947,7 @@
                 <line number="36" hits="4"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupRequest $createVisitGroupRequest, App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupResponse $createVisitGroupResponse" line-rate="0.93103448275862" branch-rate="0" complexity="6">
+            <method name="execute" signature="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupRequest $createVisitGroupRequest, App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupResponse $createVisitGroupResponse" line-rate="0.93333333333333" branch-rate="0" complexity="6">
               <lines>
                 <line number="43" hits="4"/>
                 <line number="44" hits="4"/>
@@ -14970,19 +14972,20 @@
                 <line number="73" hits="1"/>
                 <line number="74" hits="1"/>
                 <line number="75" hits="1"/>
-                <line number="77" hits="3"/>
+                <line number="76" hits="1"/>
                 <line number="78" hits="3"/>
                 <line number="79" hits="3"/>
                 <line number="80" hits="3"/>
-                <line number="81" hits="0"/>
+                <line number="81" hits="3"/>
                 <line number="82" hits="0"/>
+                <line number="83" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="88" hits="3"/>
                 <line number="89" hits="3"/>
-                <line number="90" hits="1"/>
+                <line number="90" hits="3"/>
+                <line number="91" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -15015,15 +15018,16 @@
             <line number="73" hits="1"/>
             <line number="74" hits="1"/>
             <line number="75" hits="1"/>
-            <line number="77" hits="3"/>
+            <line number="76" hits="1"/>
             <line number="78" hits="3"/>
             <line number="79" hits="3"/>
             <line number="80" hits="3"/>
-            <line number="81" hits="0"/>
+            <line number="81" hits="3"/>
             <line number="82" hits="0"/>
-            <line number="88" hits="3"/>
+            <line number="83" hits="0"/>
             <line number="89" hits="3"/>
-            <line number="90" hits="1"/>
+            <line number="90" hits="3"/>
+            <line number="91" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -27308,17 +27312,17 @@
             <method name="getJsonResponse" signature="$body, int $statusCode, string $statusText, bool $emptyArrayAsObject" line-rate="0.75" branch-rate="0" complexity="5">
               <lines>
                 <line number="16" hits="396"/>
-                <line number="18" hits="320"/>
+                <line number="18" hits="321"/>
                 <line number="19" hits="0"/>
-                <line number="21" hits="320"/>
+                <line number="21" hits="321"/>
               </lines>
             </method>
           </methods>
           <lines>
             <line number="16" hits="396"/>
-            <line number="18" hits="320"/>
+            <line number="18" hits="321"/>
             <line number="19" hits="0"/>
-            <line number="21" hits="320"/>
+            <line number="21" hits="321"/>
           </lines>
         </class>
       </classes>
