@@ -65,6 +65,12 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'azureBlob' =>[
+            'dsn' =>env('AZURE_BLOB_DSN'),
+            'container'=>env('AZURE_CONTAINER_NAME'),
+            'prefix' => env('AZURE_BLOB_PREFIX', '') 
+        ]
+
     ],
 
     /*
