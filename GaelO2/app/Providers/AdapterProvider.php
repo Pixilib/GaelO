@@ -50,7 +50,6 @@ class AdapterProvider extends ServiceProvider
     public function boot()
     {
         Storage::extend('azureBlob', function (Application $app, array $config) {
-            Log::info($config);
             $client = BlobRestProxy::createBlobService($config['dsn']);
             $adapter = new AzureBlobStorageAdapter(
                 $client,
