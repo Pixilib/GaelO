@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66136170212766" branch-rate="0" lines-covered="7771" lines-valid="11750" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1703199930">
+<coverage line-rate="0.66136170212766" branch-rate="0" lines-covered="7771" lines-valid="11750" branches-covered="0" branches-valid="0" complexity="2845" version="0.4" timestamp="1703288433">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -32218,46 +32218,46 @@
           <methods>
             <method name="register" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="36" hits="614"/>
                 <line number="37" hits="614"/>
                 <line number="38" hits="614"/>
                 <line number="39" hits="614"/>
                 <line number="40" hits="614"/>
                 <line number="41" hits="614"/>
                 <line number="42" hits="614"/>
+                <line number="43" hits="614"/>
               </lines>
             </method>
             <method name="boot" signature="" line-rate="0.22222222222222" branch-rate="0" complexity="1">
               <lines>
-                <line number="52" hits="614"/>
-                <line number="53" hits="0"/>
+                <line number="53" hits="614"/>
                 <line number="54" hits="0"/>
                 <line number="55" hits="0"/>
                 <line number="56" hits="0"/>
                 <line number="57" hits="0"/>
                 <line number="58" hits="0"/>
-                <line number="60" hits="0"/>
-                <line number="61" hits="614"/>
+                <line number="59" hits="0"/>
+                <line number="61" hits="0"/>
+                <line number="62" hits="614"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="36" hits="614"/>
             <line number="37" hits="614"/>
             <line number="38" hits="614"/>
             <line number="39" hits="614"/>
             <line number="40" hits="614"/>
             <line number="41" hits="614"/>
             <line number="42" hits="614"/>
-            <line number="52" hits="614"/>
-            <line number="53" hits="0"/>
+            <line number="43" hits="614"/>
+            <line number="53" hits="614"/>
             <line number="54" hits="0"/>
             <line number="55" hits="0"/>
             <line number="56" hits="0"/>
             <line number="57" hits="0"/>
             <line number="58" hits="0"/>
-            <line number="60" hits="0"/>
-            <line number="61" hits="614"/>
+            <line number="59" hits="0"/>
+            <line number="61" hits="0"/>
+            <line number="62" hits="614"/>
           </lines>
         </class>
       </classes>
