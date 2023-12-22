@@ -16,6 +16,7 @@ use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -49,7 +50,7 @@ class AdapterProvider extends ServiceProvider
      */
     public function boot()
     {
-        Storage::extend('azureBlob', function (Application $app, array $config) {
+        Storage::extend('azure', function (Application $app, array $config) {
             $client = BlobRestProxy::createBlobService($config['dsn']);
             $adapter = new AzureBlobStorageAdapter(
                 $client,
@@ -57,7 +58,7 @@ class AdapterProvider extends ServiceProvider
                 $config['prefix'],
             );
 
-            return new Filesystem($adapter);
+            return new FilesystemAdapter(new Filesystem($adapter, $config),$adapter, $config);
         });
     }
 }
