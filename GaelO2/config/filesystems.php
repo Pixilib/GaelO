@@ -65,6 +65,13 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'azure' =>[
+            'driver' => 'azure',
+            'dsn' =>env('AZURE_BLOB_DSN'),
+            'container'=>env('AZURE_CONTAINER_NAME'),
+            'prefix' => env('AZURE_BLOB_PREFIX', '') 
+        ]
+
     ],
 
     /*
