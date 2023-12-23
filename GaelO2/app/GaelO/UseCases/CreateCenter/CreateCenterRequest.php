@@ -2,6 +2,9 @@
 
 namespace App\GaelO\UseCases\CreateCenter;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CreateCenterRequest
 {
     public int $currentUserId;
