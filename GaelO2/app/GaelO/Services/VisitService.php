@@ -142,6 +142,7 @@ class VisitService
         $qcModifiedEvent->setImageQcStatus($imageQc ? 'Accepted ' : 'Refused');
         $qcModifiedEvent->setFormQcComment($formQcComment ?? 'None');
         $qcModifiedEvent->setImageQcComment($imageQcComment ?? 'None');
+        $qcModifiedEvent->setReviewNeeded($reviewNeeded);
 
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $studyObject->onEventStudy($qcModifiedEvent);

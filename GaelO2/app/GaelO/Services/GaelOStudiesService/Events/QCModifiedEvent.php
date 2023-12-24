@@ -10,6 +10,7 @@ class QCModifiedEvent extends BaseVisitEvent
     private string $imageQcStatus;
     private string $formQcComment;
     private string $imageQcComment;
+    private bool $reviewNeeded;
 
     public function __construct(array $visitEntity)
     {
@@ -26,12 +27,12 @@ class QCModifiedEvent extends BaseVisitEvent
         return $this->userId;
     }
 
-    public function setQcStatus(string $qcStatus) :void
+    public function setQcStatus(string $qcStatus): void
     {
         $this->qcStatus = $qcStatus;
     }
 
-    public function getQcStatus() :string
+    public function getQcStatus(): string
     {
         return $this->qcStatus;
     }
@@ -74,5 +75,15 @@ class QCModifiedEvent extends BaseVisitEvent
     public function getImageQcComment(): string
     {
         return $this->imageQcComment;
+    }
+
+    public function setReviewNeeded(bool $needed): void
+    {
+        $this->reviewNeeded = $needed;
+    }
+
+    public function isReviewNeeded(): bool
+    {
+        return $this->reviewNeeded;
     }
 }
