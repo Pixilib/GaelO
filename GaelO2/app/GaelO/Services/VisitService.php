@@ -197,7 +197,7 @@ class VisitService
         return $filename;
     }
 
-    public function removeFile(string $key): void
+    public function deleteFile(string $key): void
     {
         $visitEntity = $this->getVisitContext($this->visitId);
 

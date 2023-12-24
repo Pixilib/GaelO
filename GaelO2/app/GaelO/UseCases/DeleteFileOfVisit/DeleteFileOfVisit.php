@@ -51,7 +51,7 @@ class DeleteFileOfVisit
 
             $this->checkAuthorization($visitContext, $currentUserId);
 
-            $this->visitService->removeFile($fileKey);
+            $this->visitService->deleteFile($fileKey);
 
             $actionDetails = [
                 'removed_file' => $fileKey
