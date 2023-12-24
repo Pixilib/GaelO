@@ -70,7 +70,7 @@ class DicomSeriesRepositoryTest extends TestCase
         $this->assertEquals(5, sizeof($answer));
     }
 
-    public function testGetSeriesOrthancIdOfSeriesInstanceUid(){
+    public function testGetSeriesOrthancIdsOfSeriesInstanceUids(){
 
         $dicomSeries = DicomSeries::factory()->count(5)->create();
         //Should work even for deleted series / studies if requested
@@ -78,9 +78,9 @@ class DicomSeriesRepositoryTest extends TestCase
         $dicomSeries->first()->dicomStudy->delete();
 
         $seriesInstanceUID = $dicomSeries->pluck('series_uid')->toArray();
-        $answer = $this->orthancSeriesRepository->getSeriesOrthancIDOfSeriesInstanceUID($seriesInstanceUID, true);
+        $answer = $this->orthancSeriesRepository->getSeriesOrthancIDsOfSeriesInstanceUIDs($seriesInstanceUID, true);
         $this->assertEquals(5, sizeof($answer));
-        $answerNotTrashed = $this->orthancSeriesRepository->getSeriesOrthancIDOfSeriesInstanceUID($seriesInstanceUID, false);
+        $answerNotTrashed = $this->orthancSeriesRepository->getSeriesOrthancIDsOfSeriesInstanceUIDs($seriesInstanceUID, false);
         $this->assertEquals(4, sizeof($answerNotTrashed));
 
     }

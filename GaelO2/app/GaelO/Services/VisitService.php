@@ -142,6 +142,7 @@ class VisitService
         $qcModifiedEvent->setImageQcStatus($imageQc ? 'Accepted ' : 'Refused');
         $qcModifiedEvent->setFormQcComment($formQcComment ?? 'None');
         $qcModifiedEvent->setImageQcComment($imageQcComment ?? 'None');
+        $qcModifiedEvent->setReviewNeeded($reviewNeeded);
 
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $studyObject->onEventStudy($qcModifiedEvent);
@@ -197,7 +198,7 @@ class VisitService
         return $filename;
     }
 
-    public function removeFile(string $key): void
+    public function deleteFile(string $key): void
     {
         $visitEntity = $this->getVisitContext($this->visitId);
 

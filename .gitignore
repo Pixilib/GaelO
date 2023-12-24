@@ -3,3 +3,4 @@ composer.phar
 .VSCodeCounter/*
 
 src/*
+GaelO2/app/Console/Commands/RealysaTmtvInference.php

@@ -63,7 +63,7 @@ class CreateVisitGroup
 
             if ($hasVisits) throw new GaelOForbiddenException("Study already having visits, can't change workflow");
 
-            $this->visitGroupRepositoryInterface->createVisitGroup($studyName, $visitGroupName, $visitGroupModality);
+            $createdVisitGroup = $this->visitGroupRepositoryInterface->createVisitGroup($studyName, $visitGroupName, $visitGroupModality);
 
             $actionDetails = [
                 'modality' => $visitGroupModality,
@@ -73,6 +73,7 @@ class CreateVisitGroup
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_CREATE_VISIT_GROUP, $actionDetails);
             $createVisitGroupResponse->status = 201;
             $createVisitGroupResponse->statusText = 'Created';
+            $createVisitGroupResponse->body=['id' => $createdVisitGroup['id']];
 
         } catch (AbstractGaelOException $e) {
             $createVisitGroupResponse->status = $e->statusCode;

@@ -125,7 +125,7 @@ abstract class FormService
         return $filename;
     }
 
-    public function removeFile(array $reviewEntity, string $key): void
+    public function deleteFile(array $reviewEntity, string $key): void
     {
         if (empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException('Non exisiting key file in review');

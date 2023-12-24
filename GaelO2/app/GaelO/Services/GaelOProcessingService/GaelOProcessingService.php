@@ -5,7 +5,6 @@ namespace App\GaelO\Services\GaelOProcessingService;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
-use Illuminate\Support\Facades\Log;
 
 class GaelOProcessingService
 {

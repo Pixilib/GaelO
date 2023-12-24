@@ -49,7 +49,7 @@ class GetNiftiFileSupervisor
             $compress = $getNiftiFileSupervisorRequest->compress;
 
             //Get Related visit ID of requested seriesInstanceUID
-            $orthancSeriesIds = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID([$seriesInstanceUID], true);
+            $orthancSeriesIds = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDsOfSeriesInstanceUIDs([$seriesInstanceUID], true);
             $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID([$seriesInstanceUID], true);
 
             //Get Contexts of the related visit

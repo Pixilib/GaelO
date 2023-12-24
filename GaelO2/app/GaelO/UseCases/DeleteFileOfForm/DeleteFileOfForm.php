@@ -68,7 +68,7 @@ class DeleteFileOfForm
             }
 
             $formService->setVisitContextAndStudy($visitContext, $studyName);
-            $formService->removeFile($reviewEntity, $fileKey);
+            $formService->deleteFile($reviewEntity, $fileKey);
 
             $actionDetails = [
                 'removed_file' => $fileKey,

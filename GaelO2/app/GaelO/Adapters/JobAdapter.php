@@ -4,7 +4,6 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\Jobs\JobQcReport;
-use App\Jobs\JobRadiomicsReport;
 
 class JobAdapter implements JobInterface
 {
@@ -13,8 +12,4 @@ class JobAdapter implements JobInterface
         JobQcReport::dispatch($visitId);
     }
 
-    public function sendRadiomicsReport(int $visitId, ?int $behalfUserId, ?array $destinatorEmails): void
-    {
-        JobRadiomicsReport::dispatch($visitId, $behalfUserId, $destinatorEmails);
-    }
 }

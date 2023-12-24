@@ -25,10 +25,10 @@ class VisitGroupRepositoryTest extends TestCase
 
     public function testCreateRepositoryGroup(){
         $study = Study::factory()->create();
-        $this->visitGroupRepository->createVisitGroup($study->name, 'wb', 'CT');
+        $createdVisitGroup = $this->visitGroupRepository->createVisitGroup($study->name, 'wb', 'CT');
 
         $visitGroup = VisitGroup::get();
-        $this->assertEquals(1, $visitGroup->count());
+        $this->assertEquals($createdVisitGroup['id'], $visitGroup->count());
     }
 
     public function testHasVisitType(){
