@@ -2,6 +2,9 @@
 
 namespace App\GaelO\UseCases\CreateFileToForm;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CreateFileToFormRequest
 {
     public int $currentUserId;
