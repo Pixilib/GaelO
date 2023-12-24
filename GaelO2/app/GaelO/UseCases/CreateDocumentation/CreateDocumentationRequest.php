@@ -2,9 +2,6 @@
 
 namespace App\GaelO\UseCases\CreateDocumentation;
 
-/**
- * @codeCoverageIgnore
- */
 class CreateDocumentationRequest
 {
     public int $currentUserId;
