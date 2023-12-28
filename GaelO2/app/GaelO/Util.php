@@ -52,8 +52,11 @@ class Util
 
         foreach ($files as $file) {
             // Add current file to archive
-            $fileContent = FrameworkAdapter::getFile($file);
-            $zip->addFromString($file, $fileContent);
+            $tempraryFile = tmpfile();
+            $tempraryFilePath = stream_get_meta_data($tempraryFile)['uri']; 
+            $fileContent = FrameworkAdapter::getFile($file, true);
+            stream_copy_to_stream($fileContent, $tempraryFile);
+            $zip->addFile($tempraryFilePath, $file);
         }
     }
 

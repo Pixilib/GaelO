@@ -46,9 +46,14 @@ class FrameworkAdapter implements FrameworkInterface
         Storage::delete($path);
     }
 
-    public static function getFile(string $path): string
+    public static function getFile(string $path, bool $asStream = false)
     {
-        $file = Storage::get($path);
+        if($asStream){
+            $file = Storage::readStream($path);
+        }else{
+            $file = Storage::get($path);
+        }
+        
         if($file === null){
             throw new GaelOException("File not found in storage");
         }

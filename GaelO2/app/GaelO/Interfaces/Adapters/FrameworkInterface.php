@@ -21,7 +21,7 @@ interface FrameworkInterface
 
     public static function deleteFile(string $path): void;
 
-    public static function getFile(string $path): string;
+    public static function getFile(string $path, bool $asStream) :mixed;
 
     public static function sendResetPasswordLink(string $email): bool;
 
