@@ -311,8 +311,7 @@ class ExportStudyService
         //Add a file to create zip
         $zip->addFromString('Readme', 'Folder Containing associated files to study');
         //send stored file for this study
-        Util::addStoredFilesInZip($zip, $this->studyName);
-        $zip->close();
+        Util::addStoredFilesInZipAndClose($zip, $this->studyName);
 
         $exporFileResult = new ExportFileResults();
         $exporFileResult->addExportFile(ExportDataResults::EXPORT_TYPE_ZIP, $tempZip);

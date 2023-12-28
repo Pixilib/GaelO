@@ -5,6 +5,7 @@ namespace App\GaelO;
 use App\GaelO\Adapters\FrameworkAdapter;
 use Carbon\Carbon;
 use FilesystemIterator;
+use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -45,18 +46,24 @@ class Util
         ));
     }
 
-    public static function addStoredFilesInZip(ZipArchive $zip, ?string $path)
+    public static function addStoredFilesInZipAndClose(ZipArchive $zip, ?string $path)
     {
 
         $files = FrameworkAdapter::getStoredFiles($path);
-
+        $temporaryFilesToDelete=[];
         foreach ($files as $file) {
-            // Add current file to archive
-            $tempraryFile = tmpfile();
-            $tempraryFilePath = stream_get_meta_data($tempraryFile)['uri'];
+            // Add current file to archive using data as stream to prevent running out memory for large files
+            $tempraryFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMPEXP_');
+            $temporaryFilesToDelete[] = $tempraryFilePath;
             $fileContent = FrameworkAdapter::getFile($file, true);
-            stream_copy_to_stream($fileContent, $tempraryFile);
+            stream_copy_to_stream($fileContent, fopen($tempraryFilePath, 'w'));
             $zip->addFile($tempraryFilePath, $file);
+        }
+        //Close to build the zip as the operation is async
+        $zip->close();
+        //Delete all temporary files
+        foreach($temporaryFilesToDelete as $temp){
+            unlink($temp);
         }
     }
 
