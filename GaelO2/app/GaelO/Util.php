@@ -13,7 +13,7 @@ use ZipArchive;
 class Util
 {
 
-    public static function fillObject(array $dataToExtract, object $dataToFill) :void
+    public static function fillObject(array $dataToExtract, object $dataToFill): void
     {
         //Get Expected properties awaited in DTO Request
         $reflect = new ReflectionClass($dataToFill);
@@ -53,7 +53,7 @@ class Util
         foreach ($files as $file) {
             // Add current file to archive
             $tempraryFile = tmpfile();
-            $tempraryFilePath = stream_get_meta_data($tempraryFile)['uri']; 
+            $tempraryFilePath = stream_get_meta_data($tempraryFile)['uri'];
             $fileContent = FrameworkAdapter::getFile($file, true);
             stream_copy_to_stream($fileContent, $tempraryFile);
             $zip->addFile($tempraryFilePath, $file);
@@ -134,7 +134,7 @@ class Util
         return preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/', $version);
     }
 
-    public static function isUrlSafeString(string $value) :bool
+    public static function isUrlSafeString(string $value): bool
     {
         return preg_match('/^[a-zA-Z0-9_-]*$/', $value);
     }
