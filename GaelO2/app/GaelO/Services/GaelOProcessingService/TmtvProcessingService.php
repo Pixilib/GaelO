@@ -46,7 +46,7 @@ class TmtvProcessingService
             'idCT' => $idCT
         ];
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('unet_model', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInference('pt_seg_attentionunet', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
