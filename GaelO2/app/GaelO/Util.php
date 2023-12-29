@@ -5,7 +5,6 @@ namespace App\GaelO;
 use App\GaelO\Adapters\FrameworkAdapter;
 use Carbon\Carbon;
 use FilesystemIterator;
-use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
