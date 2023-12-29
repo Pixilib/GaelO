@@ -38,8 +38,7 @@ class ExportDatabase
             $date = Date('Ymd_His');
             $zip->addFile($filePathSql, "export_database_$date.sql");
             
-            Util::addStoredFilesInZip($zip, null);
-            $zip->close();
+            Util::addStoredFilesInZipAndClose($zip, null);
             
             //Unlick after lock released by zip close
             unlink($filePathSql);
