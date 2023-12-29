@@ -27,7 +27,8 @@ class ExportDatabase
 
         try {
             $this->checkAuthorization($exportDatabaseRequest->currentUserId);
-
+            //Operation might be long, set max execution time to 30 minutes
+            set_time_limit(1800);
             $zip = new ZipArchive();
             $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
             $zip->open($tempZip, ZipArchive::OVERWRITE);
