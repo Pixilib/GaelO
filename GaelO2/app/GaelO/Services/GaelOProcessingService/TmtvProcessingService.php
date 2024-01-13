@@ -33,8 +33,10 @@ class TmtvProcessingService
     public function runInference(): MaskProcessingService
     {
 
-        $this->sendDicomToProcessing($this->ptOrthancSeriesId);
-        $this->sendDicomToProcessing($this->ctOrthancSeriesId);
+        $this->orthancService->sendDicomToProcessing($this->ptOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
+        $this->orthancService->sendDicomToProcessing($this->ctOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
 
         $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
         $this->addCreatedRessource('series', $idPT);
@@ -55,16 +57,6 @@ class TmtvProcessingService
         return $maskProcessingService;
     }
 
-
-
-    protected function sendDicomToProcessing(string $orthancSeriesIdPt)
-    {
-        $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
-        $this->gaelOProcessingService->createDicom($temporaryZipDicom);
-        $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
-        unlink($temporaryZipDicom);
-    }
 
     public function loadPetAndCtSeriesOrthancIdsFromVisit($visitId): void
     {

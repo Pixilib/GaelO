@@ -4,6 +4,7 @@ namespace App\Jobs\QcReport;
 
 use App\GaelO\DicomUtils;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use Throwable;
@@ -136,29 +137,35 @@ class SeriesReport
         return ImageType::DEFAULT;
     }
 
-    public function loadSeriesPreview(OrthancService $orthancService): void
+    public function loadSeriesPreview(OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService): void
     {
         $imageType = $this->getPreviewType();
 
         $imagePath = [];
 
+
         try {
-            switch ($imageType) {
-                case ImageType::MIP:
-                    //Mosaic for now as mip need significant computation and memory backend
-                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
-                    break;
-                case ImageType::MOSAIC:
-                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
-                    break;
-                case ImageType::MULTIFRAME:
-                    $imagePath = array_map(function ($instanceOrthancId) use ($orthancService) {
-                        return $orthancService->getMosaic('instances', $instanceOrthancId);
-                    }, $this->orthancInstanceIds);
-                    break;
-                case ImageType::DEFAULT:
-                    $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
-                    break;
+            if ($imageType === ImageType::DEFAULT) {
+                $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
+            } else {
+                $isPet = $this->modality == 'PT';
+                $payload = $isPet ? ['min' => 0, 'max' => 5] : [];
+                $orthancService->sendDicomToProcessing($this->seriesOrthancId, $gaelOProcessingService);
+                $processingSeriesId = $gaelOProcessingService->createSeriesFromOrthanc($this->seriesOrthancId, $isPet, $isPet);
+                switch ($imageType) {
+                    case ImageType::MIP:
+                        //Mosaic for now as mip need significant computation and memory backend
+                        $imagePath[] = $gaelOProcessingService->createMIPForSeries($processingSeriesId, $payload);
+                        break;
+                    case ImageType::MOSAIC:
+                        $imagePath[] = $gaelOProcessingService->createMosaicForSeries($processingSeriesId, $payload);
+                        break;
+                    case ImageType::MULTIFRAME:
+                        $imagePath = array_map(function ($instanceOrthancId) use ($gaelOProcessingService) {
+                            return $gaelOProcessingService->createMosaicForSeries('instances', $instanceOrthancId);
+                        }, $this->orthancInstanceIds);
+                        break;
+                }
             }
         } catch (Throwable $t) {
         }

@@ -49,11 +49,24 @@ class GaelOProcessingService
         return $request->getJsonBody();
     }
 
+    /**
+     * Return gif
+     */
     public function createMIPForSeries(string $seriesId, array $payload = []): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
         $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
+        return $downloadedFilePath;
+    }
+
+    /**
+     * return png
+     */
+    public function createMosaicForSeries(string $seriesId, array $payload = ["min" => null, "max" => null, "cols" => 5, "nbImages" => 20, "width" => 512, "height" => 512, "orientation"=>"LPI"]): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mosaic", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
         return $downloadedFilePath;
     }
 

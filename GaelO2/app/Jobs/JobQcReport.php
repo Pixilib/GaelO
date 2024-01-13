@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\QcReport\InstanceReport;
@@ -57,6 +58,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         MailServices $mailServices,
         OrthancService $orthancService,
+        GaelOProcessingService $gaelOProcessingService,
         ReviewRepositoryInterface $reviewRepositoryInterface
     ) {
         $this->orthancService = $orthancService;
@@ -115,7 +117,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
                 $seriesReport->fillData($seriesSharedTags);
                 $seriesReport->setInstanceReport($instanceReport);
 
-                $seriesReport->loadSeriesPreview($this->orthancService);
+                $seriesReport->loadSeriesPreview($this->orthancService, $gaelOProcessingService);
 
                 $seriesReports[] = $seriesReport;
             } catch (Throwable $t) {
