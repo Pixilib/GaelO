@@ -42,7 +42,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(int $visitId)
     {
-        $this->onQueue('auto-qc');
+        $this->onQueue('processing');
         $this->visitId = $visitId;
     }
 

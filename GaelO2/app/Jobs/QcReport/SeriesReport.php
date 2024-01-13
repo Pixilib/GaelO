@@ -143,7 +143,6 @@ class SeriesReport
 
         $imagePath = [];
 
-
         try {
             if ($imageType === ImageType::DEFAULT) {
                 $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
@@ -166,6 +165,8 @@ class SeriesReport
                         }, $this->orthancInstanceIds);
                         break;
                 }
+                $gaelOProcessingService->deleteRessource('series', $processingSeriesId);
+                $gaelOProcessingService->deleteRessource('dicoms', $this->seriesOrthancId);
             }
         } catch (Throwable $t) {
         }
