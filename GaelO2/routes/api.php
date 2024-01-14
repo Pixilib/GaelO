@@ -163,7 +163,9 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('dicom-series/{seriesInstanceUID}/activate', [DicomController::class, 'reactivateSeries']);
     Route::post('dicom-study/{studyInstanceUID}/activate', [DicomController::class, 'reactivateStudy']);
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
-
+    Route::get('dicom-series/{seriesInstanceUID}/previews/{index}', [DicomController::class, 'getSeriesPreview']);
+    Route::get('dicom-series/{seriesInstanceUID}/metadata', [DicomController::class, 'getSeriesMetadata']);
+    Route::get('dicom-studies/{studyInstanceUID}/metadata', [DicomController::class, 'getStudyMetadata']);
 
     //Ask Unlock route
     Route::post('visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);

@@ -33,6 +33,7 @@ class SeriesReport
     private $protocolName;
     private $patientWeight;
     private $patientHeight;
+    private $seriesInstanceUID;
     private array $previewImagePath = [];
     private array $orthancInstanceIds;
     private string $seriesOrthancId;
@@ -52,11 +53,6 @@ class SeriesReport
     public function getNumberOfInstances(): int
     {
         return sizeof($this->orthancInstanceIds);
-    }
-
-    public function addPreviewImagePath(?string $path)
-    {
-        $this->previewImagePath[] = $path;
     }
 
     public function deletePreviewImages()
@@ -88,6 +84,7 @@ class SeriesReport
         $this->matrixSize = $sharedTags->getMatrixSize();
         $this->patientPosition = $sharedTags->getPatientPosition();
         $this->patientOrientation = $sharedTags->getImageOrientation();
+        $this->seriesInstanceUID = $sharedTags->getSeriesInstanceUID();
 
         if ($this->modality == 'MR') {
             $this->scanningSequence = $sharedTags->getScanningSequence();
@@ -148,12 +145,11 @@ class SeriesReport
                 $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
             } else {
                 $isPet = $this->modality == 'PT';
-                $payload = $isPet ? ['min' => 0, 'max' => 5] : [];
+                $payload = $isPet ? ['min' => 0, 'max' => 5, 'orientation' => 'LPI'] : ['orientation' => 'LPI'];
                 $orthancService->sendDicomToProcessing($this->seriesOrthancId, $gaelOProcessingService);
                 $processingSeriesId = $gaelOProcessingService->createSeriesFromOrthanc($this->seriesOrthancId, $isPet, $isPet);
                 switch ($imageType) {
                     case ImageType::MIP:
-                        //Mosaic for now as mip need significant computation and memory backend
                         $imagePath[] = $gaelOProcessingService->createMIPForSeries($processingSeriesId, $payload);
                         break;
                     case ImageType::MOSAIC:
@@ -172,6 +168,16 @@ class SeriesReport
         }
 
         $this->previewImagePath = $imagePath;
+    }
+
+    public function getSeriesInstanceUID(): string
+    {
+        return $this->seriesInstanceUID;
+    }
+
+    public function getPreviews(): array
+    {
+        return $this->previewImagePath;
     }
 
     public function toArray()
@@ -203,7 +209,7 @@ class SeriesReport
             'Protocol Name' => $this->protocolName ?? null,
             'Patient weight (kg)' => $this->patientWeight ?? null,
             'Patient height (m)' => $this->patientHeight ?? null,
-            'image_path' => $this->previewImagePath,
+            'Previews' => sizeof($this->previewImagePath),
             ...$instanceData
         ];
     }

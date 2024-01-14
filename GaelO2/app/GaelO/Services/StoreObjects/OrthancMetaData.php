@@ -260,4 +260,9 @@ class OrthancMetaData
     {
         return $this->getMetaDataValueFromCode('0054,0400');
     }
+
+    public function getSeriesInstanceUID() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0020,000e');
+    }
 }

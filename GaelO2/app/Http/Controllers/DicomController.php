@@ -8,12 +8,21 @@ use App\GaelO\UseCases\DeleteSeries\DeleteSeriesResponse;
 use App\GaelO\UseCases\GetDicoms\GetDicoms;
 use App\GaelO\UseCases\GetDicoms\GetDicomsRequest;
 use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadata;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadataRequest;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadataResponse;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreview;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewRequest;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorResponse;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadata;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadataRequest;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadataResponse;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisor;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorRequest;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorResponse;
@@ -156,5 +165,48 @@ class DicomController extends Controller
             return response()->json($getNiftiFileSupervisorResponse->body)
                 ->setStatusCode($getNiftiFileSupervisorResponse->status, $getNiftiFileSupervisorResponse->statusText);
         }
+    }
+
+    public function getStudyMetadata(Request $request, GetDicomStudyMetadata $getDicomStudyMetadata, GetDicomStudyMetadataRequest $getDicomStudyMetadataRequest, GetDicomStudyMetadataResponse $getDicomStudyMetadataResponse, string $studyInstanceUID)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomStudyMetadataRequest->studyInstanceUID = $studyInstanceUID;
+        $getDicomStudyMetadataRequest->role = $queryParam['role'];
+        $getDicomStudyMetadataRequest->currentUserId = $currentUser['id'];
+
+        $getDicomStudyMetadata->execute($getDicomStudyMetadataRequest, $getDicomStudyMetadataResponse);
+
+        return $this->getJsonResponse($getDicomStudyMetadataResponse->body, $getDicomStudyMetadataResponse->status, $getDicomStudyMetadataResponse->statusText);
+    }
+
+    public function getSeriesMetadata(Request $request, GetDicomSeriesMetadata $getDicomSeriesMetadata, GetDicomSeriesMetadataRequest $getDicomSeriesMetadataRequest, GetDicomSeriesMetadataResponse $getDicomSeriesMetadataResponse, string $seriesInstanceUID)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesMetadataRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesMetadataRequest->role = $queryParam['role'];
+        $getDicomSeriesMetadataRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesMetadata->execute($getDicomSeriesMetadataRequest, $getDicomSeriesMetadataResponse);
+
+        return $this->getJsonResponse($getDicomSeriesMetadataResponse->body, $getDicomSeriesMetadataResponse->status, $getDicomSeriesMetadataResponse->statusText);
+    }
+
+    public function getSeriesPreview(Request $request, GetDicomSeriesPreview $getDicomSeriesPreview, GetDicomSeriesPreviewRequest $getDicomSeriesPreviewRequest, GetDicomSeriesPreviewResponse $getDicomSeriesPreviewResponse, string $seriesInstanceUID, int $index)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesPreviewRequest->role = $queryParam['role'];
+        $getDicomSeriesPreviewRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesPreviewRequest->index = $index;
+        $getDicomSeriesPreviewRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesPreview->execute($getDicomSeriesPreviewRequest, $getDicomSeriesPreviewResponse);
+
+        return response($getDicomSeriesPreviewResponse->body, $getDicomSeriesPreviewResponse->status)->header('Content-Type', $getDicomSeriesPreviewResponse->contentType);
     }
 }

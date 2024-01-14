@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\GaelO\Adapters\AzureCacheAdapter;
 use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\HttpClientAdapter;
@@ -18,7 +19,7 @@ use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
@@ -60,5 +61,18 @@ class AdapterProvider extends ServiceProvider
 
             return new FilesystemAdapter(new Filesystem($adapter, $config),$adapter, $config);
         });
+
+        Cache::extend('azure', function($app, $config){
+            $client = BlobRestProxy::createBlobService($config['dsn']);
+            $adapter = new AzureBlobStorageAdapter(
+                $client,
+                $config['container'],
+                $config['prefix'],
+            );
+    
+            $fileSystem = new Filesystem($adapter, $config);
+
+			return Cache::repository(new AzureCacheAdapter($fileSystem));
+		});
     }
 }
