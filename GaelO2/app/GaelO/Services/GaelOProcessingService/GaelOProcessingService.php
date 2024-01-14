@@ -52,11 +52,11 @@ class GaelOProcessingService
     /**
      * Return gif
      */
-    public function createMIPForSeries(string $seriesId, array $payload = []): string
+    public function createMIPForSeries(string $seriesId, array $payload = ['orientation' => 'LPI']): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['Content-Type' => 'application/json'], $payload);
         return $downloadedFilePath;
     }
 
@@ -66,7 +66,7 @@ class GaelOProcessingService
     public function createMosaicForSeries(string $seriesId, array $payload = ["min" => null, "max" => null, "cols" => 5, "nbImages" => 20, "width" => 512, "height" => 512, "orientation"=>"LPI"]): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mosaic", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mosaic", $downloadedFilePath, ['Content-Type' => 'application/json'], $payload);
         return $downloadedFilePath;
     }
 
@@ -74,7 +74,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/masks/" . $maskId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/masks/" . $maskId . "/file", $downloadedFilePath, ['Content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
 
@@ -82,7 +82,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['Content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
 

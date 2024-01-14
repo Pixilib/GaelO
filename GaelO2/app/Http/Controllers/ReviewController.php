@@ -56,7 +56,6 @@ use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller

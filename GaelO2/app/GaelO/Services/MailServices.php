@@ -590,24 +590,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magicLinkAccepted, string $magicLinkRefused, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, string $magicLink, string $controllerEmail)
     {
-
-        $isVisitDateExpected = true;
-
-        if (isset($studyInfo['visitDate']) && isset($studyInfo['studyDetails']['Study Date'])) {
-            $isVisitDateExpected = ($studyInfo['visitDate'] === $studyInfo['studyDetails']['Study Date']);
-        }
 
         $parameters = [
             'study' => $studyName,
             'visitType' => $visitType,
             'patientCode' => $patientCode,
-            'studyInfo' => $studyInfo,
-            'seriesInfo' => $seriesInfo,
-            'warningVisitDate' =>  $isVisitDateExpected === false,
-            'magicLinkAccepted' => $magicLinkAccepted,
-            'magicLinkRefused' => $magicLinkRefused
+            'magicLink' => $magicLink,
         ];
 
         $this->mailInterface->setTo([$controllerEmail]);
