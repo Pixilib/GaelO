@@ -25,7 +25,7 @@ class AzureCacheAdapter implements Store
     private function getPath(string $key)
     {
         $hash = sha1($key);
-        return $this->rootDirectory . '/'. $hash;
+        return $this->rootDirectory . '/' . $hash;
     }
 
     public function get($key)
@@ -77,12 +77,14 @@ class AzureCacheAdapter implements Store
     public function forever($key, $value)
     {
         $this->put($key, $value, 0);
+        return true;
     }
 
     public function forget($key)
     {
         $path = $this->getPath($key);
         $this->fileSystem->delete($path);
+        return true;
     }
 
     public function flush()
@@ -91,6 +93,7 @@ class AzureCacheAdapter implements Store
         foreach ($files as $file) {
             $this->fileSystem->delete($file->path());
         }
+        return true;
     }
 
     public function getPrefix()
