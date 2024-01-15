@@ -3,9 +3,7 @@
 namespace App\Jobs;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\FileCacheService;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
@@ -50,12 +48,9 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
      * @return void
      */
     public function handle(
-        FrameworkInterface $frameworkInterface,
         FileCacheService $fileCacheService,
-        UserRepositoryInterface $userRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        MailServices $mailServices,
         OrthancService $orthancService,
         GaelOProcessingService $gaelOProcessingService,
     ) {
@@ -132,18 +127,6 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
         $studyInfo = $visitReport->toArray();
         $studyInstanceUID = $dicomStudyEntity[0]['study_uid'];
         $fileCacheService->storeDicomMetadata($studyInstanceUID, json_encode($studyInfo));
-
-        $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
-
-        foreach ($controllerUsers as $user) {
-            $redirectLink = '/magic-link-tools/auto-qc';
-            $queryParams = [
-                'visitId' => $visitId,
-                'studyName' => $studyName
-            ];
-            $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $magicLink, $user['email']);
-        }
 
         //Once job finished remove preview file to avoid dangling temporary files
         foreach ($seriesReports as $seriesReport) {
