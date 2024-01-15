@@ -174,7 +174,9 @@ class DicomController extends Controller
 
         $getDicomStudyMetadataRequest->studyInstanceUID = $studyInstanceUID;
         $getDicomStudyMetadataRequest->role = $queryParam['role'];
+        $getDicomStudyMetadataRequest->studyName = $queryParam['studyName'];
         $getDicomStudyMetadataRequest->currentUserId = $currentUser['id'];
+        
 
         $getDicomStudyMetadata->execute($getDicomStudyMetadataRequest, $getDicomStudyMetadataResponse);
 
@@ -188,6 +190,7 @@ class DicomController extends Controller
 
         $getDicomSeriesMetadataRequest->seriesInstanceUID = $seriesInstanceUID;
         $getDicomSeriesMetadataRequest->role = $queryParam['role'];
+        $getDicomSeriesMetadataRequest->studyName = $queryParam['studyName'];
         $getDicomSeriesMetadataRequest->currentUserId = $currentUser['id'];
 
         $getDicomSeriesMetadata->execute($getDicomSeriesMetadataRequest, $getDicomSeriesMetadataResponse);
@@ -201,6 +204,7 @@ class DicomController extends Controller
         $queryParam = $request->query();
 
         $getDicomSeriesPreviewRequest->role = $queryParam['role'];
+        $getDicomSeriesPreviewRequest->studyName = $queryParam['studyName'];
         $getDicomSeriesPreviewRequest->seriesInstanceUID = $seriesInstanceUID;
         $getDicomSeriesPreviewRequest->index = $index;
         $getDicomSeriesPreviewRequest->currentUserId = $currentUser['id'];

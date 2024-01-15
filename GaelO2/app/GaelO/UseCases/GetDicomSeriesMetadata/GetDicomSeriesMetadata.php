@@ -3,12 +3,14 @@
 namespace App\GaelO\UseCases\GetDicomSeriesMetadata;
 
 use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FileCacheService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class GetDicomSeriesMetadata
 {
@@ -33,12 +35,12 @@ class GetDicomSeriesMetadata
             $curentUserId = $getDicomSeriesMetadataRequest->currentUserId;
             $role = $getDicomSeriesMetadataRequest->role;
             $seriesInstanceUID = $getDicomSeriesMetadataRequest->seriesInstanceUID;
+            $studyName = $getDicomSeriesMetadataRequest->studyName;
 
             $seriesData = $this->dicomSeriesRepository->getSeries($seriesInstanceUID, false);
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $studyName = $visitContext['patient']['study_name'];
 
             $this->checkAuthorization($curentUserId, $role, $visitId, $studyName, $visitContext);
 

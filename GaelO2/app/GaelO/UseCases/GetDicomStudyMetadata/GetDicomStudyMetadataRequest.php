@@ -7,4 +7,5 @@ class GetDicomStudyMetadataRequest
     public string $studyInstanceUID;
     public int $currentUserId;
     public string $role;
+    public string $studyName;
 }

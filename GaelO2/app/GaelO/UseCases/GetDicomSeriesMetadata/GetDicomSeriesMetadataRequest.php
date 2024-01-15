@@ -7,4 +7,5 @@ class GetDicomSeriesMetadataRequest
     public string $seriesInstanceUID;
     public int $currentUserId;
     public string $role;
+    public string $studyName;
 }

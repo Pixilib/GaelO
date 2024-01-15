@@ -33,12 +33,12 @@ class GetDicomStudyMetadata
             $curentUserId = $getDicomStudyMetadataRequest->currentUserId;
             $role = $getDicomStudyMetadataRequest->role;
             $studyInstanceUID = $getDicomStudyMetadataRequest->studyInstanceUID;
+            $studyName = $getDicomStudyMetadataRequest->studyName;
 
             $studyData = $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, false);
             $visitId = $studyData['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $studyName = $visitContext['patient']['study_name'];
 
             $this->checkAuthorization($curentUserId, $role, $visitId, $studyName, $visitContext);
 

@@ -8,4 +8,5 @@ class GetDicomSeriesPreviewRequest
     public int $index;
     public int $currentUserId;
     public string $role;
+    public string $studyName;
 }

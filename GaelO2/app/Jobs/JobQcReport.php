@@ -61,7 +61,6 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
 
         $studyName = $visitEntity['patient']['study_name'];
-        $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
         $visitDate = $visitEntity['visit_date'];

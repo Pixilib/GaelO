@@ -34,12 +34,12 @@ class GetDicomSeriesPreview
             $role = $getDicomSeriesPreviewRequest->role;
             $seriesInstanceUID = $getDicomSeriesPreviewRequest->seriesInstanceUID;
             $index = $getDicomSeriesPreviewRequest->index;
+            $studyName = $getDicomSeriesPreviewRequest->studyName;
 
             $seriesData = $this->dicomSeriesRepository->getSeries($seriesInstanceUID, false);
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $studyName = $visitContext['patient']['study_name'];
 
             $this->checkAuthorization($curentUserId, $role, $visitId, $studyName, $visitContext);
 
