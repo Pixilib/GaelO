@@ -56,6 +56,7 @@ class GetDicomSeriesPreview
             $getDicomSeriesPreviewResponse->body = $e->getErrorBody();
             $getDicomSeriesPreviewResponse->status = $e->statusCode;
             $getDicomSeriesPreviewResponse->statusText = $e->statusText;
+            $getDicomSeriesPreviewResponse->contentType = "application/json";
         } catch (Exception $e) {
             throw $e;
         }
