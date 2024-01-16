@@ -14,9 +14,9 @@ class FileCacheAdapter implements CacheInterface
         return Cache::store(Config::get('cache.file-cache'))->get($key);
     }
 
-    public function store(string $key, $value): bool
+    public function store(string $key, $value, ?int $ttl): bool
     {
-        Cache::store(Config::get('cache.file-cache'))->put($key, $value);
+        Cache::store(Config::get('cache.file-cache'))->put($key, $value, $ttl);
         return true;
     }
 

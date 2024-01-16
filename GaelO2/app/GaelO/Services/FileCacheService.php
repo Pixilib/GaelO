@@ -3,6 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\FileCacheAdapter;
+use App\GaelO\Exceptions\GaelONotFoundException;
 
 class FileCacheService
 {
@@ -15,12 +16,19 @@ class FileCacheService
 
     public function getSeriesPreview(string $seriesInstanceUID, int $index)
     {
-        return $this->fileCacheAdapter->get('preview-' . $seriesInstanceUID . '-' . $index);
+        $data = $this->fileCacheAdapter->get('preview-' . $seriesInstanceUID . '-' . $index);
+        if ($data == null) {
+            throw new GaelONotFoundException();
+        }
+        return $data;
     }
 
-    public function storeSeriesPreview(string $seriesInstanceUID, int $index, $value)
+    /**
+     * ttl in seconds may not be supported with all drivers (ok with redis not with Azure)
+     */
+    public function storeSeriesPreview(string $seriesInstanceUID, int $index, $value, ?int $ttl = null)
     {
-        return $this->fileCacheAdapter->store('preview-' . $seriesInstanceUID . '-' . $index, $value);
+        return $this->fileCacheAdapter->store('preview-' . $seriesInstanceUID . '-' . $index, $value, $ttl);
     }
 
     public function deleteSeriesPreview(string $seriesInstanceUID, int $index)
@@ -28,14 +36,21 @@ class FileCacheService
         return $this->fileCacheAdapter->delete('preview-' . $seriesInstanceUID . '-' . $index);
     }
 
-    public function storeDicomMetadata(string $uid, $value)
+    /**
+     * ttl in seconds may not be supported with all drivers (ok with redis not with Azure)
+     */
+    public function storeDicomMetadata(string $uid, $value, ?int $ttl = null)
     {
-        return $this->fileCacheAdapter->store('metadata-' . $uid, $value);
+        return $this->fileCacheAdapter->store('metadata-' . $uid, $value, $ttl);
     }
 
     public function getDicomMetadata(string $uid)
     {
-        return $this->fileCacheAdapter->get('metadata-' . $uid);
+        $data = $this->fileCacheAdapter->get('metadata-' . $uid);
+        if ($data == null) {
+            throw new GaelONotFoundException();
+        }
+        return $data;
     }
 
     public function deleteDicomMetadata(string $uid)
