@@ -36,7 +36,7 @@ class AzureCacheAdapter implements Store
             throw new GaelONotFoundException("File doesn't exist in azure cache");
         }
 
-        $this->fileSystem->read($path);
+        return $this->fileSystem->read($path);
     }
 
     public function many(array $keys)
