@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.82403165347772" branch-rate="0" lines-covered="7914" lines-valid="9604" branches-covered="0" branches-valid="0" complexity="2637" version="0.4" timestamp="1705351653">
+<coverage line-rate="0.82384767453959" branch-rate="0" lines-covered="7918" lines-valid="9611" branches-covered="0" branches-valid="0" complexity="2639" version="0.4" timestamp="1705392567">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -592,7 +592,7 @@
                 <line number="14" hits="4"/>
               </lines>
             </method>
-            <method name="store" signature="string $key, $value" line-rate="1" branch-rate="0" complexity="1">
+            <method name="store" signature="string $key, $value, ?int $ttl" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="19" hits="8"/>
                 <line number="20" hits="8"/>
@@ -6243,54 +6243,66 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/FileCacheService.php" line-rate="0.71428571428571" branch-rate="0" complexity="7">
+    <package name="GaelO/Services/FileCacheService.php" line-rate="0.69230769230769" branch-rate="0" complexity="9">
       <classes>
-        <class name="App\GaelO\Services\FileCacheService" filename="GaelO/Services/FileCacheService.php" line-rate="0.71428571428571" branch-rate="0" complexity="7">
+        <class name="App\GaelO\Services\FileCacheService" filename="GaelO/Services/FileCacheService.php" line-rate="0.69230769230769" branch-rate="0" complexity="9">
           <methods>
             <method name="__construct" signature="App\GaelO\Adapters\FileCacheAdapter $fileCacheAdapter" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="13" hits="5"/>
+                <line number="14" hits="5"/>
               </lines>
             </method>
-            <method name="getSeriesPreview" signature="string $seriesInstanceUID, int $index" line-rate="1" branch-rate="0" complexity="1">
+            <method name="getSeriesPreview" signature="string $seriesInstanceUID, int $index" line-rate="0.75" branch-rate="0" complexity="2">
               <lines>
-                <line number="18" hits="1"/>
+                <line number="19" hits="1"/>
+                <line number="20" hits="1"/>
+                <line number="21" hits="0"/>
+                <line number="23" hits="1"/>
               </lines>
             </method>
-            <method name="storeSeriesPreview" signature="string $seriesInstanceUID, int $index, $value" line-rate="1" branch-rate="0" complexity="1">
+            <method name="storeSeriesPreview" signature="string $seriesInstanceUID, int $index, $value, ?int $ttl" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="23" hits="5"/>
+                <line number="31" hits="5"/>
               </lines>
             </method>
             <method name="deleteSeriesPreview" signature="string $seriesInstanceUID, int $index" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="28" hits="0"/>
+                <line number="36" hits="0"/>
               </lines>
             </method>
-            <method name="storeDicomMetadata" signature="string $uid, $value" line-rate="1" branch-rate="0" complexity="1">
+            <method name="storeDicomMetadata" signature="string $uid, $value, ?int $ttl" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="33" hits="5"/>
+                <line number="44" hits="5"/>
               </lines>
             </method>
-            <method name="getDicomMetadata" signature="string $uid" line-rate="1" branch-rate="0" complexity="1">
+            <method name="getDicomMetadata" signature="string $uid" line-rate="0.75" branch-rate="0" complexity="2">
               <lines>
-                <line number="38" hits="2"/>
+                <line number="49" hits="2"/>
+                <line number="50" hits="2"/>
+                <line number="51" hits="0"/>
+                <line number="53" hits="2"/>
               </lines>
             </method>
             <method name="deleteDicomMetadata" signature="string $uid" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="43" hits="0"/>
+                <line number="58" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="5"/>
-            <line number="18" hits="1"/>
-            <line number="23" hits="5"/>
-            <line number="28" hits="0"/>
-            <line number="33" hits="5"/>
-            <line number="38" hits="2"/>
-            <line number="43" hits="0"/>
+            <line number="14" hits="5"/>
+            <line number="19" hits="1"/>
+            <line number="20" hits="1"/>
+            <line number="21" hits="0"/>
+            <line number="23" hits="1"/>
+            <line number="31" hits="5"/>
+            <line number="36" hits="0"/>
+            <line number="44" hits="5"/>
+            <line number="49" hits="2"/>
+            <line number="50" hits="2"/>
+            <line number="51" hits="0"/>
+            <line number="53" hits="2"/>
+            <line number="58" hits="0"/>
           </lines>
         </class>
       </classes>
@@ -16802,9 +16814,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/GetDicomSeriesPreview/GetDicomSeriesPreview.php" line-rate="0.78787878787879" branch-rate="0" complexity="6">
+    <package name="GaelO/UseCases/GetDicomSeriesPreview/GetDicomSeriesPreview.php" line-rate="0.76470588235294" branch-rate="0" complexity="6">
       <classes>
-        <class name="App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreview" filename="GaelO/UseCases/GetDicomSeriesPreview/GetDicomSeriesPreview.php" line-rate="0.78787878787879" branch-rate="0" complexity="6">
+        <class name="App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreview" filename="GaelO/UseCases/GetDicomSeriesPreview/GetDicomSeriesPreview.php" line-rate="0.76470588235294" branch-rate="0" complexity="6">
           <methods>
             <method name="__construct" signature="App\GaelO\Services\AuthorizationService\AuthorizationVisitService $authorizationVisitService, App\GaelO\Repositories\DicomSeriesRepository $dicomSeriesRepository, App\GaelO\Interfaces\Repositories\VisitRepositoryInterface $visitRepositoryInterface, App\GaelO\Services\FileCacheService $fileCacheService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -16814,7 +16826,7 @@
                 <line number="26" hits="1"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewRequest $getDicomSeriesPreviewRequest, App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewResponse $getDicomSeriesPreviewResponse" line-rate="0.73913043478261" branch-rate="0" complexity="3">
+            <method name="execute" signature="App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewRequest $getDicomSeriesPreviewRequest, App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewResponse $getDicomSeriesPreviewResponse" line-rate="0.70833333333333" branch-rate="0" complexity="3">
               <lines>
                 <line number="33" hits="1"/>
                 <line number="34" hits="1"/>
@@ -16839,16 +16851,17 @@
                 <line number="58" hits="0"/>
                 <line number="59" hits="0"/>
                 <line number="60" hits="0"/>
+                <line number="61" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId, string $role, int $visitId, string $studyName, array $visitContext" line-rate="0.83333333333333" branch-rate="0" complexity="2">
               <lines>
-                <line number="66" hits="1"/>
                 <line number="67" hits="1"/>
                 <line number="68" hits="1"/>
                 <line number="69" hits="1"/>
-                <line number="71" hits="1"/>
-                <line number="72" hits="0"/>
+                <line number="70" hits="1"/>
+                <line number="72" hits="1"/>
+                <line number="73" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -16880,12 +16893,13 @@
             <line number="58" hits="0"/>
             <line number="59" hits="0"/>
             <line number="60" hits="0"/>
-            <line number="66" hits="1"/>
+            <line number="61" hits="0"/>
             <line number="67" hits="1"/>
             <line number="68" hits="1"/>
             <line number="69" hits="1"/>
-            <line number="71" hits="1"/>
-            <line number="72" hits="0"/>
+            <line number="70" hits="1"/>
+            <line number="72" hits="1"/>
+            <line number="73" hits="0"/>
           </lines>
         </class>
       </classes>
