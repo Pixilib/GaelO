@@ -6,6 +6,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use Illuminate\Contracts\Cache\Store;
 use League\Flysystem\Filesystem;
+use Throwable;
 
 /**
  * File Cache using Azure blob storage, this cache adapter does not implement auto delete of files which should be 
@@ -31,12 +32,11 @@ class AzureCacheAdapter implements Store
     public function get($key)
     {
         $path = $this->getPath($key);
-
-        if ($this->fileSystem->fileExists($path)) {
+        try {
+            return $this->fileSystem->read($path);
+        } catch (Throwable $e) {
             throw new GaelONotFoundException("File doesn't exist in azure cache");
         }
-
-        return $this->fileSystem->read($path);
     }
 
     public function many(array $keys)
@@ -83,8 +83,12 @@ class AzureCacheAdapter implements Store
     public function forget($key)
     {
         $path = $this->getPath($key);
-        $this->fileSystem->delete($path);
-        return true;
+        try {
+            $this->fileSystem->delete($path);
+            return true;
+        } catch (Throwable $t) {
+            throw new GaelONotFoundException("File cache delete file");
+        }
     }
 
     public function flush()
