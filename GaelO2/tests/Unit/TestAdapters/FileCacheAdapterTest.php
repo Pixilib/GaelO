@@ -19,20 +19,20 @@ class FileCacheAdapterTest extends TestCase
 
     public function testReadFile()
     {
-        $this->fileCacheAdapter->store('keyFile2', 'payload');
+        $this->fileCacheAdapter->store('keyFile2', 'payload', null);
         $content = $this->fileCacheAdapter->get('keyFile2');
         $this->assertEquals('payload', $content);
     }
 
     public function testStoreFile()
     {
-        $success = $this->fileCacheAdapter->store('keyFile', 'payload');
+        $success = $this->fileCacheAdapter->store('keyFile', 'payload', null);
         $this->assertTrue($success);
     }
 
     public function testDeleteFile()
     {
-        $this->fileCacheAdapter->store('keyFile3', 'payload');
+        $this->fileCacheAdapter->store('keyFile3', 'payload', null);
         $success = $this->fileCacheAdapter->delete('keyFile3');
         $this->assertTrue($success);
     }
