@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadataResponse;
 use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreview;
 use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewRequest;
 use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewResponse;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReport;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReportRequest;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReportResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
@@ -176,7 +179,7 @@ class DicomController extends Controller
         $getDicomStudyMetadataRequest->role = $queryParam['role'];
         $getDicomStudyMetadataRequest->studyName = $queryParam['studyName'];
         $getDicomStudyMetadataRequest->currentUserId = $currentUser['id'];
-        
+
 
         $getDicomStudyMetadata->execute($getDicomStudyMetadataRequest, $getDicomStudyMetadataResponse);
 
@@ -212,5 +215,22 @@ class DicomController extends Controller
         $getDicomSeriesPreview->execute($getDicomSeriesPreviewRequest, $getDicomSeriesPreviewResponse);
 
         return response($getDicomSeriesPreviewResponse->body, $getDicomSeriesPreviewResponse->status)->header('Content-Type', $getDicomSeriesPreviewResponse->contentType);
+    }
+
+    public function getSeriesTmtvReport(Request $request, GetDicomSeriesTmtvReport $getDicomSeriesTmtvReport, GetDicomSeriesTmtvReportRequest $getDicomSeriesTmtvRequest, GetDicomSeriesTmtvReportResponse $getDicomSeriesTmtvReportResponse, string $seriesInstanceUID, string $type)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesTmtvRequest->role = $queryParam['role'];
+        $getDicomSeriesTmtvRequest->studyName = $queryParam['studyName'];
+        $getDicomSeriesTmtvRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesTmtvRequest->type = $type;
+        $getDicomSeriesTmtvRequest->methodology = $queryParam['methodology'];
+        $getDicomSeriesTmtvRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesTmtvReport->execute($getDicomSeriesTmtvRequest, $getDicomSeriesTmtvReportResponse);
+
+        return response($getDicomSeriesTmtvReportResponse->body, $getDicomSeriesTmtvReportResponse->status)->header('Content-Type', $getDicomSeriesTmtvReportResponse->contentType);
     }
 }

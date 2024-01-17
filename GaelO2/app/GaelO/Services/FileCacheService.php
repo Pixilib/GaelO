@@ -31,9 +31,42 @@ class FileCacheService
         return $this->fileCacheAdapter->store('preview-' . $seriesInstanceUID . '-' . $index, $value, $ttl);
     }
 
+    /**
+     * Methodology should be 41 / 25 / 4
+     */
+    public function storeTmtvPreview(string $seriesInstanceUID, string $methodology, $value, ?int $ttl = null)
+    {
+        return $this->fileCacheAdapter->store('tmtv-preview-' . $seriesInstanceUID . '-' . $methodology, $value, $ttl);
+    }
+
+    public function storeTmtvResults(string $seriesInstanceUID, string $methodology, $value, ?int $ttl = null)
+    {
+        return $this->fileCacheAdapter->store('tmtv-results-' . $seriesInstanceUID . '-' . $methodology, $value, $ttl);
+    }
+
     public function deleteSeriesPreview(string $seriesInstanceUID, int $index)
     {
-        return $this->fileCacheAdapter->delete('preview-' . $seriesInstanceUID . '-' . $index);
+        return $this->fileCacheAdapter->delete('tmtv-preview-' . $seriesInstanceUID . '-' . $index);
+    }
+
+    public function deleteTmtvResults(string $seriesInstanceUID, int $index)
+    {
+        return $this->fileCacheAdapter->delete('tmtv-results-' . $seriesInstanceUID . '-' . $index);
+    }
+
+    public function deleteTmtvPreview(string $seriesInstanceUID, string $methodology)
+    {
+        return $this->fileCacheAdapter->delete('tmtv-' . $seriesInstanceUID . '-' . $methodology);
+    }
+
+    public function getTmtvResults(string $seriesInstanceUID, string $methodology)
+    {
+        return $this->fileCacheAdapter->get('tmtv-results-' . $seriesInstanceUID . '-' . $methodology);
+    }
+
+    public function getTmtvPreview(string $seriesInstanceUID, string $methodology)
+    {
+        return $this->fileCacheAdapter->get('tmtv-preview-' . $seriesInstanceUID . '-' . $methodology);
     }
 
     /**
