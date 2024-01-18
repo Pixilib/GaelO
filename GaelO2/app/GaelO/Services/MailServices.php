@@ -607,7 +607,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $magicLink, string $email)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $magicLink, int $userId)
     {
         $parameters = [
             'patientCode' => $patientCode,
@@ -616,7 +616,7 @@ class MailServices
             'magicLink' => $magicLink,
         ];
 
-        $this->mailInterface->setTo([$email]);
+        $this->mailInterface->setTo([$this->getUserEmail($userId)]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);
