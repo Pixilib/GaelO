@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.8245704823018" branch-rate="0" lines-covered="7967" lines-valid="9662" branches-covered="0" branches-valid="0" complexity="2653" version="0.4" timestamp="1705596978">
+<coverage line-rate="0.8245704823018" branch-rate="0" lines-covered="7967" lines-valid="9662" branches-covered="0" branches-valid="0" complexity="2653" version="0.4" timestamp="1705597062">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -8902,7 +8902,7 @@
                 <line number="607" hits="0"/>
               </lines>
             </method>
-            <method name="sendRadiomicsReport" signature="string $studyName, string $patientCode, string $visitType, string $magicLink, string $email" line-rate="0" branch-rate="0" complexity="1">
+            <method name="sendRadiomicsReport" signature="string $studyName, string $patientCode, string $visitType, string $magicLink, int $userId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
                 <line number="612" hits="0"/>
                 <line number="613" hits="0"/>
