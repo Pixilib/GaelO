@@ -607,18 +607,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, array $emailList)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $magicLink, string $email)
     {
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
             'studyName' => $studyName,
-            'visitDate' => $visitDate,
-            'image_path' => [$imagePath],
-            'stats' => $stats
+            'magicLink' => $magicLink,
         ];
 
-        $this->mailInterface->setTo($emailList);
+        $this->mailInterface->setTo([$email]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);
