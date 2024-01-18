@@ -140,7 +140,7 @@
                   <tbody>
                     <tr>
                       <td align="center" class="text-color" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">The Visit {{$visitType}} of the patient {{$patientCode}} from the {{$studyName}}, has the TMTV report ready</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">The TMTV report of the patient {{$patientCode}} is ready !</div>
                       </td>
                     </tr>
                   </tbody>
