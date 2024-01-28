@@ -19,6 +19,7 @@ return [
     */
 
     'default' => env('CACHE_DRIVER', 'file'),
+    'file-cache' => env('FILE_CACHE_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
@@ -85,6 +86,13 @@ return [
             'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
             'endpoint' => env('DYNAMODB_ENDPOINT'),
         ],
+
+        'azure' => [
+            'driver' => 'azure',
+            'dsn' =>env('AZURE_BLOB_DSN'),
+            'container'=>env('AZURE_FILE_CACHE_CONTAINER_NAME'),
+            'prefix' => env('AZURE_BLOB_PREFIX', '') 
+        ]
 
     ],
 

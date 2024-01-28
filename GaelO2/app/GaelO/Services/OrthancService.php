@@ -8,6 +8,7 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
@@ -472,4 +473,13 @@ class OrthancService
         $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $instanceOrthancID . '/preview?returnUnsupportedImage',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
+
+    public function sendDicomToProcessing(string $orthancSeriesIdPt, GaelOProcessingService $gaelOProcessingService)
+    {
+        $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $this->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
+        $gaelOProcessingService->createDicom($temporaryZipDicom);
+        unlink($temporaryZipDicom);        
+    }
+
 }

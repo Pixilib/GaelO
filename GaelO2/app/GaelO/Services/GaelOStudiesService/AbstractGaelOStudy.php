@@ -4,6 +4,7 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -137,6 +138,7 @@ abstract class AbstractGaelOStudy
         $currentUserId = $qcModifiedEvent->getCurrentUserId();
         $visitModality = $qcModifiedEvent->getVisitModality();
         $qcStatus = $qcModifiedEvent->getQcStatus();
+        $reviewNeeded = $qcModifiedEvent->isReviewNeeded();
 
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
         $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
@@ -159,6 +161,12 @@ abstract class AbstractGaelOStudy
             $qcModifiedEvent->getFormQcComment(),
             $qcModifiedEvent->getImageQcComment()
         );
+
+        if ($qcStatus === QualityControlStateEnum::ACCEPTED->value && $reviewNeeded) {
+            $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+            $this->mailServices->sendReviewReadyMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
+        }
     }
 
     protected function onCorrectiveAction(CorrectiveActionEvent $correctiveActionEvent)

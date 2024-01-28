@@ -16,40 +16,11 @@
       </mj-column>
     </mj-section>
     <mj-section>
-      <mj-column>
-        <mj-text align="center" css-class="text-color"> Visit {{$visitType}} of the patient {{$patientCode}} from the {{$studyName}}.</mj-text>
-        <mj-text align="center" line-height="16px">
-          Visit Date: {{$visitDate}}
-        </mj-text>
+      <mj-column width="100%">
+        <mj-text align="center" css-class="text-color"> The TMTV report of the patient {{$patientCode}} is ready !</mj-text>
       </mj-column>
-    </mj-section>
-    <mj-raw>
-      @if(!empty($message))
-    </mj-raw>
-    <mj-section>
-      <mj-raw>
-        @foreach($image_path as $path)
-      </mj-raw>
-      <mj-column>
-        <mj-image alt="tmtv preview" src="{{$message->embed($path ?? public_path('static/media/ban-image-photo-icon.png'))}}" align="center"></mj-image>
-      </mj-column>
-      <mj-raw>
-        @endforeach
-      </mj-raw>
-    </mj-section>
-    <mj-raw>
-      @endif
-    </mj-raw>
-    <mj-section>
-      <mj-column>
-        <mj-table css-class="table-striped" role="presentation">
-          @foreach($stats as $key => $value)
-          <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
-            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
-          </tr>
-          @endforeach
-        </mj-table>
+      <mj-column width="100%">
+        <mj-button align="center" href="{{ $magicLink }}" rel="noopener" background-color="#2ec086" mj-class="button">Access TMTV report</mj-button>
       </mj-column>
     </mj-section>
     <mj-section>

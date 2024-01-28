@@ -8,12 +8,24 @@ use App\GaelO\UseCases\DeleteSeries\DeleteSeriesResponse;
 use App\GaelO\UseCases\GetDicoms\GetDicoms;
 use App\GaelO\UseCases\GetDicoms\GetDicomsRequest;
 use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadata;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadataRequest;
+use App\GaelO\UseCases\GetDicomSeriesMetadata\GetDicomSeriesMetadataResponse;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreview;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewRequest;
+use App\GaelO\UseCases\GetDicomSeriesPreview\GetDicomSeriesPreviewResponse;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReport;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReportRequest;
+use App\GaelO\UseCases\GetDicomSeriesTmtvReport\GetDicomSeriesTmtvReportResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorResponse;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadata;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadataRequest;
+use App\GaelO\UseCases\GetDicomStudyMetadata\GetDicomStudyMetadataResponse;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisor;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorRequest;
 use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorResponse;
@@ -156,5 +168,69 @@ class DicomController extends Controller
             return response()->json($getNiftiFileSupervisorResponse->body)
                 ->setStatusCode($getNiftiFileSupervisorResponse->status, $getNiftiFileSupervisorResponse->statusText);
         }
+    }
+
+    public function getStudyMetadata(Request $request, GetDicomStudyMetadata $getDicomStudyMetadata, GetDicomStudyMetadataRequest $getDicomStudyMetadataRequest, GetDicomStudyMetadataResponse $getDicomStudyMetadataResponse, string $studyInstanceUID)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomStudyMetadataRequest->studyInstanceUID = $studyInstanceUID;
+        $getDicomStudyMetadataRequest->role = $queryParam['role'];
+        $getDicomStudyMetadataRequest->studyName = $queryParam['studyName'];
+        $getDicomStudyMetadataRequest->currentUserId = $currentUser['id'];
+
+
+        $getDicomStudyMetadata->execute($getDicomStudyMetadataRequest, $getDicomStudyMetadataResponse);
+
+        return $this->getJsonResponse($getDicomStudyMetadataResponse->body, $getDicomStudyMetadataResponse->status, $getDicomStudyMetadataResponse->statusText);
+    }
+
+    public function getSeriesMetadata(Request $request, GetDicomSeriesMetadata $getDicomSeriesMetadata, GetDicomSeriesMetadataRequest $getDicomSeriesMetadataRequest, GetDicomSeriesMetadataResponse $getDicomSeriesMetadataResponse, string $seriesInstanceUID)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesMetadataRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesMetadataRequest->role = $queryParam['role'];
+        $getDicomSeriesMetadataRequest->studyName = $queryParam['studyName'];
+        $getDicomSeriesMetadataRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesMetadata->execute($getDicomSeriesMetadataRequest, $getDicomSeriesMetadataResponse);
+
+        return $this->getJsonResponse($getDicomSeriesMetadataResponse->body, $getDicomSeriesMetadataResponse->status, $getDicomSeriesMetadataResponse->statusText);
+    }
+
+    public function getSeriesPreview(Request $request, GetDicomSeriesPreview $getDicomSeriesPreview, GetDicomSeriesPreviewRequest $getDicomSeriesPreviewRequest, GetDicomSeriesPreviewResponse $getDicomSeriesPreviewResponse, string $seriesInstanceUID, int $index)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesPreviewRequest->role = $queryParam['role'];
+        $getDicomSeriesPreviewRequest->studyName = $queryParam['studyName'];
+        $getDicomSeriesPreviewRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesPreviewRequest->index = $index;
+        $getDicomSeriesPreviewRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesPreview->execute($getDicomSeriesPreviewRequest, $getDicomSeriesPreviewResponse);
+
+        return response($getDicomSeriesPreviewResponse->body, $getDicomSeriesPreviewResponse->status)->header('Content-Type', $getDicomSeriesPreviewResponse->contentType);
+    }
+
+    public function getSeriesTmtvReport(Request $request, GetDicomSeriesTmtvReport $getDicomSeriesTmtvReport, GetDicomSeriesTmtvReportRequest $getDicomSeriesTmtvRequest, GetDicomSeriesTmtvReportResponse $getDicomSeriesTmtvReportResponse, string $seriesInstanceUID, string $type)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomSeriesTmtvRequest->role = $queryParam['role'];
+        $getDicomSeriesTmtvRequest->studyName = $queryParam['studyName'];
+        $getDicomSeriesTmtvRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getDicomSeriesTmtvRequest->type = $type;
+        $getDicomSeriesTmtvRequest->methodology = $queryParam['methodology'];
+        $getDicomSeriesTmtvRequest->currentUserId = $currentUser['id'];
+
+        $getDicomSeriesTmtvReport->execute($getDicomSeriesTmtvRequest, $getDicomSeriesTmtvReportResponse);
+
+        return response($getDicomSeriesTmtvReportResponse->body, $getDicomSeriesTmtvReportResponse->status)->header('Content-Type', $getDicomSeriesTmtvReportResponse->contentType);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -45,9 +46,18 @@ class FrameworkAdapter implements FrameworkInterface
         Storage::delete($path);
     }
 
-    public static function getFile(string $path): string
+    public static function getFile(string $path, bool $asStream = false): mixed
     {
-        return Storage::get($path);
+        if ($asStream) {
+            $file = Storage::readStream($path);
+        } else {
+            $file = Storage::get($path);
+        }
+
+        if ($file === null) {
+            throw new GaelOException("File not found in storage");
+        }
+        return $file;
     }
 
     public static function sendRegisteredEventForEmailVerification(int $userId): void

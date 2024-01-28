@@ -9,7 +9,7 @@ interface VisitGroupRepositoryInterface
 
     public function delete($id) : void ;
 
-    public function createVisitGroup(String $studyName, String $name, String $modality)  : void ;
+    public function createVisitGroup(String $studyName, String $name, String $modality)  : array ;
 
     public function hasVisitTypes(int $visitGroupId) : bool ;
 

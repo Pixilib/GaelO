@@ -41,7 +41,7 @@ class GetDicomFileSupervisorTest extends TestCase
         $dicomRepositoryMock->shouldReceive('getRelatedVisitIdFromSeriesInstanceUID')
             ->andReturn([1]);
 
-        $dicomRepositoryMock->shouldReceive('getSeriesOrthancIDOfSeriesInstanceUID')
+        $dicomRepositoryMock->shouldReceive('getSeriesOrthancIDsOfSeriesInstanceUIDs')
             ->andReturn(['1234-1234-1234-1234']);
 
         $visitRepositoryMock = Mockery::mock(VisitRepository::class);

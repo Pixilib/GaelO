@@ -472,7 +472,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, ?string $patientCode, ?string $visitType)
+    public function sendMailToSupervisors(?int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, ?string $patientCode, ?string $visitType)
     {
 
         $parameters = [
@@ -490,13 +490,33 @@ class MailServices
         $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR);
 
         $this->mailInterface->setTo($mailListBuilder->get());
-        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        if ($senderId !== null) {
+            $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        }
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
     }
 
-    public function sendMailToUser(int $senderId, array $userIds, ?string $studyName, string $subject, string $content)
+    public function sendMailToEmails(?int $senderId, array $toEmails, ?string $studyName, string $subject, string $content)
+    {
+        $parameters = [
+            'study' => $studyName,
+            'subject' => $subject,
+            'content' => $content,
+            'canReply' => true
+        ];
+
+        $this->mailInterface->setTo($toEmails);
+        if ($senderId !== null) {
+            $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        }
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER);
+        $this->mailInterface->send();
+    }
+
+    public function sendMailToUser(?int $senderId, array $userIds, ?string $studyName, string $subject, string $content)
     {
         $parameters = [
             'study' => $studyName,
@@ -510,7 +530,9 @@ class MailServices
             $mailListBuilder->withUserEmail($userId);
         }
         $this->mailInterface->setTo($mailListBuilder->get());
-        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        if ($senderId !== null) {
+            $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        }
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
@@ -568,24 +590,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magicLinkAccepted, string $magicLinkRefused, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, string $magicLink, string $controllerEmail)
     {
-
-        $isVisitDateExpected = true;
-
-        if (isset($studyInfo['visitDate']) && isset($studyInfo['studyDetails']['Study Date'])) {
-            $isVisitDateExpected = ($studyInfo['visitDate'] === $studyInfo['studyDetails']['Study Date']);
-        }
 
         $parameters = [
             'study' => $studyName,
             'visitType' => $visitType,
             'patientCode' => $patientCode,
-            'studyInfo' => $studyInfo,
-            'seriesInfo' => $seriesInfo,
-            'warningVisitDate' =>  $isVisitDateExpected === false,
-            'magicLinkAccepted' => $magicLinkAccepted,
-            'magicLinkRefused' => $magicLinkRefused
+            'magicLink' => $magicLink,
         ];
 
         $this->mailInterface->setTo([$controllerEmail]);
@@ -595,22 +607,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, int $uploaderId)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $magicLink, int $userId)
     {
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
             'studyName' => $studyName,
-            'visitDate' => $visitDate,
-            'image_path' => [$imagePath],
-            'stats' => $stats
+            'magicLink' => $magicLink,
         ];
 
-        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface, $this->studyRepositoryInterface);
-        $mailListBuilder->withUserEmail($uploaderId)
-            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR);
-
-        $this->mailInterface->setTo($mailListBuilder->get());
+        $this->mailInterface->setTo([$this->getUserEmail($userId)]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);

@@ -57,6 +57,9 @@ class ValidateDicomUpload
     {
 
         try {
+            //Run as a background task even if the user leave the website
+            ignore_user_abort(true);
+
             //Initialize unzipPath to avoid null pointer in catch
             $unzipedPath = null;
             //Retrieve Visit Context

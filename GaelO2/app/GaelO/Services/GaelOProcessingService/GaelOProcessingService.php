@@ -5,7 +5,6 @@ namespace App\GaelO\Services\GaelOProcessingService;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
-use Illuminate\Support\Facades\Log;
 
 class GaelOProcessingService
 {
@@ -38,7 +37,8 @@ class GaelOProcessingService
         return $request->getBody();
     }
 
-    public function createDicom(string $filename){
+    public function createDicom(string $filename)
+    {
         $request = $this->httpClientInterface->uploadFile('POST', "/dicoms", $filename);
         return $request->getBody();
     }
@@ -49,11 +49,24 @@ class GaelOProcessingService
         return $request->getJsonBody();
     }
 
-    public function createMIPForSeries(string $seriesId, array $payload = []): string
+    /**
+     * Return gif
+     */
+    public function createMIPForSeries(string $seriesId, array $payload = ['orientation' => 'LPI']): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['Content-Type' => 'application/json'], $payload);
+        return $downloadedFilePath;
+    }
+
+    /**
+     * return png
+     */
+    public function createMosaicForSeries(string $seriesId, array $payload = ["min" => null, "max" => null, "cols" => 5, "nbImages" => 20, "width" => 512, "height" => 512, "orientation"=>"LPI"]): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mosaic", $downloadedFilePath, ['Content-Type' => 'application/json'], $payload);
         return $downloadedFilePath;
     }
 
@@ -61,7 +74,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/masks/" . $maskId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/masks/" . $maskId . "/file", $downloadedFilePath, ['Content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
 
@@ -69,7 +82,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['Content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
 
@@ -151,6 +164,12 @@ class GaelOProcessingService
     public function getStatsMask(string $maskId): array
     {
         $request = $this->httpClientInterface->requestJson('GET', "/masks/" . $maskId . "/stats");
+        return $request->getJsonBody();
+    }
+
+    public function getStatsMaskSeries(string $maskId, string $seriesId): array
+    {
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/stats-mask-image", ["seriesId" => $seriesId, "maskId" => $maskId]);
         return $request->getJsonBody();
     }
 

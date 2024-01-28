@@ -13,7 +13,7 @@ use ZipArchive;
 class Util
 {
 
-    public static function fillObject(array $dataToExtract, object $dataToFill) :void
+    public static function fillObject(array $dataToExtract, object $dataToFill): void
     {
         //Get Expected properties awaited in DTO Request
         $reflect = new ReflectionClass($dataToFill);
@@ -45,15 +45,24 @@ class Util
         ));
     }
 
-    public static function addStoredFilesInZip(ZipArchive $zip, ?string $path)
+    public static function addStoredFilesInZipAndClose(ZipArchive $zip, ?string $path)
     {
 
         $files = FrameworkAdapter::getStoredFiles($path);
-
+        $temporaryFilesToDelete=[];
         foreach ($files as $file) {
-            // Add current file to archive
-            $fileContent = FrameworkAdapter::getFile($file);
-            $zip->addFromString($file, $fileContent);
+            // Add current file to archive using data as stream to prevent running out memory for large files
+            $tempraryFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMPEXP_');
+            $temporaryFilesToDelete[] = $tempraryFilePath;
+            $fileContent = FrameworkAdapter::getFile($file, true);
+            stream_copy_to_stream($fileContent, fopen($tempraryFilePath, 'w'));
+            $zip->addFile($tempraryFilePath, $file);
+        }
+        //Close to build the zip as the operation is async
+        $zip->close();
+        //Delete all temporary files
+        foreach($temporaryFilesToDelete as $temp){
+            unlink($temp);
         }
     }
 
@@ -131,7 +140,7 @@ class Util
         return preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/', $version);
     }
 
-    public static function isUrlSafeString(string $value) :bool
+    public static function isUrlSafeString(string $value): bool
     {
         return preg_match('/^[a-zA-Z0-9_-]*$/', $value);
     }

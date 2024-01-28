@@ -56,7 +56,6 @@ use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
@@ -300,7 +299,7 @@ class ReviewController extends Controller
 
         $getAssociatedDataForReview->execute($getAssociatedDataForReviewRequest, $getAssociatedDataForReviewResponse);
 
-        return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText);
+        return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText, true);
     }
 
     public function getAssociatedDataOfVisitForInvestigator(Request $request, GetAssociatedDataForInvestigator $getAssociatedDataForInvestigator, GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse, int $visitId)
@@ -314,6 +313,6 @@ class ReviewController extends Controller
 
         $getAssociatedDataForInvestigator->execute($getAssociatedDataForInvestigatorRequest, $getAssociatedDataForInvestigatorResponse);
 
-        return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText);
+        return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText, true);
     }
 }
