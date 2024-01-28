@@ -10,7 +10,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class DeleteOldVisits extends Command
+class DeleteVisitsOlderThan extends Command
 {
 
     private Study $study;
@@ -23,7 +23,7 @@ class DeleteOldVisits extends Command
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-old-visits {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation}';
+    protected $signature = 'gaelo:delete-visits-older-than {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation}';
 
     /**
      * The console command description.
@@ -82,6 +82,10 @@ class DeleteOldVisits extends Command
                 return $visit['id'];
             }, $visits->toArray());
 
+            $patientIds = array_map(function ($visit) {
+                return $visit['patient']['id'];
+            }, $visits->toArray());
+
             $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
             $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
             $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
@@ -95,19 +99,17 @@ class DeleteOldVisits extends Command
             $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
             $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
             //Remove patients with no visits
-            $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($studyName);
+            $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($patientIds);
 
-
-            if ($this->option('deleteDicom') && $this->confirm('Found ' . sizeOf($orthancIdArray) . ' series to delete, do you want to continue ?')) {
-                foreach ($orthancIdArray as $seriesOrthancId) {
-                    try {
-                        $this->info('Deleting ' . $seriesOrthancId);
-                        $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
-                    } catch (Exception $e) {
-                        Log::error($e->getMessage());
-                    }
+            foreach ($orthancIdArray as $seriesOrthancId) {
+                try {
+                    $this->info('Deleting ' . $seriesOrthancId);
+                    $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                } catch (Exception $e) {
+                    Log::error($e->getMessage());
                 }
             }
+            
 
             $this->info('The command was successful !');
         }

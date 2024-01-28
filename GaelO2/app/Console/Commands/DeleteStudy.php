@@ -9,7 +9,6 @@ use App\Models\Visit;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class DeleteStudy extends Command
 {
@@ -24,14 +23,14 @@ class DeleteStudy extends Command
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-study {studyName : the study name to delete} {--deleteDicom : delete dicom in Orthanc} { --deleteAssociatedFile : delete associated files}';
+    protected $signature = 'gaelo:delete-study {studyName : the study name to delete}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete a Study from GaelO (hard delete)';
+    protected $description = 'Delete a Study from GaelO (hard delete), including DICOM and associated files';
 
     /**
      * Execute the console command.
@@ -111,27 +110,18 @@ class DeleteStudy extends Command
                 $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
                 $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
                 $this->gaelODeleteRessourcesRepository->deleteVisitGroupAndVisitType($studyName);
-                $this->gaelODeleteRessourcesRepository->deletePatient($studyName);
+                $this->gaelODeleteRessourcesRepository->deleteAllPatientsOfStudy($studyName);
             }
 
             $this->gaelODeleteRessourcesRepository->deleteStudy($studyName);
 
-            $confirmDeleteDicom = $this->confirm('Found ' . sizeOf($orthancIdArray) . ' series to delete, do you want to continue ?');
-            $confirmDeleteAssociatedFiles = $this->confirm('Going to delete associated file, do you want to continue ?');
-
-            if ($this->option('deleteDicom') && $confirmDeleteDicom) {
-                foreach ($orthancIdArray as $seriesOrthancId) {
-                    try {
-                        $this->info('Deleting ' . $seriesOrthancId);
-                        $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
-                    } catch (Exception $e) {
-                        Log::error($e->getMessage());
-                    }
+            foreach ($orthancIdArray as $seriesOrthancId) {
+                try {
+                    $this->info('Deleting ' . $seriesOrthancId);
+                    $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                } catch (Exception $e) {
+                    Log::error($e->getMessage());
                 }
-            }
-
-            if ($this->option('deleteAssociatedFile') && $confirmDeleteAssociatedFiles) {
-                Storage::deleteDirectory($studyName);
             }
 
             $this->info('The command was successful !');

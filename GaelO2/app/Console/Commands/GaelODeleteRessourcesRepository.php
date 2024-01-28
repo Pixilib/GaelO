@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Documentation;
@@ -28,6 +29,7 @@ class GaelODeleteRessourcesRepository
     private Role $role;
     private VisitGroup $visitGroup;
     private Review $review;
+    private FrameworkInterface $frameworkInterface;
 
     public function __construct(
         Study $study,
@@ -40,7 +42,8 @@ class GaelODeleteRessourcesRepository
         Tracker $tracker,
         Documentation $documentation,
         Review $review,
-        ReviewStatus $reviewStatus
+        ReviewStatus $reviewStatus,
+        FrameworkInterface $frameworkInterface
     ) {
 
         $this->study = $study;
@@ -54,11 +57,16 @@ class GaelODeleteRessourcesRepository
         $this->role = $role;
         $this->review = $review;
         $this->reviewStatus = $reviewStatus;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function deleteDocumentation(string $studyName)
     {
-        $this->documentation->where('study_name', $studyName)->withTrashed()->forceDelete();
+        $documentations = $this->documentation->where('study_name', $studyName)->withTrashed();
+        foreach($documentations as $documentation){
+            $this->frameworkInterface->deleteFile($documentation['path']);
+            $documentation->forceDelete();
+        }
     }
 
     public function deleteRoles(string $studyName)
@@ -88,19 +96,26 @@ class GaelODeleteRessourcesRepository
         })->withTrashed()->forceDelete();
     }
 
-    public function deletePatient(string $studyName)
+    public function deleteAllPatientsOfStudy(string $studyName)
     {
         $this->patient->where('study_name', $studyName)->delete();
     }
 
-    public function deletePatientsWithNoVisits(string $studyName)
+    public function deletePatientsWithNoVisits(array $patientIds)
     {
-        $this->patient->where('study_name', $studyName)->doesntHave('visits')->delete();
+        $this->patient->whereIn('id', $patientIds)->doesntHave('visits')->delete();
     }
 
     public function deleteReviews(array $visitIds, string $studyName)
     {
-        $this->review->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->withTrashed()->forceDelete();
+        $reviews = $this->review->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->withTrashed();
+        foreach ($reviews as $review) {
+            $files = $review['sent_files'];
+            foreach ($files as $key => $path) {
+                $this->frameworkInterface->deleteFile($path);
+            }
+            $review->forceDelete();
+        }
     }
 
     public function deleteReviewStatus(array $visitIds, String $studyName)
@@ -116,7 +131,14 @@ class GaelODeleteRessourcesRepository
 
     public function deleteVisits(array $visitIds)
     {
-        $this->visit->whereIn('id', $visitIds)->withTrashed()->forceDelete();
+        $visits = $this->visit->whereIn('id', $visitIds)->withTrashed();
+        foreach ($visits as $visit) {
+            $files = $visit['sent_files'];
+            foreach ($files as $key => $path) {
+                $this->frameworkInterface->deleteFile($path);
+            }
+            $visit->forceDelete();
+        }
     }
 
     public function deleteVisitGroupAndVisitType(string $studyName)
