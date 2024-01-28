@@ -52,6 +52,7 @@ class DeleteVisitsOlderThan extends Command
         $this->orthancService->setOrthancServer(true);
 
         $studyName = $this->argument('studyName');
+        $numberOfDays = $this->argument('numberOfDays');
         $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
 
         if ($studyName !== $studyNameConfirmation) {
@@ -76,7 +77,7 @@ class DeleteVisitsOlderThan extends Command
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
             //Get visits created more than 5 day
-            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-5 days")));
+            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-".$numberOfDays." days")));
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
@@ -94,6 +95,8 @@ class DeleteVisitsOlderThan extends Command
             $orthancIdArray = array_map(function ($seriesId) {
                 return $seriesId['orthanc_id'];
             }, $dicomSeries);
+
+            $this->info(implode(",", $visitIds));
 
             $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
             $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);

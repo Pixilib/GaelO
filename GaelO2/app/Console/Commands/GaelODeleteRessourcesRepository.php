@@ -108,7 +108,7 @@ class GaelODeleteRessourcesRepository
 
     public function deleteReviews(array $visitIds, string $studyName)
     {
-        $reviews = $this->review->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->withTrashed();
+        $reviews = $this->review->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->withTrashed()->get();
         foreach ($reviews as $review) {
             $files = $review['sent_files'];
             foreach ($files as $key => $path) {
@@ -131,7 +131,7 @@ class GaelODeleteRessourcesRepository
 
     public function deleteVisits(array $visitIds)
     {
-        $visits = $this->visit->whereIn('id', $visitIds)->withTrashed();
+        $visits = $this->visit->whereIn('id', $visitIds)->withTrashed()->get();
         foreach ($visits as $visit) {
             $files = $visit['sent_files'];
             foreach ($files as $key => $path) {

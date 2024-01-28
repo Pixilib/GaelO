@@ -16,7 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class DeleteCommandTest extends TestCase
+class DeleteVisitOlderCommandTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -49,30 +49,20 @@ class DeleteCommandTest extends TestCase
             $mock->shouldReceive('deleteFromOrthanc')->andReturn(true);
         });
         app()->instance(OrthancService::class, $mockOrthancService);
-        $this->study->delete();
     }
 
     public function testDeleteCommandShouldFailWrongStudyNameConfirmation()
     {
         $studyName = $this->study->name;
-        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', 'WrongStudyName')
+        $this->artisan('gaelo:delete-visits-older-than ' . $studyName . " 0")->expectsQuestion('Warning : Please confirm study Name', 'WrongStudyName')
             ->expectsOutput('Wrong study name, terminating');
-    }
-
-    public function testDeleteCommandShouldFailStudyNotDeleted()
-    {
-        $this->study->restore();
-        $studyName = $this->study->name;
-        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-            ->expectsOutput('Study is not soft deleted, terminating');
     }
 
     public function testDeleteCommand()
     {
         $studyName = $this->study->name;
-        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        $this->artisan('gaelo:delete-visits-older-than ' . $studyName . " 0")->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
-            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
             ->expectsOutput('The command was successful !');
     }
 
@@ -80,7 +70,7 @@ class DeleteCommandTest extends TestCase
     {
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
-        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        $this->artisan('gaelo:delete-visits-older-than ' . $studyName . " 0")->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsOutput('Delete all ancilaries studies first');
     }
 }
