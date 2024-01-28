@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\GaelODeleteRessourcesRepository;
 use App\GaelO\Adapters\AzureCacheAdapter;
 use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
@@ -42,6 +43,7 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(PhoneNumberInterface::class, PhoneNumberAdapter::class);
         $this->app->bind(JobInterface::class, JobAdapter::class);
         $this->app->bind(PdfInterface::class, PdfAdapter::class);
+        $this->app->bind(GaelODeleteRessourcesRepository::class, GaelODeleteRessourcesRepository::class);
     }
 
     /**

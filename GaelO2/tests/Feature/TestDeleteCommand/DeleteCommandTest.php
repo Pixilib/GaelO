@@ -20,6 +20,15 @@ class DeleteCommandTest extends TestCase
 {
 
     use RefreshDatabase;
+    private Study $study;
+    private VisitGroup $visitGroup;
+    private VisitType $visitType;
+    private Patient $patient;
+    private Visit $visit;
+    private DicomStudy $dicomStudy;
+    private DicomSeries $dicomSeries;
+    private Review $review;
+    private ReviewStatus $reviewStatus;
 
     protected function setUp(): void
     {
@@ -65,28 +74,6 @@ class DeleteCommandTest extends TestCase
         $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
-            ->expectsOutput('The command was successful !');
-    }
-
-    public function testDeleteCommandWithDeleteDicom()
-    {
-        $studyName = $this->study->name;
-        $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom')->expectsQuestion('Warning : Please confirm study Name', $studyName)
-            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
-            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
-            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
-            ->expectsOutput('The command was successful !');
-    }
-
-
-    public function testDeleteCommandWithDeleteDicomAndAssociatedFiles()
-    {
-        $studyName = $this->study->name;
-        $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom --deleteAssociatedFile')->expectsQuestion('Warning : Please confirm study Name', $studyName)
-            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
-            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
-            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
-            ->expectsQuestion('Going to delete associated file, do you want to continue ?', 'yes')
             ->expectsOutput('The command was successful !');
     }
 

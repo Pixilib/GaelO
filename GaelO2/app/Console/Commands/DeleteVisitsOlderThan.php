@@ -10,7 +10,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class DeleteStudy extends Command
+class DeleteVisitsOlderThan extends Command
 {
 
     private Study $study;
@@ -23,14 +23,14 @@ class DeleteStudy extends Command
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-study {studyName : the study name to delete}';
+    protected $signature = 'gaelo:delete-visits-older-than {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete a Study from GaelO (hard delete), including DICOM and associated files';
+    protected $description = 'Delete visits of a Study created later than days threshold (hard delete)';
 
     /**
      * Execute the console command.
@@ -61,12 +61,6 @@ class DeleteStudy extends Command
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
 
-        //Check study have been soft delete before real deletion
-        if (!$studyEntity->trashed()) {
-            $this->error('Study is not soft deleted, terminating');
-            return 0;
-        }
-
         //Check that no ancillary study is remaining on this study
         $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
         if ($ancilariesStudies->count() > 0) {
@@ -74,46 +68,38 @@ class DeleteStudy extends Command
             return 0;
         }
 
+        if ($studyEntity['ancillary_of']) {
+            $this->error('Cannot be used for an ancillary study');
+            return 0;
+        }
+
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
-            $this->gaelODeleteRessourcesRepository->deleteDocumentation($studyEntity->name);
-            $this->gaelODeleteRessourcesRepository->deleteRoles($studyEntity->name);
-            $this->gaelODeleteRessourcesRepository->deleteTracker($studyEntity->name);
-
-            //Get Visit ID of Original Study
-            $originalStudy = $studyEntity->ancillary_of ?? $studyEntity->name;
-            $visits = $this->getVisitsOfStudy($originalStudy);
+            //Get visits created more than 5 day
+            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-5 days")));
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
             }, $visits->toArray());
 
+            $patientIds = array_map(function ($visit) {
+                return $visit['patient']['id'];
+            }, $visits->toArray());
+
             $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
             $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
+            $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
 
-            if ($studyEntity['ancillary_of'] === null) {
+            $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
+            $orthancIdArray = array_map(function ($seriesId) {
+                return $seriesId['orthanc_id'];
+            }, $dicomSeries);
 
-                $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
-
-                $orthancIdArray = array_map(function ($seriesId) {
-                    return $seriesId['orthanc_id'];
-                }, $dicomSeries);
-
-                $this->line(implode(" ", $orthancIdArray));
-
-                $this->table(
-                    ['orthanc_id'],
-                    $dicomSeries
-                );
-
-                $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
-                $this->gaelODeleteRessourcesRepository->deleteVisitGroupAndVisitType($studyName);
-                $this->gaelODeleteRessourcesRepository->deleteAllPatientsOfStudy($studyName);
-            }
-
-            $this->gaelODeleteRessourcesRepository->deleteStudy($studyName);
+            $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
+            $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
+            $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
+            //Remove patients with no visits
+            $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($patientIds);
 
             foreach ($orthancIdArray as $seriesOrthancId) {
                 try {
@@ -123,6 +109,7 @@ class DeleteStudy extends Command
                     Log::error($e->getMessage());
                 }
             }
+            
 
             $this->info('The command was successful !');
         }
@@ -138,9 +125,9 @@ class DeleteStudy extends Command
             })->select('orthanc_id')->get()->toArray();
     }
 
-    private function getVisitsOfStudy(string $studyName)
+    private function getOlderVisitsOfStudy(string $studyName, string $datelimit)
     {
-        return $this->visit->withTrashed()->with(['visitType', 'patient'])
+        return $this->visit->withTrashed()->whereDate('creation_date', '<=', $datelimit)->with(['visitType', 'patient'])
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })->get();
