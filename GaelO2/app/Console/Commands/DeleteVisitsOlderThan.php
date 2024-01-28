@@ -23,7 +23,7 @@ class DeleteVisitsOlderThan extends Command
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-visits-older-than {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation}';
+    protected $signature = 'gaelo:delete-visits-older-than {studyName : the study name to delete old visits} {numberOfDays : days threshold from visit creation} {--force}';
 
     /**
      * The console command description.
@@ -53,11 +53,15 @@ class DeleteVisitsOlderThan extends Command
 
         $studyName = $this->argument('studyName');
         $numberOfDays = $this->argument('numberOfDays');
-        $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
+        $force = $this->option('force');
 
-        if ($studyName !== $studyNameConfirmation) {
-            $this->error('Wrong study name, terminating');
-            return 0;
+        if (!$force) {
+            $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
+
+            if ($studyName !== $studyNameConfirmation) {
+                $this->error('Wrong study name, terminating');
+                return 0;
+            }
         }
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
@@ -77,7 +81,7 @@ class DeleteVisitsOlderThan extends Command
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
             //Get visits created more than 5 day
-            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-".$numberOfDays." days")));
+            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-" . $numberOfDays . " days")));
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
@@ -112,7 +116,7 @@ class DeleteVisitsOlderThan extends Command
                     Log::error($e->getMessage());
                 }
             }
-            
+
 
             $this->info('The command was successful !');
         }
