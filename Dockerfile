@@ -17,6 +17,8 @@ RUN apt-get update -qy && \
     libbz2-dev \
     libmcrypt-dev \
     libxml2-dev \
+    libcurl4 \
+    libcurl4-openssl-dev \
     openssl \
     sqlite3 \
     supervisor \
