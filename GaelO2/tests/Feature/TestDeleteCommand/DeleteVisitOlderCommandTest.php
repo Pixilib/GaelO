@@ -71,6 +71,7 @@ class DeleteVisitOlderCommandTest extends TestCase
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
         $this->artisan('gaelo:delete-visits-older-than ' . $studyName . " 0")->expectsQuestion('Warning : Please confirm study Name', $studyName)
+            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsOutput('Delete all ancilaries studies first');
     }
 }

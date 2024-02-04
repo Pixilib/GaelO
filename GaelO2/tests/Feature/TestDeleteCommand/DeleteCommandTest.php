@@ -81,7 +81,6 @@ class DeleteCommandTest extends TestCase
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
         $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")    
             ->expectsOutput('Delete all ancilaries studies first');
     }
 }
