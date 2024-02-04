@@ -5,7 +5,7 @@ ENV TZ="UTC"
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
-    ngnix \
+    nginx \
     git \
     cron \
     nano \
