@@ -37,7 +37,7 @@ RUN docker-php-ext-enable redis memcached pcov
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 # Copy configuration files.
-COPY php.ini "$PHP_INI_DIR/php.ini"
+COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
