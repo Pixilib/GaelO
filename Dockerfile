@@ -59,4 +59,8 @@ RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
 
+# Adjust user permission & group
+RUN usermod --uid 1000 www-data
+RUN groupmod --gid 1001 www-data
+
 ENTRYPOINT ["/usr/local/bin/start"]
