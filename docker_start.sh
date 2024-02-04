@@ -8,18 +8,18 @@ seed=${SEED:-false}
 
 if [ "$migrate" = "true" ]; then
     echo "Migration..."
-    (cd /var/www/html && php artisan migrate --force)
+    (cd /var/www && php artisan migrate --force)
 fi
 
 if [ "$seed" = "true" ]; then
     echo "Seeding..."
-    (cd /var/www/html && php artisan db:seed && php artisan db:seed --class=Database\\Seeders\\Studies\\TestSeeder )
+    (cd /var/www && php artisan db:seed && php artisan db:seed --class=Database\\Seeders\\Studies\\TestSeeder )
 fi
 
 #only the app container with production settings will set the cache (ideally in redis)
 if [ "$env" = "production" ] && [ "$role" = "app" ]; then
     echo "Caching configuration..."
-    (cd /var/www/html && php artisan config:cache && php artisan route:cache && php artisan view:cache)
+    (cd /var/www && php artisan config:cache && php artisan route:cache && php artisan view:cache)
 fi
 
 if [ "$role" = "app" ]; then
