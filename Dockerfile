@@ -17,8 +17,7 @@ RUN apt-get update -qy && \
     libbz2-dev \
     libmcrypt-dev \
     libxml2-dev \
-    libcurl4 \
-    libcurl4-openssl-dev \
+    libcurl4-gnutls-dev \
     openssl \
     sqlite3 \
     supervisor \
@@ -59,10 +58,17 @@ RUN composer install --optimize-autoloader --no-interaction
 COPY docker_start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
-EXPOSE 80
+# Set correct permission.
+RUN chmod -R 755 /var/www/storage
+RUN chmod -R 755 /var/www/storage/logs
+RUN chmod -R 755 /var/www/storage/framework
+RUN chmod -R 755 /var/www/storage/framework/sessions
+RUN chmod -R 755 /var/www/bootstrap
 
 # Adjust user permission & group
 RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1001 www-data
+
+EXPOSE 80
 
 ENTRYPOINT ["/usr/local/bin/start"]
