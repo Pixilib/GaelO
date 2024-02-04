@@ -1,10 +1,11 @@
-FROM php:8.2.13-apache-bullseye
+FROM php:8.2.13-fpm-bullseye
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
+    nginx \
     git \
     cron \
     nano \
@@ -33,22 +34,14 @@ RUN docker-php-ext-configure opcache --enable-opcache \
 
 RUN docker-php-ext-enable redis memcached pcov
 
-COPY php.ini "$PHP_INI_DIR/php.ini"
-
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY apache.conf /etc/apache2/conf-available/zgaelo.conf
+# Copy configuration files.
+COPY php.ini "$PHP_INI_DIR/php.ini"
+COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN a2enmod rewrite
-RUN a2enmod headers
-RUN a2enmod remoteip
-RUN a2enmod deflate
-RUN a2enmod http2
-
-RUN a2enconf zgaelo
-
-ENV APP_HOME /var/www/html
+ENV APP_HOME /var/www
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR $APP_HOME
@@ -61,12 +54,13 @@ RUN mv .env.example .env
 
 RUN composer install --optimize-autoloader --no-interaction
 
-# docker_start.sh
 COPY docker_start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
 
-RUN service apache2 restart
+# Adjust user permission & group
+RUN usermod --uid 1000 www-data
+RUN groupmod --gid 1001 www-data
 
 ENTRYPOINT ["/usr/local/bin/start"]
