@@ -62,6 +62,10 @@ class DeleteVisitsOlderThan extends Command
                 $this->error('Wrong study name, terminating');
                 return 0;
             }
+
+            if (!$this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
+                return 0;
+            }
         }
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
@@ -78,48 +82,46 @@ class DeleteVisitsOlderThan extends Command
             return 0;
         }
 
-        if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
+        //Get visits created more than 5 day
+        $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-" . $numberOfDays . " days")));
 
-            //Get visits created more than 5 day
-            $visits = $this->getOlderVisitsOfStudy($studyName, date('Y.m.d', strtotime("-" . $numberOfDays . " days")));
+        $visitIds = array_map(function ($visit) {
+            return $visit['id'];
+        }, $visits->toArray());
 
-            $visitIds = array_map(function ($visit) {
-                return $visit['id'];
-            }, $visits->toArray());
+        $patientIds = array_map(function ($visit) {
+            return $visit['patient']['id'];
+        }, $visits->toArray());
 
-            $patientIds = array_map(function ($visit) {
-                return $visit['patient']['id'];
-            }, $visits->toArray());
+        $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
+        $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
+        $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
 
-            $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
-            $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
-            $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
+        $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
+        $orthancIdArray = array_map(function ($seriesId) {
+            return $seriesId['orthanc_id'];
+        }, $dicomSeries);
 
-            $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
-            $orthancIdArray = array_map(function ($seriesId) {
-                return $seriesId['orthanc_id'];
-            }, $dicomSeries);
+        $this->info(implode(",", $visitIds));
 
-            $this->info(implode(",", $visitIds));
+        $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
+        $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
+        $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
+        //Remove patients with no visits
+        $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($patientIds);
 
-            $this->gaelODeleteRessourcesRepository->deleteDicomsSeries($visitIds);
-            $this->gaelODeleteRessourcesRepository->deleteDicomsStudies($visitIds);
-            $this->gaelODeleteRessourcesRepository->deleteVisits($visitIds);
-            //Remove patients with no visits
-            $this->gaelODeleteRessourcesRepository->deletePatientsWithNoVisits($patientIds);
-
-            foreach ($orthancIdArray as $seriesOrthancId) {
-                try {
-                    $this->info('Deleting ' . $seriesOrthancId);
-                    $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
-                } catch (Exception $e) {
-                    Log::error($e->getMessage());
-                }
+        foreach ($orthancIdArray as $seriesOrthancId) {
+            try {
+                $this->info('Deleting ' . $seriesOrthancId);
+                $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
             }
-
-
-            $this->info('The command was successful !');
         }
+
+
+        $this->info('The command was successful !');
+
 
         return 0;
     }
