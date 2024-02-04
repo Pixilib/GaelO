@@ -1,10 +1,11 @@
-FROM php:8.2.13-apache-bullseye
+FROM php:8.2.13-fpm
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
+    ngnix \
     git \
     cron \
     nano \
@@ -37,16 +38,10 @@ COPY php.ini "$PHP_INI_DIR/php.ini"
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY apache.conf /etc/apache2/conf-available/zgaelo.conf
-
-RUN a2enmod rewrite
-RUN a2enmod headers
-RUN a2enmod remoteip
-RUN a2enmod deflate
-RUN a2enmod http2
-
-RUN a2enconf zgaelo
+# Copy configuration files.
+COPY php.ini "$PHP_INI_DIR/php.ini"
+COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 ENV APP_HOME /var/www/html
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -61,12 +56,9 @@ RUN mv .env.example .env
 
 RUN composer install --optimize-autoloader --no-interaction
 
-# docker_start.sh
 COPY docker_start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
-
-RUN service apache2 restart
 
 ENTRYPOINT ["/usr/local/bin/start"]

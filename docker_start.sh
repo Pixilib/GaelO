@@ -24,7 +24,8 @@ fi
 
 if [ "$role" = "app" ]; then
     echo "App started"
-    apache2-foreground
+    php-fpm -D
+    nginx -g "daemon off;"
 
 elif [ "$role" = "queue" ]; then
     echo "Queue role"
