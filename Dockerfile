@@ -63,6 +63,7 @@ RUN chmod -R 755 /var/www/storage
 RUN chmod -R 755 /var/www/storage/logs
 RUN chmod -R 755 /var/www/storage/framework
 RUN chmod -R 755 /var/www/storage/framework/sessions
+RUN chmod -R 755 /var/www/storage/framework/views
 RUN chmod -R 755 /var/www/bootstrap
 
 # Adjust user permission & group
@@ -71,4 +72,5 @@ RUN groupmod --gid 1001 www-data
 
 EXPOSE 80
 
+USER www-data
 ENTRYPOINT ["/usr/local/bin/start"]
