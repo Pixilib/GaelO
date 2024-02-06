@@ -9,7 +9,6 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationDicomWebService;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class ReverseProxyDicomWeb
 {
@@ -63,8 +62,6 @@ class ReverseProxyDicomWeb
             unset($headers["authorization"]);
             unset($headers["content-length"]);
             unset($headers["content-type"]);
-            Log::info($headers);
-            Log::info($calledUrl);
             $response = $this->httpClientInterface->rawRequest('GET', $calledUrl, null, $headers);
 
             $responseHeaders  = $response->getHeaders();
