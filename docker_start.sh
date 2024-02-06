@@ -19,7 +19,9 @@ fi
 #only the app container with production settings will set the cache (ideally in redis)
 if [ "$env" = "production" ] && [ "$role" = "app" ]; then
     echo "Caching configuration..."
-    (cd /var/www && sudo -u www-data php artisan config:cache && sudo -u www-data php artisan route:cache && sudo -u www-data php artisan view:cache)
+    (cd /var/www && php artisan config:cache && php artisan route:cache && php artisan view:cache)
+    #in case cache is in file
+    chmod -R 755 /var/www/storage/framework
 fi
 
 if [ "$role" = "app" ]; then
