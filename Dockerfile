@@ -72,5 +72,4 @@ RUN groupmod --gid 1001 www-data
 
 EXPOSE 80
 
-USER www-data
 ENTRYPOINT ["/usr/local/bin/start"]
