@@ -62,6 +62,7 @@ RUN chmod u+x /usr/local/bin/start
 RUN chmod -R 755 /var/www/storage
 RUN chmod -R 755 /var/www/storage/logs
 RUN chmod -R 755 /var/www/storage/framework
+RUN chmod -R 755 /var/www/storage/framework/sessions
 RUN chmod -R 755 /var/www/bootstrap
 
 # Adjust user permission & group
