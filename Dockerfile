@@ -64,8 +64,6 @@ RUN chmod -R 755 /var/www/storage/logs
 RUN chmod -R 755 /var/www/storage/framework
 RUN chmod -R 755 /var/www/bootstrap
 
-RUN ls -l
-
 # Adjust user permission & group
 RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1001 www-data
