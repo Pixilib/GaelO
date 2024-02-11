@@ -48,7 +48,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 WORKDIR $APP_HOME
 
 COPY docker_start.sh /usr/local/bin/start
-COPY --chown=www-data:www-data GaelO2 .
+COPY GaelO2 .
 COPY laravel-worker.conf /etc/supervisor/conf.d
 
 RUN mv .env.example .env
@@ -58,15 +58,17 @@ RUN composer install --optimize-autoloader --no-interaction
 COPY docker_start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
+# Adjust user permission & group
+#RUN usermod --uid 1000 www-data
+#RUN groupmod --gid 1001 www-data
+
 # Set correct permission.
+RUN chown -R www-data:www-data $APP_HOME
 RUN chmod -R 755 /var/www/storage
-RUN chmod -R 755 /var/www/storage/logs
-RUN chmod -R 755 /var/www/storage/framework
 RUN chmod -R 755 /var/www/bootstrap
 
-# Adjust user permission & group
-RUN usermod --uid 1000 www-data
-RUN groupmod --gid 1001 www-data
+# Change current user to www-data
+USER www-data
 
 EXPOSE 80
 
