@@ -67,9 +67,6 @@ RUN chown -R www-data:www-data $APP_HOME
 RUN chmod -R 755 /var/www/storage
 RUN chmod -R 755 /var/www/bootstrap
 
-# Change current user to www-data
-USER www-data
-
 EXPOSE 80
 
 ENTRYPOINT ["/usr/local/bin/start"]
