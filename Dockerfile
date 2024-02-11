@@ -59,8 +59,8 @@ COPY docker_start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
 # Adjust user permission & group
-#RUN usermod --uid 1000 www-data
-#RUN groupmod --gid 1001 www-data
+RUN usermod --uid 1000 www-data
+RUN groupmod --gid 1001 www-data
 
 # Set correct permission.
 RUN chown -R www-data:www-data $APP_HOME
