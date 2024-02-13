@@ -1,4 +1,4 @@
-FROM php:8.2.13-fpm-bullseye
+FROM php:8.3.2-fpm-bullseye
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
