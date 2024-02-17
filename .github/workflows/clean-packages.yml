@@ -3,7 +3,7 @@ name: 'clean-packages'
 on:
   push:
     branches:
-      - Gaelo2
+      - '*'
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
           username: 'salimkanoun'
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - uses: actions/delete-package-versions@v4
+      - uses: actions/delete-package-versions@v5
         with: 
           package-name: 'gaelo'
           package-type: 'container'
