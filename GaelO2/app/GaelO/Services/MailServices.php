@@ -590,24 +590,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magicLinkAccepted, string $magicLinkRefused, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, string $magicLink, string $controllerEmail)
     {
-
-        $isVisitDateExpected = true;
-
-        if (isset($studyInfo['visitDate']) && isset($studyInfo['studyDetails']['Study Date'])) {
-            $isVisitDateExpected = ($studyInfo['visitDate'] === $studyInfo['studyDetails']['Study Date']);
-        }
 
         $parameters = [
             'study' => $studyName,
             'visitType' => $visitType,
             'patientCode' => $patientCode,
-            'studyInfo' => $studyInfo,
-            'seriesInfo' => $seriesInfo,
-            'warningVisitDate' =>  $isVisitDateExpected === false,
-            'magicLinkAccepted' => $magicLinkAccepted,
-            'magicLinkRefused' => $magicLinkRefused
+            'magicLink' => $magicLink,
         ];
 
         $this->mailInterface->setTo([$controllerEmail]);
@@ -617,18 +607,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $visitDate, string $imagePath, array $stats, array $emailList)
+    public function sendRadiomicsReport(string $studyName, string $patientCode, string $visitType, string $magicLink, int $userId)
     {
         $parameters = [
             'patientCode' => $patientCode,
             'visitType' => $visitType,
             'studyName' => $studyName,
-            'visitDate' => $visitDate,
-            'image_path' => [$imagePath],
-            'stats' => $stats
+            'magicLink' => $magicLink,
         ];
 
-        $this->mailInterface->setTo($emailList);
+        $this->mailInterface->setTo([$this->getUserEmail($userId)]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RADIOMICS_REPORT);

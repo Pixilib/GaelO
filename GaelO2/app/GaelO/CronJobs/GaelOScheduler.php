@@ -13,11 +13,8 @@ class GaelOScheduler
 
     public static function registerScheduledJobs(Schedule $schedule)
     {
-
-        /*
         $schedule->call(function () {
-            Log::info("Scheduled custom job");
-        })->everyMinute();
-        */
+            Log::info("Scheduler Probe");
+        })->hourly()->sentryMonitor('gaelo-scheduler');
     }
 }

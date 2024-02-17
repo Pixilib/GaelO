@@ -4,6 +4,7 @@ namespace App\Jobs\QcReport;
 
 use App\GaelO\DicomUtils;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use Throwable;
@@ -32,6 +33,7 @@ class SeriesReport
     private $protocolName;
     private $patientWeight;
     private $patientHeight;
+    private $seriesInstanceUID;
     private array $previewImagePath = [];
     private array $orthancInstanceIds;
     private string $seriesOrthancId;
@@ -51,11 +53,6 @@ class SeriesReport
     public function getNumberOfInstances(): int
     {
         return sizeof($this->orthancInstanceIds);
-    }
-
-    public function addPreviewImagePath(?string $path)
-    {
-        $this->previewImagePath[] = $path;
     }
 
     public function deletePreviewImages()
@@ -87,6 +84,7 @@ class SeriesReport
         $this->matrixSize = $sharedTags->getMatrixSize();
         $this->patientPosition = $sharedTags->getPatientPosition();
         $this->patientOrientation = $sharedTags->getImageOrientation();
+        $this->seriesInstanceUID = $sharedTags->getSeriesInstanceUID();
 
         if ($this->modality == 'MR') {
             $this->scanningSequence = $sharedTags->getScanningSequence();
@@ -136,34 +134,50 @@ class SeriesReport
         return ImageType::DEFAULT;
     }
 
-    public function loadSeriesPreview(OrthancService $orthancService): void
+    public function loadSeriesPreview(OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService): void
     {
         $imageType = $this->getPreviewType();
 
         $imagePath = [];
 
         try {
-            switch ($imageType) {
-                case ImageType::MIP:
-                    //Mosaic for now as mip need significant computation and memory backend
-                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
-                    break;
-                case ImageType::MOSAIC:
-                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
-                    break;
-                case ImageType::MULTIFRAME:
-                    $imagePath = array_map(function ($instanceOrthancId) use ($orthancService) {
-                        return $orthancService->getMosaic('instances', $instanceOrthancId);
-                    }, $this->orthancInstanceIds);
-                    break;
-                case ImageType::DEFAULT:
-                    $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
-                    break;
+            if ($imageType === ImageType::DEFAULT) {
+                $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
+            } else {
+                $isPet = $this->modality == 'PT';
+                $payload = $isPet ? ['min' => 0, 'max' => 5, 'orientation' => 'LPI'] : ['orientation' => 'LPI'];
+                $orthancService->sendDicomToProcessing($this->seriesOrthancId, $gaelOProcessingService);
+                $processingSeriesId = $gaelOProcessingService->createSeriesFromOrthanc($this->seriesOrthancId, $isPet, $isPet);
+                switch ($imageType) {
+                    case ImageType::MIP:
+                        $imagePath[] = $gaelOProcessingService->createMIPForSeries($processingSeriesId, $payload);
+                        break;
+                    case ImageType::MOSAIC:
+                        $imagePath[] = $gaelOProcessingService->createMosaicForSeries($processingSeriesId, $payload);
+                        break;
+                    case ImageType::MULTIFRAME:
+                        $imagePath = array_map(function ($instanceOrthancId) use ($gaelOProcessingService) {
+                            return $gaelOProcessingService->createMosaicForSeries('instances', $instanceOrthancId);
+                        }, $this->orthancInstanceIds);
+                        break;
+                }
+                $gaelOProcessingService->deleteRessource('series', $processingSeriesId);
+                $gaelOProcessingService->deleteRessource('dicoms', $this->seriesOrthancId);
             }
         } catch (Throwable $t) {
         }
 
         $this->previewImagePath = $imagePath;
+    }
+
+    public function getSeriesInstanceUID(): string
+    {
+        return $this->seriesInstanceUID;
+    }
+
+    public function getPreviews(): array
+    {
+        return $this->previewImagePath;
     }
 
     public function toArray()
@@ -195,7 +209,7 @@ class SeriesReport
             'Protocol Name' => $this->protocolName ?? null,
             'Patient weight (kg)' => $this->patientWeight ?? null,
             'Patient height (m)' => $this->patientHeight ?? null,
-            'image_path' => $this->previewImagePath,
+            'Previews' => sizeof($this->previewImagePath),
             ...$instanceData
         ];
     }

@@ -59,7 +59,9 @@ class ReverseProxyDicomWeb
             }
 
             $headers['Forwarded'] = [$forwardedRule];
-
+            unset($headers["authorization"]);
+            unset($headers["content-length"]);
+            unset($headers["content-type"]);
             $response = $this->httpClientInterface->rawRequest('GET', $calledUrl, null, $headers);
 
             $responseHeaders  = $response->getHeaders();

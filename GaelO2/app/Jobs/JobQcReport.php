@@ -3,12 +3,10 @@
 namespace App\Jobs;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Services\FileCacheService;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\QcReport\InstanceReport;
@@ -28,7 +26,6 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
-    private OrthancService $orthancService;
 
     public $failOnTimeout = true;
     public $timeout = 300;
@@ -41,7 +38,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(int $visitId)
     {
-        $this->onQueue('auto-qc');
+        $this->onQueue('processing');
         $this->visitId = $visitId;
     }
 
@@ -51,26 +48,21 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
      * @return void
      */
     public function handle(
-        FrameworkInterface $frameworkInterface,
-        UserRepositoryInterface $userRepositoryInterface,
+        FileCacheService $fileCacheService,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        MailServices $mailServices,
         OrthancService $orthancService,
-        ReviewRepositoryInterface $reviewRepositoryInterface
+        GaelOProcessingService $gaelOProcessingService,
     ) {
-        $this->orthancService = $orthancService;
-        $this->orthancService->setOrthancServer(true);
+        $orthancService->setOrthancServer(true);
 
         $visitReport = new VisitReport();
 
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
 
         $studyName = $visitEntity['patient']['study_name'];
-        $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
-        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
         $visitDate = $visitEntity['visit_date'];
         $registrationDate = $visitEntity['patient']['registration_date'];
 
@@ -93,20 +85,15 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
             $visitReport->setMinMaxVisitDate($formattedMinVisitDate, $formattedMaxVisitDate);
         }
 
-        if ($stateInvestigatorForm !== InvestigatorFormStateEnum::NOT_NEEDED->value) {
-            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
-            $visitReport->setInvestigatorForm($reviewEntity['review_data']);
-        }
-
         $seriesReports = [];
 
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
 
             try {
-                $seriesSharedTags = $this->orthancService->getSharedTags($series['orthanc_id']);
-                $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
+                $seriesSharedTags = $orthancService->getSharedTags($series['orthanc_id']);
+                $seriesDetails = $orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
                 //Needed for radiopharmaceutical data (need first instance metadata to access it)
-                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
+                $instanceTags = $orthancService->getInstanceTags($seriesDetails['Instances'][0]);
 
                 $instanceReport = new InstanceReport();
                 $instanceReport->fillData($instanceTags);
@@ -115,7 +102,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
                 $seriesReport->fillData($seriesSharedTags);
                 $seriesReport->setInstanceReport($instanceReport);
 
-                $seriesReport->loadSeriesPreview($this->orthancService);
+                $seriesReport->loadSeriesPreview($orthancService, $gaelOProcessingService);
 
                 $seriesReports[] = $seriesReport;
             } catch (Throwable $t) {
@@ -126,28 +113,21 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
         $visitReport->setSeriesReports($seriesReports);
 
         $seriesReports = $visitReport->getSeriesReports();
-        $seriesInfo = array_map(function (SeriesReport $seriesReport) {
-            return $seriesReport->toArray();
-        }, $seriesReports);
-
-        $studyInfo = $visitReport->toArray();
-
-        $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
-
-        foreach ($controllerUsers as $user) {
-            $redirectLink = '/magic-link-tools/auto-qc';
-            $queryParams = [
-                'visitId' => $visitId,
-                'accepted' => 'true',
-                'studyName' => $studyName
-            ];
-            $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $queryParams['accepted'] = 'false';
-            $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
+        foreach ($seriesReports as $seriesReport) {
+            $seriesInstanceUID = $seriesReport->getSeriesInstanceUID();
+            $previews = $seriesReport->getPreviews();
+            for ($i = 0; $i < sizeof($previews); $i++) {
+                $fileCacheService->storeSeriesPreview($seriesInstanceUID, $i, file_get_contents($previews[$i]));
+            }
+            $fileCacheService->storeDicomMetadata($seriesInstanceUID, json_encode($seriesReport->toArray()));
         }
 
-        //Once all email emited remove preview file to avoid dangling temporary files
+
+        $studyInfo = $visitReport->toArray();
+        $studyInstanceUID = $dicomStudyEntity[0]['study_uid'];
+        $fileCacheService->storeDicomMetadata($studyInstanceUID, json_encode($studyInfo));
+
+        //Once job finished remove preview file to avoid dangling temporary files
         foreach ($seriesReports as $seriesReport) {
             $seriesReport->deletePreviewImages();
         }

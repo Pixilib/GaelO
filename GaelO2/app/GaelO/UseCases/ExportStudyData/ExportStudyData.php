@@ -30,10 +30,11 @@ class ExportStudyData
 
             $this->checkAuthorization($exportStudyDataRequest->currentUserId, $studyName);
 
+            //Operation might be long, set max execution time to 30 minutes
+            set_time_limit(1800);
+
             $this->exportStudyService->setStudyName($studyName);
-
             $this->exportStudyService->exportAll();
-
             $exportResults = $this->exportStudyService->getExportStudyResult();
 
             $exportStudyDataResponse->zipFile = $exportResults->getResultsAsZip();

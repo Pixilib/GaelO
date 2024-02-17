@@ -7,12 +7,10 @@ class VisitReport
     private string $studyName;
     private string $visitName;
     private string $patientCode;
-
     private string $visitDate;
     private string $minVisitDate;
     private string $maxVisitDate;
     private string $registrationDate;
-    private array $investigatorForm = [];
 
     private array $seriesReports = [];
 
@@ -46,11 +44,6 @@ class VisitReport
         $this->visitDate = $visitDate;
     }
 
-    public function setInvestigatorForm(array $investigatorForm)
-    {
-        $this->investigatorForm = $investigatorForm;
-    }
-
     public function setRegistrationDate(string $registrationDate)
     {
         $this->registrationDate = $registrationDate;
@@ -72,7 +65,6 @@ class VisitReport
                 }, $this->seriesReports)),
                 'Number Of Series' => sizeof($this->seriesReports)
             ],
-            'investigatorForm' => $this->investigatorForm,
             'studyName' => $this->studyName,
             'visitName' => $this->visitName,
             'patientCode' => $this->patientCode,

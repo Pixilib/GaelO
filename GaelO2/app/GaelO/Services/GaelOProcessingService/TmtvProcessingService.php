@@ -16,6 +16,8 @@ class TmtvProcessingService
     private GaelOProcessingService $gaelOProcessingService;
     private string $ptOrthancSeriesId;
     private string $ctOrthancSeriesId;
+    private string $ptSeriesUid;
+    private string $ctSeriesUid;
     private array $createdFiles = [];
 
 
@@ -33,8 +35,10 @@ class TmtvProcessingService
     public function runInference(): MaskProcessingService
     {
 
-        $this->sendDicomToProcessing($this->ptOrthancSeriesId);
-        $this->sendDicomToProcessing($this->ctOrthancSeriesId);
+        $this->orthancService->sendDicomToProcessing($this->ptOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
+        $this->orthancService->sendDicomToProcessing($this->ctOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
 
         $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
         $this->addCreatedRessource('series', $idPT);
@@ -56,30 +60,24 @@ class TmtvProcessingService
     }
 
 
-
-    protected function sendDicomToProcessing(string $orthancSeriesIdPt)
-    {
-        $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $this->orthancService->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
-        $this->gaelOProcessingService->createDicom($temporaryZipDicom);
-        $this->addCreatedRessource('dicoms', $orthancSeriesIdPt);
-        unlink($temporaryZipDicom);
-    }
-
     public function loadPetAndCtSeriesOrthancIdsFromVisit($visitId): void
     {
         $dicomStudyEntity = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visitId, false, false);
 
         $idPT = null;
+        $ptSeriesUid = null;
         $idCT = null;
+        $ctSeriesUid = null;
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             if ($series['modality'] == 'PT') {
                 if ($idPT) throw new GaelOException('Multiple PET Series, unable to perform segmentation');
                 $idPT = $series['orthanc_id'];
+                $ptSeriesUid = $series['series_uid'];
             }
             if ($series['modality'] == 'CT') {
                 if ($idCT) throw new GaelOException('Multiple CT Series, unable to perform segmentation');
                 $idCT = $series['orthanc_id'];
+                $ctSeriesUid = $series['series_uid'];
             }
         }
 
@@ -90,6 +88,13 @@ class TmtvProcessingService
 
         $this->ctOrthancSeriesId = $idCT;
         $this->ptOrthancSeriesId = $idPT;
+        $this->ptSeriesUid = $ptSeriesUid;
+        $this->ctSeriesUid = $ctSeriesUid;
+    }
+
+    public function getInferedPtSeriesUid(): string
+    {
+        return $this->ptSeriesUid;
     }
 
     public function addCreatedRessource(string $type, string $id)
