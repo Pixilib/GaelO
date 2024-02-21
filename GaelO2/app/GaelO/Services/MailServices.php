@@ -390,7 +390,7 @@ class MailServices
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
 
         $parameters = [
-            'name' => $this->getUserName($requestingUserId),
+            'supervisorName' => $this->getUserName($requestingUserId),
             'study' => $studyName,
             'patientId' => $patientId,
             'patientCode' => $patientCode,
