@@ -173,9 +173,6 @@ class VisitService
         $abstractVisitRules = $studyRule->getSpecificVisitRules($visitGroupName, $visitTypeName);
         $associatedFilesVisit = $abstractVisitRules->getAssociatedFilesVisit();
 
-        //TODO remove this log
-        Log::info($associatedFilesVisit);
-
         if (!empty($visitEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this visit");
         }
