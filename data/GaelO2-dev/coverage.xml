@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.8339494762785" branch-rate="0" lines-covered="8121" lines-valid="9738" branches-covered="0" branches-valid="0" complexity="2669" version="0.4" timestamp="1708552066">
+<coverage line-rate="0.83393242271747" branch-rate="0" lines-covered="8120" lines-valid="9737" branches-covered="0" branches-valid="0" complexity="2669" version="0.4" timestamp="1708554475">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -11680,9 +11680,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/VisitService.php" line-rate="0.80459770114943" branch-rate="0" complexity="31">
+    <package name="GaelO/Services/VisitService.php" line-rate="0.80232558139535" branch-rate="0" complexity="31">
       <classes>
-        <class name="App\GaelO\Services\VisitService" filename="GaelO/Services/VisitService.php" line-rate="0.80459770114943" branch-rate="0" complexity="31">
+        <class name="App\GaelO\Services\VisitService" filename="GaelO/Services/VisitService.php" line-rate="0.80232558139535" branch-rate="0" complexity="31">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface, App\GaelO\Repositories\VisitRepository $visitRepository, App\GaelO\Repositories\ReviewRepository $reviewRepository, App\GaelO\Repositories\ReviewStatusRepository $reviewStatusRepository" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -11782,7 +11782,7 @@
                 <line number="162" hits="4"/>
               </lines>
             </method>
-            <method name="attachFile" signature="string $key, string $mimeType, string $extension, $binaryData" line-rate="0.90909090909091" branch-rate="0" complexity="4">
+            <method name="attachFile" signature="string $key, string $mimeType, string $extension, $binaryData" line-rate="0.9047619047619" branch-rate="0" complexity="4">
               <lines>
                 <line number="167" hits="2"/>
                 <line number="168" hits="2"/>
@@ -11791,32 +11791,31 @@
                 <line number="172" hits="2"/>
                 <line number="173" hits="2"/>
                 <line number="174" hits="2"/>
-                <line number="177" hits="2"/>
-                <line number="179" hits="2"/>
-                <line number="180" hits="0"/>
-                <line number="183" hits="2"/>
+                <line number="176" hits="2"/>
+                <line number="177" hits="0"/>
+                <line number="180" hits="2"/>
+                <line number="181" hits="1"/>
                 <line number="184" hits="1"/>
-                <line number="187" hits="1"/>
-                <line number="189" hits="1"/>
-                <line number="190" hits="0"/>
+                <line number="186" hits="1"/>
+                <line number="187" hits="0"/>
+                <line number="190" hits="1"/>
+                <line number="192" hits="1"/>
                 <line number="193" hits="1"/>
                 <line number="195" hits="1"/>
-                <line number="196" hits="1"/>
+                <line number="197" hits="1"/>
                 <line number="198" hits="1"/>
-                <line number="200" hits="1"/>
-                <line number="201" hits="1"/>
-                <line number="202" hits="1"/>
+                <line number="199" hits="1"/>
               </lines>
             </method>
             <method name="deleteFile" signature="string $key" line-rate="0.85714285714286" branch-rate="0" complexity="2">
               <lines>
-                <line number="207" hits="1"/>
-                <line number="209" hits="1"/>
-                <line number="210" hits="0"/>
+                <line number="204" hits="1"/>
+                <line number="206" hits="1"/>
+                <line number="207" hits="0"/>
+                <line number="210" hits="1"/>
+                <line number="211" hits="1"/>
                 <line number="213" hits="1"/>
                 <line number="214" hits="1"/>
-                <line number="216" hits="1"/>
-                <line number="217" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -11886,28 +11885,27 @@
             <line number="172" hits="2"/>
             <line number="173" hits="2"/>
             <line number="174" hits="2"/>
-            <line number="177" hits="2"/>
-            <line number="179" hits="2"/>
-            <line number="180" hits="0"/>
-            <line number="183" hits="2"/>
+            <line number="176" hits="2"/>
+            <line number="177" hits="0"/>
+            <line number="180" hits="2"/>
+            <line number="181" hits="1"/>
             <line number="184" hits="1"/>
-            <line number="187" hits="1"/>
-            <line number="189" hits="1"/>
-            <line number="190" hits="0"/>
+            <line number="186" hits="1"/>
+            <line number="187" hits="0"/>
+            <line number="190" hits="1"/>
+            <line number="192" hits="1"/>
             <line number="193" hits="1"/>
             <line number="195" hits="1"/>
-            <line number="196" hits="1"/>
+            <line number="197" hits="1"/>
             <line number="198" hits="1"/>
-            <line number="200" hits="1"/>
-            <line number="201" hits="1"/>
-            <line number="202" hits="1"/>
-            <line number="207" hits="1"/>
-            <line number="209" hits="1"/>
-            <line number="210" hits="0"/>
+            <line number="199" hits="1"/>
+            <line number="204" hits="1"/>
+            <line number="206" hits="1"/>
+            <line number="207" hits="0"/>
+            <line number="210" hits="1"/>
+            <line number="211" hits="1"/>
             <line number="213" hits="1"/>
             <line number="214" hits="1"/>
-            <line number="216" hits="1"/>
-            <line number="217" hits="1"/>
           </lines>
         </class>
       </classes>
