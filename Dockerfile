@@ -10,7 +10,7 @@
 FROM alpine as stone
 RUN apk --no-cache add wget
 RUN apk add --update zip
-RUN wget https://lsb.orthanc-server.com/stone-webviewer/2.3/wasm-binaries.zip
+RUN wget https://orthanc.uclouvain.be/downloads/linux-standard-base/stone-web-viewer/2.3/wasm-binaries.zip
 RUN mkdir /stone
 RUN unzip wasm-binaries.zip -d /stone
 RUN rm /stone/wasm-binaries/StoneWebViewer/configuration.json
