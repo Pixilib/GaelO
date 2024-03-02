@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1709412474">
+<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1709414784">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -19957,11 +19957,10 @@
                 <line number="75" hits="1"/>
                 <line number="76" hits="1"/>
                 <line number="78" hits="0"/>
-                <line number="81" hits="1"/>
-                <line number="83" hits="1"/>
-                <line number="85" hits="1"/>
+                <line number="82" hits="1"/>
+                <line number="84" hits="1"/>
                 <line number="86" hits="1"/>
-                <line number="89" hits="1"/>
+                <line number="87" hits="1"/>
                 <line number="90" hits="1"/>
                 <line number="91" hits="1"/>
                 <line number="92" hits="1"/>
@@ -19970,31 +19969,32 @@
                 <line number="95" hits="1"/>
                 <line number="96" hits="1"/>
                 <line number="97" hits="1"/>
-                <line number="100" hits="1"/>
+                <line number="98" hits="1"/>
                 <line number="101" hits="1"/>
                 <line number="102" hits="1"/>
                 <line number="103" hits="1"/>
                 <line number="104" hits="1"/>
                 <line number="105" hits="1"/>
                 <line number="106" hits="1"/>
-                <line number="107" hits="0"/>
+                <line number="107" hits="1"/>
                 <line number="108" hits="0"/>
+                <line number="109" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId, string $studyName" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="114" hits="2"/>
                 <line number="115" hits="2"/>
                 <line number="116" hits="2"/>
-                <line number="117" hits="1"/>
+                <line number="117" hits="2"/>
+                <line number="118" hits="1"/>
               </lines>
             </method>
             <method name="getUsersDetails" signature="array $usersId, array $usersDetails" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="126" hits="1"/>
                 <line number="127" hits="1"/>
                 <line number="128" hits="1"/>
-                <line number="131" hits="1"/>
+                <line number="129" hits="1"/>
+                <line number="132" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -20024,11 +20024,10 @@
             <line number="75" hits="1"/>
             <line number="76" hits="1"/>
             <line number="78" hits="0"/>
-            <line number="81" hits="1"/>
-            <line number="83" hits="1"/>
-            <line number="85" hits="1"/>
+            <line number="82" hits="1"/>
+            <line number="84" hits="1"/>
             <line number="86" hits="1"/>
-            <line number="89" hits="1"/>
+            <line number="87" hits="1"/>
             <line number="90" hits="1"/>
             <line number="91" hits="1"/>
             <line number="92" hits="1"/>
@@ -20037,23 +20036,24 @@
             <line number="95" hits="1"/>
             <line number="96" hits="1"/>
             <line number="97" hits="1"/>
-            <line number="100" hits="1"/>
+            <line number="98" hits="1"/>
             <line number="101" hits="1"/>
             <line number="102" hits="1"/>
             <line number="103" hits="1"/>
             <line number="104" hits="1"/>
             <line number="105" hits="1"/>
             <line number="106" hits="1"/>
-            <line number="107" hits="0"/>
+            <line number="107" hits="1"/>
             <line number="108" hits="0"/>
-            <line number="114" hits="2"/>
+            <line number="109" hits="0"/>
             <line number="115" hits="2"/>
             <line number="116" hits="2"/>
-            <line number="117" hits="1"/>
-            <line number="126" hits="1"/>
+            <line number="117" hits="2"/>
+            <line number="118" hits="1"/>
             <line number="127" hits="1"/>
             <line number="128" hits="1"/>
-            <line number="131" hits="1"/>
+            <line number="129" hits="1"/>
+            <line number="132" hits="1"/>
           </lines>
         </class>
       </classes>
