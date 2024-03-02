@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83393242271747" branch-rate="0" lines-covered="8120" lines-valid="9737" branches-covered="0" branches-valid="0" complexity="2669" version="0.4" timestamp="1709071121">
+<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1709388563">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -8598,9 +8598,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/MailServices.php" line-rate="0.7636815920398" branch-rate="0" complexity="39">
+    <package name="GaelO/Services/MailServices.php" line-rate="0.75615763546798" branch-rate="0" complexity="41">
       <classes>
-        <class name="App\GaelO\Services\MailServices" filename="GaelO/Services/MailServices.php" line-rate="0.7636815920398" branch-rate="0" complexity="39">
+        <class name="App\GaelO\Services\MailServices" filename="GaelO/Services/MailServices.php" line-rate="0.75615763546798" branch-rate="0" complexity="41">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\MailerInterface $mailInterface, App\GaelO\Interfaces\Repositories\UserRepositoryInterface $userRepositoryInterface, App\GaelO\Interfaces\Repositories\StudyRepositoryInterface $studyRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -9117,7 +9117,7 @@
                 <line number="623" hits="0"/>
               </lines>
             </method>
-            <method name="sendJobFailure" signature="string $jobType, array $details, string $errorMessage" line-rate="0" branch-rate="0" complexity="1">
+            <method name="sendJobFailure" signature="string $jobType, array $details, string $errorMessage, ?string $studyName, ?int $toUserId" line-rate="0" branch-rate="0" complexity="3">
               <lines>
                 <line number="629" hits="0"/>
                 <line number="630" hits="0"/>
@@ -9128,8 +9128,12 @@
                 <line number="636" hits="0"/>
                 <line number="637" hits="0"/>
                 <line number="638" hits="0"/>
-                <line number="639" hits="0"/>
                 <line number="640" hits="0"/>
+                <line number="641" hits="0"/>
+                <line number="643" hits="0"/>
+                <line number="644" hits="0"/>
+                <line number="645" hits="0"/>
+                <line number="646" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -9534,8 +9538,12 @@
             <line number="636" hits="0"/>
             <line number="637" hits="0"/>
             <line number="638" hits="0"/>
-            <line number="639" hits="0"/>
             <line number="640" hits="0"/>
+            <line number="641" hits="0"/>
+            <line number="643" hits="0"/>
+            <line number="644" hits="0"/>
+            <line number="645" hits="0"/>
+            <line number="646" hits="0"/>
           </lines>
         </class>
       </classes>
