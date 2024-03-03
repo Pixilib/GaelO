@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1709414784">
+<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1709473229">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -8312,7 +8312,7 @@
       <classes>
         <class name="App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient" filename="GaelO/Services/GaelOStudiesService/ExpectedPatient/ExpectedPatient.php" line-rate="1" branch-rate="0" complexity="1">
           <methods>
-            <method name="__construct" signature="string $code, int $centerCode, ?string $inclusionStatus" line-rate="1" branch-rate="0" complexity="1">
+            <method name="__construct" signature="string $code, ?int $centerCode, ?string $inclusionStatus" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="13" hits="1"/>
                 <line number="14" hits="1"/>
