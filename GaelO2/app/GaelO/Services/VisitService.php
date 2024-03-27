@@ -16,7 +16,6 @@ use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\Events\QCModifiedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
-use Illuminate\Support\Facades\Log;
 
 class VisitService
 {
