@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1711575381">
+<coverage line-rate="0.83358998049482" branch-rate="0" lines-covered="8120" lines-valid="9741" branches-covered="0" branches-valid="0" complexity="2671" version="0.4" timestamp="1711578180">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -375,24 +375,24 @@
                 <line number="116" hits="1"/>
                 <line number="117" hits="0"/>
                 <line number="118" hits="0"/>
-                <line number="123" hits="1"/>
-                <line number="126" hits="1"/>
+                <line number="122" hits="1"/>
+                <line number="124" hits="1"/>
               </lines>
             </method>
             <method name="getDicomSeriesOfVisits" signature="array $visitIds" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="129" hits="1"/>
+                <line number="130" hits="1"/>
                 <line number="131" hits="1"/>
                 <line number="132" hits="1"/>
-                <line number="133" hits="1"/>
-                <line number="134" hits="1"/>
               </lines>
             </method>
             <method name="getOlderVisitsOfStudy" signature="string $studyName, string $datelimit" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="137" hits="1"/>
+                <line number="138" hits="1"/>
                 <line number="139" hits="1"/>
                 <line number="140" hits="1"/>
-                <line number="141" hits="1"/>
-                <line number="142" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -445,16 +445,16 @@
             <line number="116" hits="1"/>
             <line number="117" hits="0"/>
             <line number="118" hits="0"/>
-            <line number="123" hits="1"/>
-            <line number="126" hits="1"/>
+            <line number="122" hits="1"/>
+            <line number="124" hits="1"/>
+            <line number="129" hits="1"/>
+            <line number="130" hits="1"/>
             <line number="131" hits="1"/>
             <line number="132" hits="1"/>
-            <line number="133" hits="1"/>
-            <line number="134" hits="1"/>
+            <line number="137" hits="1"/>
+            <line number="138" hits="1"/>
             <line number="139" hits="1"/>
             <line number="140" hits="1"/>
-            <line number="141" hits="1"/>
-            <line number="142" hits="1"/>
           </lines>
         </class>
       </classes>
