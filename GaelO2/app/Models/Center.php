@@ -12,12 +12,15 @@ class Center extends Model
     protected $primaryKey = 'code';
     public $incrementing = false;
 
-    protected $casts = [
-        'code' => 'integer',
-        'name' => 'string',
-        'country_code' => 'string'
-    ];
-
+    protected function casts(): array
+    {
+        return [
+            'code' => 'integer',
+            'name' => 'string',
+            'country_code' => 'string'
+        ];
+    }
+    
     public function country()
     {
         return $this->belongsTo(Country::class, 'country_code', 'code');

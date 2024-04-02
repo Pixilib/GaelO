@@ -10,12 +10,15 @@ class VisitGroup extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'id' => 'integer',
-        'study_name' => 'string',
-        'name' => 'string',
-        'modality' => ModalityEnum::class
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'study_name' => 'string',
+            'name' => 'string',
+            'modality' => ModalityEnum::class
+        ];
+    }
 
     public function study()
     {

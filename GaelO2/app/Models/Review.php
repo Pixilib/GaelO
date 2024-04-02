@@ -12,18 +12,21 @@ class Review extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'id' => 'integer',
-        'study_name' => 'string',
-        'visit_id' => 'integer',
-        'user_id' => 'integer',
-        'review_date' => 'datetime',
-        'validated' => 'boolean',
-        'local' => 'boolean',
-        'adjudication' => 'boolean',
-        'sent_files' => 'array',
-        'review_data' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'study_name' => 'string',
+            'visit_id' => 'integer',
+            'user_id' => 'integer',
+            'review_date' => 'datetime',
+            'validated' => 'boolean',
+            'local' => 'boolean',
+            'adjudication' => 'boolean',
+            'sent_files' => 'array',
+            'review_data' => 'array',
+        ];
+    }
 
     //Default value because db does not accept default value json
     protected $attributes = [
