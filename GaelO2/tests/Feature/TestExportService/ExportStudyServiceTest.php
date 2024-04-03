@@ -35,6 +35,7 @@ class ExportStudyServiceTest extends TestCase
 
     protected function tearDown(): void
     {
+        parent::tearDown();
         $this->exportStudyService->getExportStudyResult()->deleteTemporaryFiles();
     }
 
