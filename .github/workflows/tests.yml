@@ -50,7 +50,7 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
           APP_ENV: testing
-        run: vendor/bin/phpunit --coverage-cobertura=coverage.xml --debug
+        run: vendor/bin/phpunit --coverage-cobertura=coverage.xml
 
       - name: Fix code coverage paths
         working-directory: ./GaelO2
