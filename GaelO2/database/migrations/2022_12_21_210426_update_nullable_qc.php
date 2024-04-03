@@ -27,8 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('visits', function (Blueprint $table) {
-            $table->boolean('form_quality_control')->change();
-            $table->boolean('image_quality_control')->change();
+            $table->boolean('form_quality_control')->nullable(false)->default(false)->change();
+            $table->boolean('image_quality_control')->nullable(false)->default(false)->change();
         });
     }
 };

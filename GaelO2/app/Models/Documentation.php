@@ -10,18 +10,21 @@ class Documentation extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'document_date' => 'datetime',
-        'study_name' => 'string',
-        'version' => 'string',
-        'investigator' => 'boolean',
-        'controller' => 'boolean',
-        'monitor' => 'boolean',
-        'reviewer' => 'boolean',
-        'path' => 'string'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'name' => 'string',
+            'document_date' => 'datetime',
+            'study_name' => 'string',
+            'version' => 'string',
+            'investigator' => 'boolean',
+            'controller' => 'boolean',
+            'monitor' => 'boolean',
+            'reviewer' => 'boolean',
+            'path' => 'string'
+        ];
+    }
 
     public function study()
     {

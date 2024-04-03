@@ -9,10 +9,13 @@ class CenterUser extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'user_id' => 'integer',
-        'center_code' => 'integer'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'user_id' => 'integer',
+            'center_code' => 'integer'
+        ];
+    }
 
     /**
      * The table associated with the model.

@@ -13,16 +13,19 @@ class ReviewStatus extends Model
     protected $table = 'reviews_status';
     protected $guarded = [];
 
-    protected $casts = [
-        'id' => 'integer',
-        'visit_id' => 'integer',
-        'study_name' => 'string',
-        'review_available' => 'boolean',
-        'target_lesions' => 'array',
-        'review_status' => ReviewStatusEnum::class,
-        'review_conclusion_value' => 'string',
-        'review_conclusion_date' => 'datetime'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'visit_id' => 'integer',
+            'study_name' => 'string',
+            'review_available' => 'boolean',
+            'target_lesions' => 'array',
+            'review_status' => ReviewStatusEnum::class,
+            'review_conclusion_value' => 'string',
+            'review_conclusion_date' => 'datetime'
+        ];
+    }
 
     //Default value because db does not accept default value json
     protected $attributes = [

@@ -9,10 +9,12 @@ class Country extends Model
     protected $primaryKey = 'code';
     public $incrementing = false;
 
-    protected $casts = [
-        'code' => 'string',
-        'country_us' => 'string',
-        'country_fr' => 'string'
-    ];
-
+    protected function casts(): array
+    {
+        return [
+            'code' => 'string',
+            'country_us' => 'string',
+            'country_fr' => 'string'
+        ];
+    }
 }
