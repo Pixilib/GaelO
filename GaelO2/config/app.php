@@ -174,6 +174,9 @@ return [
     'azure_subscription_id' => env('AZURE_SUBSCRIPTION_ID'),
     'azure_container_group' => env('AZURE_CONTAINER_GROUP'),
     'azure_resource_group' => env('AZURE_RESOURCE_GROUP'),
+    'monitoring_imap_connection_string' => env("MONITORING_IMAP_CONNECTION_STRING"),
+    'monitoring_imap_username' => env("MONITORING_IMAP_USERNAME"),
+    'monitoring_imap_password' => env("MONITORING_IMAP_PASSWORD"),
 
 
     'providers' => [
