@@ -22,6 +22,8 @@ RUN apt-get update -qy && \
     sqlite3 \
     supervisor \
     zip \
+    libc-client-dev \
+    libkrb5-dev \
     libpng-dev \
     libmemcached-dev \
     mariadb-client \
