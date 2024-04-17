@@ -64,7 +64,7 @@ class GetStudyReviewProgression
             $visits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false, false, $studyName);
 
             //Get validated review for study
-            $validatedReview = $this->reviewRepositoryInterface->getStudyReviewsGroupedByUserIds($originalStudyName);
+            $validatedReview = $this->reviewRepositoryInterface->getStudyReviewsGroupedByUserIds($studyName);
 
             $answer = [];
 
@@ -74,18 +74,19 @@ class GetStudyReviewProgression
                 //Listing users having done a review of this visit
                 if (key_exists($visitId, $validatedReview)) {
                     $userIdHavingReviewed = array_keys($validatedReview[$visitId]);
+                } else {
+                    $userIdHavingReviewed = [];
                 }
-                else $userIdHavingReviewed = [];
 
                 //Listing users not having done review of this visit
                 $userIdNotHavingReviewed = array_diff(array_keys($reviewersById), $userIdHavingReviewed);
 
                 $userDetailsHavingReviewed = [];
                 //Get reviewer details having reviewed from db answer (user may have been removed so won't be in the list of current reviewer in the study)
-                foreach($userIdHavingReviewed as $reviewerId){
+                foreach ($userIdHavingReviewed as $reviewerId) {
                     $userDetailsHavingReviewed[] = $validatedReview[(string) $visitId][(string) $reviewerId][0]['user'];
                 }
-               
+
                 $answer[] = [
                     'visitId' => $visitId,
                     'patientId' => $visit['patient_id'],

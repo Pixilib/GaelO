@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Services\FormService;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;

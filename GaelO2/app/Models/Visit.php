@@ -16,32 +16,35 @@ class Visit extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'id' => 'integer',
-        'creator_user_id' => 'integer',
-        'creation_date' => 'datetime',
-        'patient_id' => 'string',
-        'visit_date' => 'date',
-        'visit_type_id' => 'integer',
-        'status_done' => VisitStatusDoneEnum::class,
-        'reason_for_not_done' => 'string',
-        'upload_status' => UploadStatusEnum::class,
-        'state_investigator_form' => InvestigatorFormStateEnum::class,
-        'state_quality_control' => QualityControlStateEnum::class,
-        'controller_user_id' => 'integer',
-        'control_date' => 'datetime',
-        'image_quality_control' => 'boolean',
-        'form_quality_control' => 'boolean',
-        'image_quality_comment' => 'string',
-        'form_quality_comment' => 'string',
-        'corrective_action_user_id' => 'integer',
-        'corrective_action_date' => 'datetime',
-        'corrective_action_new_upload' => 'boolean',
-        'corrective_action_investigator_form' => 'boolean',
-        'corrective_action_comment' => 'string',
-        'corrective_action_applied' => 'boolean',
-        'sent_files' => 'array'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'creator_user_id' => 'integer',
+            'creation_date' => 'datetime',
+            'patient_id' => 'string',
+            'visit_date' => 'date',
+            'visit_type_id' => 'integer',
+            'status_done' => VisitStatusDoneEnum::class,
+            'reason_for_not_done' => 'string',
+            'upload_status' => UploadStatusEnum::class,
+            'state_investigator_form' => InvestigatorFormStateEnum::class,
+            'state_quality_control' => QualityControlStateEnum::class,
+            'controller_user_id' => 'integer',
+            'control_date' => 'datetime',
+            'image_quality_control' => 'boolean',
+            'form_quality_control' => 'boolean',
+            'image_quality_comment' => 'string',
+            'form_quality_comment' => 'string',
+            'corrective_action_user_id' => 'integer',
+            'corrective_action_date' => 'datetime',
+            'corrective_action_new_upload' => 'boolean',
+            'corrective_action_investigator_form' => 'boolean',
+            'corrective_action_comment' => 'string',
+            'corrective_action_applied' => 'boolean',
+            'sent_files' => 'array'
+        ];
+    }
 
     //Default value because db does not accept default value json
     protected $attributes = [

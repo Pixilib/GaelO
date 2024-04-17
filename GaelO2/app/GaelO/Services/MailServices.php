@@ -390,7 +390,7 @@ class MailServices
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
 
         $parameters = [
-            'name' => $this->getUserName($requestingUserId),
+            'supervisorName' => $this->getUserName($requestingUserId),
             'study' => $studyName,
             'patientId' => $patientId,
             'patientCode' => $patientCode,
@@ -624,7 +624,7 @@ class MailServices
     }
 
 
-    public function sendJobFailure(string $jobType, array $details, string $errorMessage)
+    public function sendJobFailure(string $jobType, array $details, string $errorMessage, ?string $studyName = null, ?int $toUserId = null)
     {
         $parameters = [
             'jobType' => $jobType,
@@ -634,6 +634,12 @@ class MailServices
 
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface, $this->studyRepositoryInterface);
         $mailListBuilder->withAdminsEmails();
+        if ($studyName) {
+            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR);
+        }
+        if ($toUserId) {
+            $mailListBuilder->withUserEmail($toUserId);
+        }
         $this->mailInterface->setTo($mailListBuilder->get());
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_JOB_FAILURE);

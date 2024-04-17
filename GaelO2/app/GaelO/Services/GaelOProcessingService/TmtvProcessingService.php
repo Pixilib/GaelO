@@ -38,7 +38,7 @@ class TmtvProcessingService
         $this->orthancService->sendDicomToProcessing($this->ptOrthancSeriesId, $this->gaelOProcessingService);
         $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
         $this->orthancService->sendDicomToProcessing($this->ctOrthancSeriesId, $this->gaelOProcessingService);
-        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
+        $this->addCreatedRessource('dicoms', $this->ctOrthancSeriesId);
 
         $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
         $this->addCreatedRessource('series', $idPT);

@@ -12,12 +12,15 @@ class Role extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'name' => RoleEnum::class,
-        'user_id' => 'integer',
-        'study_name' => 'string',
-        'validated_documentation_version' => 'string'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'name' => RoleEnum::class,
+            'user_id' => 'integer',
+            'study_name' => 'string',
+            'validated_documentation_version' => 'string'
+        ];
+    }
 
     public function user()
     {

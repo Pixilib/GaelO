@@ -22,6 +22,8 @@ RUN apt-get update -qy && \
     sqlite3 \
     supervisor \
     zip \
+    libc-client-dev \
+    libkrb5-dev \
     libpng-dev \
     libmemcached-dev \
     mariadb-client \
@@ -30,6 +32,10 @@ RUN apt-get update -qy && \
 
 RUN pecl install pcov redis memcached
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl curl ftp
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install imap
+
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 

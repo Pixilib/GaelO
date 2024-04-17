@@ -95,7 +95,7 @@ class DeleteVisitsOlderThan extends Command
 
         $this->gaelODeleteRessourcesRepository->deleteReviews($visitIds, $studyName);
         $this->gaelODeleteRessourcesRepository->deleteReviewStatus($visitIds, $studyName);
-        $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyEntity->name);
+        $this->gaelODeleteRessourcesRepository->deleteTrackerOfVisits($visitIds, $studyName);
 
         $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
         $orthancIdArray = array_map(function ($seriesId) {
@@ -119,9 +119,7 @@ class DeleteVisitsOlderThan extends Command
             }
         }
 
-
         $this->info('The command was successful !');
-
 
         return 0;
     }

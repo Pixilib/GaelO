@@ -43,10 +43,14 @@ abstract class AbstractVisitDecisions
         return $this->visitContext['patient_id'];
     }
 
-
     public function getPatientCode()
     {
         return $this->visitContext['patient']['code'];
+    }
+
+    public function getVisitName(): string
+    {
+        return $this->visitContext['visit_type']['name'];
     }
 
     /**
