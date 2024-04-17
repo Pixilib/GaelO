@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83401807723911" branch-rate="0" lines-covered="8120" lines-valid="9736" branches-covered="0" branches-valid="0" complexity="2668" version="0.4" timestamp="1708198265">
+<coverage line-rate="0.83687229546141" branch-rate="0" lines-covered="8316" lines-valid="9937" branches-covered="0" branches-valid="0" complexity="2687" version="0.4" timestamp="1713382346">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -375,24 +375,24 @@
                 <line number="116" hits="1"/>
                 <line number="117" hits="0"/>
                 <line number="118" hits="0"/>
-                <line number="123" hits="1"/>
-                <line number="126" hits="1"/>
+                <line number="122" hits="1"/>
+                <line number="124" hits="1"/>
               </lines>
             </method>
             <method name="getDicomSeriesOfVisits" signature="array $visitIds" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="129" hits="1"/>
+                <line number="130" hits="1"/>
                 <line number="131" hits="1"/>
                 <line number="132" hits="1"/>
-                <line number="133" hits="1"/>
-                <line number="134" hits="1"/>
               </lines>
             </method>
             <method name="getOlderVisitsOfStudy" signature="string $studyName, string $datelimit" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="137" hits="1"/>
+                <line number="138" hits="1"/>
                 <line number="139" hits="1"/>
                 <line number="140" hits="1"/>
-                <line number="141" hits="1"/>
-                <line number="142" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -445,16 +445,16 @@
             <line number="116" hits="1"/>
             <line number="117" hits="0"/>
             <line number="118" hits="0"/>
-            <line number="123" hits="1"/>
-            <line number="126" hits="1"/>
+            <line number="122" hits="1"/>
+            <line number="124" hits="1"/>
+            <line number="129" hits="1"/>
+            <line number="130" hits="1"/>
             <line number="131" hits="1"/>
             <line number="132" hits="1"/>
-            <line number="133" hits="1"/>
-            <line number="134" hits="1"/>
+            <line number="137" hits="1"/>
+            <line number="138" hits="1"/>
             <line number="139" hits="1"/>
             <line number="140" hits="1"/>
-            <line number="141" hits="1"/>
-            <line number="142" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -6755,128 +6755,128 @@
           <methods>
             <method name="__construct" signature="App\GaelO\Services\VisitService $visitService, App\GaelO\Services\MailServices $mailServices, App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface, App\GaelO\Interfaces\Repositories\StudyRepositoryInterface $studyRepositoryInterface, App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface $reviewRepositoryInterface, App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="33" hits="24"/>
                 <line number="34" hits="24"/>
-                <line number="35" hits="24"/>
               </lines>
             </method>
             <method name="createForm" signature="array $data, bool $validated, ?bool $adjudication" line-rate="0.88888888888889" branch-rate="0" complexity="3">
               <lines>
+                <line number="39" hits="1"/>
                 <line number="40" hits="1"/>
                 <line number="41" hits="1"/>
                 <line number="42" hits="1"/>
-                <line number="43" hits="1"/>
-                <line number="44" hits="0"/>
+                <line number="43" hits="0"/>
+                <line number="45" hits="1"/>
                 <line number="46" hits="1"/>
                 <line number="47" hits="1"/>
-                <line number="48" hits="1"/>
-                <line number="50" hits="1"/>
+                <line number="49" hits="1"/>
               </lines>
             </method>
             <method name="updateForm" signature="int $reviewId, array $uploadedFileKeys, array $data, bool $validated" line-rate="0.9" branch-rate="0" complexity="3">
               <lines>
-                <line number="56" hits="1"/>
+                <line number="55" hits="1"/>
+                <line number="57" hits="1"/>
                 <line number="58" hits="1"/>
                 <line number="59" hits="1"/>
                 <line number="60" hits="1"/>
                 <line number="61" hits="1"/>
-                <line number="62" hits="1"/>
-                <line number="63" hits="0"/>
+                <line number="62" hits="0"/>
+                <line number="65" hits="1"/>
                 <line number="66" hits="1"/>
                 <line number="67" hits="1"/>
-                <line number="68" hits="1"/>
               </lines>
             </method>
             <method name="deleteForm" signature="int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="74" hits="2"/>
                 <line number="75" hits="2"/>
                 <line number="76" hits="2"/>
                 <line number="77" hits="2"/>
-                <line number="78" hits="2"/>
               </lines>
             </method>
             <method name="unlockForm" signature="int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="82" hits="2"/>
                 <line number="83" hits="2"/>
                 <line number="84" hits="2"/>
                 <line number="85" hits="2"/>
-                <line number="86" hits="2"/>
               </lines>
             </method>
             <method name="doSpecificReviewDecisions" signature="" line-rate="0.8" branch-rate="0" complexity="7">
               <lines>
+                <line number="90" hits="6"/>
                 <line number="91" hits="6"/>
                 <line number="92" hits="6"/>
                 <line number="93" hits="6"/>
                 <line number="94" hits="6"/>
-                <line number="95" hits="6"/>
-                <line number="97" hits="6"/>
-                <line number="98" hits="3"/>
-                <line number="101" hits="6"/>
-                <line number="102" hits="0"/>
-                <line number="105" hits="6"/>
-                <line number="108" hits="6"/>
+                <line number="96" hits="6"/>
+                <line number="97" hits="3"/>
+                <line number="100" hits="6"/>
+                <line number="101" hits="0"/>
+                <line number="104" hits="6"/>
+                <line number="107" hits="6"/>
+                <line number="108" hits="0"/>
                 <line number="109" hits="0"/>
                 <line number="110" hits="0"/>
-                <line number="111" hits="0"/>
-                <line number="112" hits="6"/>
+                <line number="111" hits="6"/>
+                <line number="113" hits="3"/>
                 <line number="114" hits="3"/>
                 <line number="115" hits="3"/>
                 <line number="116" hits="3"/>
                 <line number="117" hits="3"/>
-                <line number="118" hits="3"/>
               </lines>
             </method>
           </methods>
           <lines>
+            <line number="33" hits="24"/>
             <line number="34" hits="24"/>
-            <line number="35" hits="24"/>
+            <line number="39" hits="1"/>
             <line number="40" hits="1"/>
             <line number="41" hits="1"/>
             <line number="42" hits="1"/>
-            <line number="43" hits="1"/>
-            <line number="44" hits="0"/>
+            <line number="43" hits="0"/>
+            <line number="45" hits="1"/>
             <line number="46" hits="1"/>
             <line number="47" hits="1"/>
-            <line number="48" hits="1"/>
-            <line number="50" hits="1"/>
-            <line number="56" hits="1"/>
+            <line number="49" hits="1"/>
+            <line number="55" hits="1"/>
+            <line number="57" hits="1"/>
             <line number="58" hits="1"/>
             <line number="59" hits="1"/>
             <line number="60" hits="1"/>
             <line number="61" hits="1"/>
-            <line number="62" hits="1"/>
-            <line number="63" hits="0"/>
+            <line number="62" hits="0"/>
+            <line number="65" hits="1"/>
             <line number="66" hits="1"/>
             <line number="67" hits="1"/>
-            <line number="68" hits="1"/>
+            <line number="74" hits="2"/>
             <line number="75" hits="2"/>
             <line number="76" hits="2"/>
             <line number="77" hits="2"/>
-            <line number="78" hits="2"/>
+            <line number="82" hits="2"/>
             <line number="83" hits="2"/>
             <line number="84" hits="2"/>
             <line number="85" hits="2"/>
-            <line number="86" hits="2"/>
+            <line number="90" hits="6"/>
             <line number="91" hits="6"/>
             <line number="92" hits="6"/>
             <line number="93" hits="6"/>
             <line number="94" hits="6"/>
-            <line number="95" hits="6"/>
-            <line number="97" hits="6"/>
-            <line number="98" hits="3"/>
-            <line number="101" hits="6"/>
-            <line number="102" hits="0"/>
-            <line number="105" hits="6"/>
-            <line number="108" hits="6"/>
+            <line number="96" hits="6"/>
+            <line number="97" hits="3"/>
+            <line number="100" hits="6"/>
+            <line number="101" hits="0"/>
+            <line number="104" hits="6"/>
+            <line number="107" hits="6"/>
+            <line number="108" hits="0"/>
             <line number="109" hits="0"/>
             <line number="110" hits="0"/>
-            <line number="111" hits="0"/>
-            <line number="112" hits="6"/>
+            <line number="111" hits="6"/>
+            <line number="113" hits="3"/>
             <line number="114" hits="3"/>
             <line number="115" hits="3"/>
             <line number="116" hits="3"/>
             <line number="117" hits="3"/>
-            <line number="118" hits="3"/>
           </lines>
         </class>
       </classes>
@@ -7673,9 +7673,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.66666666666667" branch-rate="0" complexity="11">
+    <package name="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.61538461538462" branch-rate="0" complexity="12">
       <classes>
-        <class name="App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions" filename="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.66666666666667" branch-rate="0" complexity="11">
+        <class name="App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions" filename="GaelO/Services/GaelOStudiesService/AbstractVisitDecisions.php" line-rate="0.61538461538462" branch-rate="0" complexity="12">
           <methods>
             <method name="setFormData" signature="array $data" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -7709,24 +7709,29 @@
             </method>
             <method name="getPatientCode" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="49" hits="0"/>
+                <line number="48" hits="0"/>
+              </lines>
+            </method>
+            <method name="getVisitName" signature="" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="53" hits="0"/>
               </lines>
             </method>
             <method name="getAssociatedDataForInvestigatorForm" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="69" hits="0"/>
+                <line number="73" hits="0"/>
               </lines>
             </method>
             <method name="getAssociatedDataForReviewForm" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="78" hits="0"/>
+                <line number="82" hits="0"/>
               </lines>
             </method>
             <method name="getReviewAvailability" signature="string $reviewStatus" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="85" hits="6"/>
-                <line number="87" hits="3"/>
-                <line number="90" hits="3"/>
+                <line number="89" hits="6"/>
+                <line number="91" hits="3"/>
+                <line number="94" hits="3"/>
               </lines>
             </method>
           </methods>
@@ -7737,12 +7742,13 @@
             <line number="33" hits="8"/>
             <line number="38" hits="8"/>
             <line number="43" hits="0"/>
-            <line number="49" hits="0"/>
-            <line number="69" hits="0"/>
-            <line number="78" hits="0"/>
-            <line number="85" hits="6"/>
-            <line number="87" hits="3"/>
-            <line number="90" hits="3"/>
+            <line number="48" hits="0"/>
+            <line number="53" hits="0"/>
+            <line number="73" hits="0"/>
+            <line number="82" hits="0"/>
+            <line number="89" hits="6"/>
+            <line number="91" hits="3"/>
+            <line number="94" hits="3"/>
           </lines>
         </class>
       </classes>
@@ -8306,7 +8312,7 @@
       <classes>
         <class name="App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient" filename="GaelO/Services/GaelOStudiesService/ExpectedPatient/ExpectedPatient.php" line-rate="1" branch-rate="0" complexity="1">
           <methods>
-            <method name="__construct" signature="string $code, int $centerCode, ?string $inclusionStatus" line-rate="1" branch-rate="0" complexity="1">
+            <method name="__construct" signature="string $code, ?int $centerCode, ?string $inclusionStatus" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="13" hits="1"/>
                 <line number="14" hits="1"/>
@@ -8592,9 +8598,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/MailServices.php" line-rate="0.7636815920398" branch-rate="0" complexity="39">
+    <package name="GaelO/Services/MailServices.php" line-rate="0.75615763546798" branch-rate="0" complexity="41">
       <classes>
-        <class name="App\GaelO\Services\MailServices" filename="GaelO/Services/MailServices.php" line-rate="0.7636815920398" branch-rate="0" complexity="39">
+        <class name="App\GaelO\Services\MailServices" filename="GaelO/Services/MailServices.php" line-rate="0.75615763546798" branch-rate="0" complexity="41">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\MailerInterface $mailInterface, App\GaelO\Interfaces\Repositories\UserRepositoryInterface $userRepositoryInterface, App\GaelO\Interfaces\Repositories\StudyRepositoryInterface $studyRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -9111,7 +9117,7 @@
                 <line number="623" hits="0"/>
               </lines>
             </method>
-            <method name="sendJobFailure" signature="string $jobType, array $details, string $errorMessage" line-rate="0" branch-rate="0" complexity="1">
+            <method name="sendJobFailure" signature="string $jobType, array $details, string $errorMessage, ?string $studyName, ?int $toUserId" line-rate="0" branch-rate="0" complexity="3">
               <lines>
                 <line number="629" hits="0"/>
                 <line number="630" hits="0"/>
@@ -9122,8 +9128,12 @@
                 <line number="636" hits="0"/>
                 <line number="637" hits="0"/>
                 <line number="638" hits="0"/>
-                <line number="639" hits="0"/>
                 <line number="640" hits="0"/>
+                <line number="641" hits="0"/>
+                <line number="643" hits="0"/>
+                <line number="644" hits="0"/>
+                <line number="645" hits="0"/>
+                <line number="646" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -9528,8 +9538,12 @@
             <line number="636" hits="0"/>
             <line number="637" hits="0"/>
             <line number="638" hits="0"/>
-            <line number="639" hits="0"/>
             <line number="640" hits="0"/>
+            <line number="641" hits="0"/>
+            <line number="643" hits="0"/>
+            <line number="644" hits="0"/>
+            <line number="645" hits="0"/>
+            <line number="646" hits="0"/>
           </lines>
         </class>
       </classes>
@@ -19943,11 +19957,10 @@
                 <line number="75" hits="1"/>
                 <line number="76" hits="1"/>
                 <line number="78" hits="0"/>
-                <line number="81" hits="1"/>
-                <line number="83" hits="1"/>
-                <line number="85" hits="1"/>
+                <line number="82" hits="1"/>
+                <line number="84" hits="1"/>
                 <line number="86" hits="1"/>
-                <line number="89" hits="1"/>
+                <line number="87" hits="1"/>
                 <line number="90" hits="1"/>
                 <line number="91" hits="1"/>
                 <line number="92" hits="1"/>
@@ -19956,31 +19969,32 @@
                 <line number="95" hits="1"/>
                 <line number="96" hits="1"/>
                 <line number="97" hits="1"/>
-                <line number="100" hits="1"/>
+                <line number="98" hits="1"/>
                 <line number="101" hits="1"/>
                 <line number="102" hits="1"/>
                 <line number="103" hits="1"/>
                 <line number="104" hits="1"/>
                 <line number="105" hits="1"/>
                 <line number="106" hits="1"/>
-                <line number="107" hits="0"/>
+                <line number="107" hits="1"/>
                 <line number="108" hits="0"/>
+                <line number="109" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId, string $studyName" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="114" hits="2"/>
                 <line number="115" hits="2"/>
                 <line number="116" hits="2"/>
-                <line number="117" hits="1"/>
+                <line number="117" hits="2"/>
+                <line number="118" hits="1"/>
               </lines>
             </method>
             <method name="getUsersDetails" signature="array $usersId, array $usersDetails" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="126" hits="1"/>
                 <line number="127" hits="1"/>
                 <line number="128" hits="1"/>
-                <line number="131" hits="1"/>
+                <line number="129" hits="1"/>
+                <line number="132" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -20010,11 +20024,10 @@
             <line number="75" hits="1"/>
             <line number="76" hits="1"/>
             <line number="78" hits="0"/>
-            <line number="81" hits="1"/>
-            <line number="83" hits="1"/>
-            <line number="85" hits="1"/>
+            <line number="82" hits="1"/>
+            <line number="84" hits="1"/>
             <line number="86" hits="1"/>
-            <line number="89" hits="1"/>
+            <line number="87" hits="1"/>
             <line number="90" hits="1"/>
             <line number="91" hits="1"/>
             <line number="92" hits="1"/>
@@ -20023,23 +20036,24 @@
             <line number="95" hits="1"/>
             <line number="96" hits="1"/>
             <line number="97" hits="1"/>
-            <line number="100" hits="1"/>
+            <line number="98" hits="1"/>
             <line number="101" hits="1"/>
             <line number="102" hits="1"/>
             <line number="103" hits="1"/>
             <line number="104" hits="1"/>
             <line number="105" hits="1"/>
             <line number="106" hits="1"/>
-            <line number="107" hits="0"/>
+            <line number="107" hits="1"/>
             <line number="108" hits="0"/>
-            <line number="114" hits="2"/>
+            <line number="109" hits="0"/>
             <line number="115" hits="2"/>
             <line number="116" hits="2"/>
-            <line number="117" hits="1"/>
-            <line number="126" hits="1"/>
+            <line number="117" hits="2"/>
+            <line number="118" hits="1"/>
             <line number="127" hits="1"/>
             <line number="128" hits="1"/>
-            <line number="131" hits="1"/>
+            <line number="129" hits="1"/>
+            <line number="132" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -29553,440 +29567,900 @@
         </class>
       </classes>
     </package>
-    <package name="Models/Center.php" line-rate="0.66666666666667" branch-rate="0" complexity="3">
+    <package name="Models/Center.php" line-rate="0.875" branch-rate="0" complexity="4">
       <classes>
-        <class name="App\Models\Center" filename="Models/Center.php" line-rate="0.66666666666667" branch-rate="0" complexity="3">
+        <class name="App\Models\Center" filename="Models/Center.php" line-rate="0.875" branch-rate="0" complexity="4">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="17" hits="414"/>
+                <line number="18" hits="414"/>
+                <line number="19" hits="414"/>
+                <line number="20" hits="414"/>
+                <line number="21" hits="414"/>
+              </lines>
+            </method>
             <method name="country" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="23" hits="0"/>
+                <line number="26" hits="0"/>
               </lines>
             </method>
             <method name="patients" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="28" hits="4"/>
+                <line number="31" hits="4"/>
               </lines>
             </method>
             <method name="users" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="33" hits="4"/>
+                <line number="36" hits="4"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="23" hits="0"/>
-            <line number="28" hits="4"/>
-            <line number="33" hits="4"/>
+            <line number="17" hits="414"/>
+            <line number="18" hits="414"/>
+            <line number="19" hits="414"/>
+            <line number="20" hits="414"/>
+            <line number="21" hits="414"/>
+            <line number="26" hits="0"/>
+            <line number="31" hits="4"/>
+            <line number="36" hits="4"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/CenterUser.php" line-rate="0" branch-rate="0" complexity="0">
+    <package name="Models/CenterUser.php" line-rate="1" branch-rate="0" complexity="1">
       <classes>
-        <class name="App\Models\CenterUser" filename="Models/CenterUser.php" line-rate="0" branch-rate="0" complexity="0">
-          <methods/>
-          <lines/>
-        </class>
-      </classes>
-    </package>
-    <package name="Models/Country.php" line-rate="0" branch-rate="0" complexity="0">
-      <classes>
-        <class name="App\Models\Country" filename="Models/Country.php" line-rate="0" branch-rate="0" complexity="0">
-          <methods/>
-          <lines/>
-        </class>
-      </classes>
-    </package>
-    <package name="Models/DicomSeries.php" line-rate="1" branch-rate="0" complexity="1">
-      <classes>
-        <class name="App\Models\DicomSeries" filename="Models/DicomSeries.php" line-rate="1" branch-rate="0" complexity="1">
+        <class name="App\Models\CenterUser" filename="Models/CenterUser.php" line-rate="1" branch-rate="0" complexity="1">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="14" hits="475"/>
+                <line number="15" hits="475"/>
+                <line number="16" hits="475"/>
+                <line number="17" hits="475"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="14" hits="475"/>
+            <line number="15" hits="475"/>
+            <line number="16" hits="475"/>
+            <line number="17" hits="475"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="Models/Country.php" line-rate="1" branch-rate="0" complexity="1">
+      <classes>
+        <class name="App\Models\Country" filename="Models/Country.php" line-rate="1" branch-rate="0" complexity="1">
+          <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="14" hits="5"/>
+                <line number="15" hits="5"/>
+                <line number="16" hits="5"/>
+                <line number="17" hits="5"/>
+                <line number="18" hits="5"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="14" hits="5"/>
+            <line number="15" hits="5"/>
+            <line number="16" hits="5"/>
+            <line number="17" hits="5"/>
+            <line number="18" hits="5"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="Models/DicomSeries.php" line-rate="1" branch-rate="0" complexity="2">
+      <classes>
+        <class name="App\Models\DicomSeries" filename="Models/DicomSeries.php" line-rate="1" branch-rate="0" complexity="2">
+          <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="20" hits="602"/>
+                <line number="21" hits="602"/>
+                <line number="22" hits="602"/>
+                <line number="23" hits="602"/>
+                <line number="24" hits="602"/>
+                <line number="25" hits="602"/>
+                <line number="26" hits="602"/>
+                <line number="27" hits="602"/>
+                <line number="28" hits="602"/>
+                <line number="29" hits="602"/>
+                <line number="30" hits="602"/>
+                <line number="31" hits="602"/>
+                <line number="32" hits="602"/>
+                <line number="33" hits="602"/>
+                <line number="34" hits="602"/>
+                <line number="35" hits="602"/>
+                <line number="36" hits="602"/>
+                <line number="37" hits="602"/>
+                <line number="38" hits="602"/>
+                <line number="39" hits="602"/>
+                <line number="40" hits="602"/>
+              </lines>
+            </method>
             <method name="dicomStudy" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="42" hits="44"/>
+                <line number="45" hits="44"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="42" hits="44"/>
+            <line number="20" hits="602"/>
+            <line number="21" hits="602"/>
+            <line number="22" hits="602"/>
+            <line number="23" hits="602"/>
+            <line number="24" hits="602"/>
+            <line number="25" hits="602"/>
+            <line number="26" hits="602"/>
+            <line number="27" hits="602"/>
+            <line number="28" hits="602"/>
+            <line number="29" hits="602"/>
+            <line number="30" hits="602"/>
+            <line number="31" hits="602"/>
+            <line number="32" hits="602"/>
+            <line number="33" hits="602"/>
+            <line number="34" hits="602"/>
+            <line number="35" hits="602"/>
+            <line number="36" hits="602"/>
+            <line number="37" hits="602"/>
+            <line number="38" hits="602"/>
+            <line number="39" hits="602"/>
+            <line number="40" hits="602"/>
+            <line number="45" hits="44"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/DicomStudy.php" line-rate="1" branch-rate="0" complexity="3">
+    <package name="Models/DicomStudy.php" line-rate="1" branch-rate="0" complexity="4">
       <classes>
-        <class name="App\Models\DicomStudy" filename="Models/DicomStudy.php" line-rate="1" branch-rate="0" complexity="3">
+        <class name="App\Models\DicomStudy" filename="Models/DicomStudy.php" line-rate="1" branch-rate="0" complexity="4">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="20" hits="71"/>
+                <line number="21" hits="71"/>
+                <line number="22" hits="71"/>
+                <line number="23" hits="71"/>
+                <line number="24" hits="71"/>
+                <line number="25" hits="71"/>
+                <line number="26" hits="71"/>
+                <line number="27" hits="71"/>
+                <line number="28" hits="71"/>
+                <line number="29" hits="71"/>
+                <line number="30" hits="71"/>
+                <line number="31" hits="71"/>
+                <line number="32" hits="71"/>
+                <line number="33" hits="71"/>
+                <line number="34" hits="71"/>
+                <line number="35" hits="71"/>
+                <line number="36" hits="71"/>
+                <line number="37" hits="71"/>
+              </lines>
+            </method>
             <method name="dicomSeries" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="39" hits="11"/>
+                <line number="42" hits="11"/>
               </lines>
             </method>
             <method name="visit" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="44" hits="44"/>
+                <line number="47" hits="44"/>
               </lines>
             </method>
             <method name="uploader" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="49" hits="5"/>
+                <line number="52" hits="5"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="39" hits="11"/>
-            <line number="44" hits="44"/>
-            <line number="49" hits="5"/>
+            <line number="20" hits="71"/>
+            <line number="21" hits="71"/>
+            <line number="22" hits="71"/>
+            <line number="23" hits="71"/>
+            <line number="24" hits="71"/>
+            <line number="25" hits="71"/>
+            <line number="26" hits="71"/>
+            <line number="27" hits="71"/>
+            <line number="28" hits="71"/>
+            <line number="29" hits="71"/>
+            <line number="30" hits="71"/>
+            <line number="31" hits="71"/>
+            <line number="32" hits="71"/>
+            <line number="33" hits="71"/>
+            <line number="34" hits="71"/>
+            <line number="35" hits="71"/>
+            <line number="36" hits="71"/>
+            <line number="37" hits="71"/>
+            <line number="42" hits="11"/>
+            <line number="47" hits="44"/>
+            <line number="52" hits="5"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Documentation.php" line-rate="0" branch-rate="0" complexity="1">
+    <package name="Models/Documentation.php" line-rate="0.92307692307692" branch-rate="0" complexity="2">
       <classes>
-        <class name="App\Models\Documentation" filename="Models/Documentation.php" line-rate="0" branch-rate="0" complexity="1">
+        <class name="App\Models\Documentation" filename="Models/Documentation.php" line-rate="0.92307692307692" branch-rate="0" complexity="2">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="15" hits="34"/>
+                <line number="16" hits="34"/>
+                <line number="17" hits="34"/>
+                <line number="18" hits="34"/>
+                <line number="19" hits="34"/>
+                <line number="20" hits="34"/>
+                <line number="21" hits="34"/>
+                <line number="22" hits="34"/>
+                <line number="23" hits="34"/>
+                <line number="24" hits="34"/>
+                <line number="25" hits="34"/>
+                <line number="26" hits="34"/>
+              </lines>
+            </method>
             <method name="study" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="28" hits="0"/>
+                <line number="31" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="28" hits="0"/>
+            <line number="15" hits="34"/>
+            <line number="16" hits="34"/>
+            <line number="17" hits="34"/>
+            <line number="18" hits="34"/>
+            <line number="19" hits="34"/>
+            <line number="20" hits="34"/>
+            <line number="21" hits="34"/>
+            <line number="22" hits="34"/>
+            <line number="23" hits="34"/>
+            <line number="24" hits="34"/>
+            <line number="25" hits="34"/>
+            <line number="26" hits="34"/>
+            <line number="31" hits="0"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Patient.php" line-rate="1" branch-rate="0" complexity="3">
+    <package name="Models/Patient.php" line-rate="1" branch-rate="0" complexity="4">
       <classes>
-        <class name="App\Models\Patient" filename="Models/Patient.php" line-rate="1" branch-rate="0" complexity="3">
+        <class name="App\Models\Patient" filename="Models/Patient.php" line-rate="1" branch-rate="0" complexity="4">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="20" hits="353"/>
+                <line number="21" hits="353"/>
+                <line number="22" hits="353"/>
+                <line number="23" hits="353"/>
+                <line number="24" hits="353"/>
+                <line number="25" hits="353"/>
+                <line number="26" hits="353"/>
+                <line number="27" hits="353"/>
+                <line number="28" hits="353"/>
+                <line number="29" hits="353"/>
+                <line number="30" hits="353"/>
+                <line number="31" hits="353"/>
+                <line number="32" hits="353"/>
+                <line number="33" hits="353"/>
+                <line number="34" hits="353"/>
+                <line number="35" hits="353"/>
+                <line number="36" hits="353"/>
+                <line number="37" hits="353"/>
+              </lines>
+            </method>
             <method name="center" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="40" hits="15"/>
+                <line number="42" hits="15"/>
               </lines>
             </method>
             <method name="study" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="45" hits="33"/>
+                <line number="47" hits="33"/>
               </lines>
             </method>
             <method name="visits" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="50" hits="4"/>
+                <line number="52" hits="4"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="40" hits="15"/>
-            <line number="45" hits="33"/>
-            <line number="50" hits="4"/>
+            <line number="20" hits="353"/>
+            <line number="21" hits="353"/>
+            <line number="22" hits="353"/>
+            <line number="23" hits="353"/>
+            <line number="24" hits="353"/>
+            <line number="25" hits="353"/>
+            <line number="26" hits="353"/>
+            <line number="27" hits="353"/>
+            <line number="28" hits="353"/>
+            <line number="29" hits="353"/>
+            <line number="30" hits="353"/>
+            <line number="31" hits="353"/>
+            <line number="32" hits="353"/>
+            <line number="33" hits="353"/>
+            <line number="34" hits="353"/>
+            <line number="35" hits="353"/>
+            <line number="36" hits="353"/>
+            <line number="37" hits="353"/>
+            <line number="42" hits="15"/>
+            <line number="47" hits="33"/>
+            <line number="52" hits="4"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Review.php" line-rate="1" branch-rate="0" complexity="2">
+    <package name="Models/Review.php" line-rate="1" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Models\Review" filename="Models/Review.php" line-rate="1" branch-rate="0" complexity="2">
+        <class name="App\Models\Review" filename="Models/Review.php" line-rate="1" branch-rate="0" complexity="3">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="17" hits="163"/>
+                <line number="18" hits="163"/>
+                <line number="19" hits="163"/>
+                <line number="20" hits="163"/>
+                <line number="21" hits="163"/>
+                <line number="22" hits="163"/>
+                <line number="23" hits="163"/>
+                <line number="24" hits="163"/>
+                <line number="25" hits="163"/>
+                <line number="26" hits="163"/>
+                <line number="27" hits="163"/>
+                <line number="28" hits="163"/>
+              </lines>
+            </method>
             <method name="user" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="36" hits="18"/>
+                <line number="39" hits="18"/>
               </lines>
             </method>
             <method name="visit" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="41" hits="17"/>
+                <line number="44" hits="17"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="36" hits="18"/>
-            <line number="41" hits="17"/>
+            <line number="17" hits="163"/>
+            <line number="18" hits="163"/>
+            <line number="19" hits="163"/>
+            <line number="20" hits="163"/>
+            <line number="21" hits="163"/>
+            <line number="22" hits="163"/>
+            <line number="23" hits="163"/>
+            <line number="24" hits="163"/>
+            <line number="25" hits="163"/>
+            <line number="26" hits="163"/>
+            <line number="27" hits="163"/>
+            <line number="28" hits="163"/>
+            <line number="39" hits="18"/>
+            <line number="44" hits="17"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/ReviewStatus.php" line-rate="1" branch-rate="0" complexity="2">
+    <package name="Models/ReviewStatus.php" line-rate="1" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Models\ReviewStatus" filename="Models/ReviewStatus.php" line-rate="1" branch-rate="0" complexity="2">
+        <class name="App\Models\ReviewStatus" filename="Models/ReviewStatus.php" line-rate="1" branch-rate="0" complexity="3">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="18" hits="256"/>
+                <line number="19" hits="256"/>
+                <line number="20" hits="256"/>
+                <line number="21" hits="256"/>
+                <line number="22" hits="256"/>
+                <line number="23" hits="256"/>
+                <line number="24" hits="256"/>
+                <line number="25" hits="256"/>
+                <line number="26" hits="256"/>
+                <line number="27" hits="256"/>
+              </lines>
+            </method>
             <method name="visit" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="35" hits="7"/>
+                <line number="38" hits="7"/>
               </lines>
             </method>
             <method name="study" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="40" hits="1"/>
+                <line number="43" hits="1"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="35" hits="7"/>
-            <line number="40" hits="1"/>
+            <line number="18" hits="256"/>
+            <line number="19" hits="256"/>
+            <line number="20" hits="256"/>
+            <line number="21" hits="256"/>
+            <line number="22" hits="256"/>
+            <line number="23" hits="256"/>
+            <line number="24" hits="256"/>
+            <line number="25" hits="256"/>
+            <line number="26" hits="256"/>
+            <line number="27" hits="256"/>
+            <line number="38" hits="7"/>
+            <line number="43" hits="1"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Role.php" line-rate="1" branch-rate="0" complexity="2">
+    <package name="Models/Role.php" line-rate="1" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Models\Role" filename="Models/Role.php" line-rate="1" branch-rate="0" complexity="2">
+        <class name="App\Models\Role" filename="Models/Role.php" line-rate="1" branch-rate="0" complexity="3">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="17" hits="482"/>
+                <line number="18" hits="482"/>
+                <line number="19" hits="482"/>
+                <line number="20" hits="482"/>
+                <line number="21" hits="482"/>
+                <line number="22" hits="482"/>
+              </lines>
+            </method>
             <method name="user" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="24" hits="235"/>
+                <line number="27" hits="235"/>
               </lines>
             </method>
             <method name="study" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="29" hits="235"/>
+                <line number="32" hits="235"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="24" hits="235"/>
-            <line number="29" hits="235"/>
+            <line number="17" hits="482"/>
+            <line number="18" hits="482"/>
+            <line number="19" hits="482"/>
+            <line number="20" hits="482"/>
+            <line number="21" hits="482"/>
+            <line number="22" hits="482"/>
+            <line number="27" hits="235"/>
+            <line number="32" hits="235"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Study.php" line-rate="0.71428571428571" branch-rate="0" complexity="7">
+    <package name="Models/Study.php" line-rate="0.88235294117647" branch-rate="0" complexity="8">
       <classes>
-        <class name="App\Models\Study" filename="Models/Study.php" line-rate="0.71428571428571" branch-rate="0" complexity="7">
+        <class name="App\Models\Study" filename="Models/Study.php" line-rate="0.88235294117647" branch-rate="0" complexity="8">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="20" hits="602"/>
+                <line number="21" hits="602"/>
+                <line number="22" hits="602"/>
+                <line number="23" hits="602"/>
+                <line number="24" hits="602"/>
+                <line number="25" hits="602"/>
+                <line number="26" hits="602"/>
+                <line number="27" hits="602"/>
+                <line number="28" hits="602"/>
+                <line number="29" hits="602"/>
+              </lines>
+            </method>
             <method name="patients" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="31" hits="2"/>
+                <line number="34" hits="2"/>
               </lines>
             </method>
             <method name="visitGroups" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="36" hits="3"/>
+                <line number="39" hits="3"/>
               </lines>
             </method>
             <method name="visits" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="41" hits="2"/>
+                <line number="44" hits="2"/>
               </lines>
             </method>
             <method name="dicomStudies" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="47" hits="2"/>
+                <line number="50" hits="2"/>
               </lines>
             </method>
             <method name="dicomSeries" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="53" hits="2"/>
+                <line number="56" hits="2"/>
               </lines>
             </method>
             <method name="documentations" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="59" hits="0"/>
+                <line number="62" hits="0"/>
               </lines>
             </method>
             <method name="roles" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="64" hits="0"/>
+                <line number="67" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="31" hits="2"/>
-            <line number="36" hits="3"/>
-            <line number="41" hits="2"/>
-            <line number="47" hits="2"/>
-            <line number="53" hits="2"/>
-            <line number="59" hits="0"/>
-            <line number="64" hits="0"/>
+            <line number="20" hits="602"/>
+            <line number="21" hits="602"/>
+            <line number="22" hits="602"/>
+            <line number="23" hits="602"/>
+            <line number="24" hits="602"/>
+            <line number="25" hits="602"/>
+            <line number="26" hits="602"/>
+            <line number="27" hits="602"/>
+            <line number="28" hits="602"/>
+            <line number="29" hits="602"/>
+            <line number="34" hits="2"/>
+            <line number="39" hits="3"/>
+            <line number="44" hits="2"/>
+            <line number="50" hits="2"/>
+            <line number="56" hits="2"/>
+            <line number="62" hits="0"/>
+            <line number="67" hits="0"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Tracker.php" line-rate="0.66666666666667" branch-rate="0" complexity="3">
+    <package name="Models/Tracker.php" line-rate="0.92307692307692" branch-rate="0" complexity="4">
       <classes>
-        <class name="App\Models\Tracker" filename="Models/Tracker.php" line-rate="0.66666666666667" branch-rate="0" complexity="3">
+        <class name="App\Models\Tracker" filename="Models/Tracker.php" line-rate="0.92307692307692" branch-rate="0" complexity="4">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="14" hits="280"/>
+                <line number="15" hits="280"/>
+                <line number="16" hits="280"/>
+                <line number="17" hits="280"/>
+                <line number="18" hits="280"/>
+                <line number="19" hits="280"/>
+                <line number="20" hits="280"/>
+                <line number="21" hits="280"/>
+                <line number="22" hits="280"/>
+                <line number="23" hits="280"/>
+              </lines>
+            </method>
             <method name="user" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="29" hits="6"/>
+                <line number="32" hits="6"/>
               </lines>
             </method>
             <method name="study" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="34" hits="0"/>
+                <line number="37" hits="0"/>
               </lines>
             </method>
             <method name="visit" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="39" hits="2"/>
+                <line number="42" hits="2"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="29" hits="6"/>
-            <line number="34" hits="0"/>
-            <line number="39" hits="2"/>
+            <line number="14" hits="280"/>
+            <line number="15" hits="280"/>
+            <line number="16" hits="280"/>
+            <line number="17" hits="280"/>
+            <line number="18" hits="280"/>
+            <line number="19" hits="280"/>
+            <line number="20" hits="280"/>
+            <line number="21" hits="280"/>
+            <line number="22" hits="280"/>
+            <line number="23" hits="280"/>
+            <line number="32" hits="6"/>
+            <line number="37" hits="0"/>
+            <line number="42" hits="2"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/User.php" line-rate="1" branch-rate="0" complexity="5">
+    <package name="Models/User.php" line-rate="1" branch-rate="0" complexity="6">
       <classes>
-        <class name="App\Models\User" filename="Models/User.php" line-rate="1" branch-rate="0" complexity="5">
+        <class name="App\Models\User" filename="Models/User.php" line-rate="1" branch-rate="0" complexity="6">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="46" hits="558"/>
+                <line number="47" hits="558"/>
+                <line number="48" hits="558"/>
+                <line number="49" hits="558"/>
+                <line number="50" hits="558"/>
+                <line number="51" hits="558"/>
+                <line number="52" hits="558"/>
+                <line number="53" hits="558"/>
+                <line number="54" hits="558"/>
+                <line number="55" hits="558"/>
+                <line number="56" hits="558"/>
+                <line number="57" hits="558"/>
+                <line number="58" hits="558"/>
+                <line number="59" hits="558"/>
+                <line number="60" hits="558"/>
+                <line number="61" hits="558"/>
+                <line number="62" hits="558"/>
+                <line number="63" hits="558"/>
+                <line number="64" hits="558"/>
+              </lines>
+            </method>
             <method name="roles" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="66" hits="39"/>
+                <line number="69" hits="39"/>
               </lines>
             </method>
             <method name="affiliatedCenters" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="71" hits="53"/>
+                <line number="74" hits="53"/>
               </lines>
             </method>
             <method name="mainCenter" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="76" hits="8"/>
+                <line number="79" hits="8"/>
               </lines>
             </method>
             <method name="sendEmailVerificationNotification" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="82" hits="3"/>
+                <line number="85" hits="3"/>
               </lines>
             </method>
             <method name="sendPasswordResetNotification" signature="$token" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="87" hits="8"/>
+                <line number="90" hits="8"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="66" hits="39"/>
-            <line number="71" hits="53"/>
-            <line number="76" hits="8"/>
-            <line number="82" hits="3"/>
-            <line number="87" hits="8"/>
+            <line number="46" hits="558"/>
+            <line number="47" hits="558"/>
+            <line number="48" hits="558"/>
+            <line number="49" hits="558"/>
+            <line number="50" hits="558"/>
+            <line number="51" hits="558"/>
+            <line number="52" hits="558"/>
+            <line number="53" hits="558"/>
+            <line number="54" hits="558"/>
+            <line number="55" hits="558"/>
+            <line number="56" hits="558"/>
+            <line number="57" hits="558"/>
+            <line number="58" hits="558"/>
+            <line number="59" hits="558"/>
+            <line number="60" hits="558"/>
+            <line number="61" hits="558"/>
+            <line number="62" hits="558"/>
+            <line number="63" hits="558"/>
+            <line number="64" hits="558"/>
+            <line number="69" hits="39"/>
+            <line number="74" hits="53"/>
+            <line number="79" hits="8"/>
+            <line number="85" hits="3"/>
+            <line number="90" hits="8"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/Visit.php" line-rate="0.66666666666667" branch-rate="0" complexity="9">
+    <package name="Models/Visit.php" line-rate="0.8780487804878" branch-rate="0" complexity="10">
       <classes>
-        <class name="App\Models\Visit" filename="Models/Visit.php" line-rate="0.66666666666667" branch-rate="0" complexity="9">
+        <class name="App\Models\Visit" filename="Models/Visit.php" line-rate="0.8780487804878" branch-rate="0" complexity="10">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="21" hits="301"/>
+                <line number="22" hits="301"/>
+                <line number="23" hits="301"/>
+                <line number="24" hits="301"/>
+                <line number="25" hits="301"/>
+                <line number="26" hits="301"/>
+                <line number="27" hits="301"/>
+                <line number="28" hits="301"/>
+                <line number="29" hits="301"/>
+                <line number="30" hits="301"/>
+                <line number="31" hits="301"/>
+                <line number="32" hits="301"/>
+                <line number="33" hits="301"/>
+                <line number="34" hits="301"/>
+                <line number="35" hits="301"/>
+                <line number="36" hits="301"/>
+                <line number="37" hits="301"/>
+                <line number="38" hits="301"/>
+                <line number="39" hits="301"/>
+                <line number="40" hits="301"/>
+                <line number="41" hits="301"/>
+                <line number="42" hits="301"/>
+                <line number="43" hits="301"/>
+                <line number="44" hits="301"/>
+                <line number="45" hits="301"/>
+                <line number="46" hits="301"/>
+              </lines>
+            </method>
             <method name="reviews" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="53" hits="0"/>
+                <line number="56" hits="0"/>
               </lines>
             </method>
             <method name="reviewStatus" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="64" hits="47"/>
-                <line number="65" hits="47"/>
-                <line number="66" hits="47"/>
                 <line number="67" hits="47"/>
                 <line number="68" hits="47"/>
                 <line number="69" hits="47"/>
                 <line number="70" hits="47"/>
+                <line number="71" hits="47"/>
+                <line number="72" hits="47"/>
+                <line number="73" hits="47"/>
               </lines>
             </method>
             <method name="patient" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="75" hits="205"/>
+                <line number="78" hits="205"/>
               </lines>
             </method>
             <method name="visitGroup" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="80" hits="0"/>
+                <line number="83" hits="0"/>
               </lines>
             </method>
             <method name="visitType" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="85" hits="179"/>
+                <line number="88" hits="179"/>
               </lines>
             </method>
             <method name="creator" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="90" hits="24"/>
+                <line number="93" hits="24"/>
               </lines>
             </method>
             <method name="controller" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="95" hits="0"/>
+                <line number="98" hits="0"/>
               </lines>
             </method>
             <method name="correctiveActionUser" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="100" hits="0"/>
+                <line number="103" hits="0"/>
               </lines>
             </method>
             <method name="dicomStudies" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="105" hits="0"/>
+                <line number="108" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="53" hits="0"/>
-            <line number="64" hits="47"/>
-            <line number="65" hits="47"/>
-            <line number="66" hits="47"/>
+            <line number="21" hits="301"/>
+            <line number="22" hits="301"/>
+            <line number="23" hits="301"/>
+            <line number="24" hits="301"/>
+            <line number="25" hits="301"/>
+            <line number="26" hits="301"/>
+            <line number="27" hits="301"/>
+            <line number="28" hits="301"/>
+            <line number="29" hits="301"/>
+            <line number="30" hits="301"/>
+            <line number="31" hits="301"/>
+            <line number="32" hits="301"/>
+            <line number="33" hits="301"/>
+            <line number="34" hits="301"/>
+            <line number="35" hits="301"/>
+            <line number="36" hits="301"/>
+            <line number="37" hits="301"/>
+            <line number="38" hits="301"/>
+            <line number="39" hits="301"/>
+            <line number="40" hits="301"/>
+            <line number="41" hits="301"/>
+            <line number="42" hits="301"/>
+            <line number="43" hits="301"/>
+            <line number="44" hits="301"/>
+            <line number="45" hits="301"/>
+            <line number="46" hits="301"/>
+            <line number="56" hits="0"/>
             <line number="67" hits="47"/>
             <line number="68" hits="47"/>
             <line number="69" hits="47"/>
             <line number="70" hits="47"/>
-            <line number="75" hits="205"/>
-            <line number="80" hits="0"/>
-            <line number="85" hits="179"/>
-            <line number="90" hits="24"/>
-            <line number="95" hits="0"/>
-            <line number="100" hits="0"/>
-            <line number="105" hits="0"/>
+            <line number="71" hits="47"/>
+            <line number="72" hits="47"/>
+            <line number="73" hits="47"/>
+            <line number="78" hits="205"/>
+            <line number="83" hits="0"/>
+            <line number="88" hits="179"/>
+            <line number="93" hits="24"/>
+            <line number="98" hits="0"/>
+            <line number="103" hits="0"/>
+            <line number="108" hits="0"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/VisitGroup.php" line-rate="1" branch-rate="0" complexity="2">
+    <package name="Models/VisitGroup.php" line-rate="1" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Models\VisitGroup" filename="Models/VisitGroup.php" line-rate="1" branch-rate="0" complexity="2">
+        <class name="App\Models\VisitGroup" filename="Models/VisitGroup.php" line-rate="1" branch-rate="0" complexity="3">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="15" hits="319"/>
+                <line number="16" hits="319"/>
+                <line number="17" hits="319"/>
+                <line number="18" hits="319"/>
+                <line number="19" hits="319"/>
+                <line number="20" hits="319"/>
+              </lines>
+            </method>
             <method name="study" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="22" hits="15"/>
+                <line number="25" hits="15"/>
               </lines>
             </method>
             <method name="visitTypes" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="27" hits="7"/>
+                <line number="30" hits="7"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="22" hits="15"/>
-            <line number="27" hits="7"/>
+            <line number="15" hits="319"/>
+            <line number="16" hits="319"/>
+            <line number="17" hits="319"/>
+            <line number="18" hits="319"/>
+            <line number="19" hits="319"/>
+            <line number="20" hits="319"/>
+            <line number="25" hits="15"/>
+            <line number="30" hits="7"/>
           </lines>
         </class>
       </classes>
     </package>
-    <package name="Models/VisitType.php" line-rate="0.5" branch-rate="0" complexity="2">
+    <package name="Models/VisitType.php" line-rate="0.9375" branch-rate="0" complexity="3">
       <classes>
-        <class name="App\Models\VisitType" filename="Models/VisitType.php" line-rate="0.5" branch-rate="0" complexity="2">
+        <class name="App\Models\VisitType" filename="Models/VisitType.php" line-rate="0.9375" branch-rate="0" complexity="3">
           <methods>
+            <method name="casts" signature="" line-rate="1" branch-rate="0" complexity="1">
+              <lines>
+                <line number="14" hits="309"/>
+                <line number="15" hits="309"/>
+                <line number="16" hits="309"/>
+                <line number="17" hits="309"/>
+                <line number="18" hits="309"/>
+                <line number="19" hits="309"/>
+                <line number="20" hits="309"/>
+                <line number="21" hits="309"/>
+                <line number="22" hits="309"/>
+                <line number="23" hits="309"/>
+                <line number="24" hits="309"/>
+                <line number="25" hits="309"/>
+                <line number="26" hits="309"/>
+                <line number="27" hits="309"/>
+              </lines>
+            </method>
             <method name="visits" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="29" hits="0"/>
+                <line number="32" hits="0"/>
               </lines>
             </method>
             <method name="visitGroup" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="34" hits="200"/>
+                <line number="37" hits="200"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="29" hits="0"/>
-            <line number="34" hits="200"/>
+            <line number="14" hits="309"/>
+            <line number="15" hits="309"/>
+            <line number="16" hits="309"/>
+            <line number="17" hits="309"/>
+            <line number="18" hits="309"/>
+            <line number="19" hits="309"/>
+            <line number="20" hits="309"/>
+            <line number="21" hits="309"/>
+            <line number="22" hits="309"/>
+            <line number="23" hits="309"/>
+            <line number="24" hits="309"/>
+            <line number="25" hits="309"/>
+            <line number="26" hits="309"/>
+            <line number="27" hits="309"/>
+            <line number="32" hits="0"/>
+            <line number="37" hits="200"/>
           </lines>
         </class>
       </classes>
