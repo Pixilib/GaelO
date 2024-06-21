@@ -1,4 +1,4 @@
-FROM php:8.3.2-fpm-bullseye
+FROM php:8.3.8-fpm-bookworm
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
@@ -27,7 +27,7 @@ RUN apt-get update -qy && \
     libpng-dev \
     libmemcached-dev \
     mariadb-client \
-    postgresql-client-13 && \
+    postgresql-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pecl install pcov redis memcached

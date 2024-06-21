@@ -17,7 +17,7 @@ use App\GaelO\Services\RegisterDicomStudyService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
-use Exception;
+use Throwable;
 use ZipArchive;
 
 class ValidateDicomUpload
@@ -191,7 +191,7 @@ class ValidateDicomUpload
             $validateDicomUploadResponse->status = $e->statusCode;
             $validateDicomUploadResponse->statusText = $e->statusText;
             $validateDicomUploadResponse->body = $e->getErrorBody();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
 
             $this->handleImportException(
                 $e->getMessage(),
