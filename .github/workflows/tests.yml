@@ -78,5 +78,5 @@ jobs:
           diff-branch: GaelO2
           diff-storage: GaelO2_code_coverage
 permissions:
-  contents: read
+  contents: write
   packages: write
