@@ -36,3 +36,6 @@ jobs:
       - name: 'Execute PHP Stan'
         working-directory: ./GaelO2
         run: vendor/bin/phpstan analyse app/
+permissions:
+  contents: read
+  packages: write
