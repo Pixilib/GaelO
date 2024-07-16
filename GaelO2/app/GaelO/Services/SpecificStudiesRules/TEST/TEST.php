@@ -6,6 +6,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\DefaultVisitRules;
 use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
+use App\GaelO\Services\GaelOStudiesService\ExpectedPatient\ExpectedPatient;
 
 class TEST extends AbstractGaelOStudy {
 
@@ -79,6 +80,17 @@ class TEST extends AbstractGaelOStudy {
         else if ($key === TEST_VISITS::CT0->value) return TEST_WB_CT0::class;
         else return DefaultVisitRules::class;
 
+    }
+
+    public function getExpectedPatients(): array
+    {
+        $expectedPatients = [];
+        $initialvalue = '12345671234567';
+        for($i=1; $i<100; $i++){
+            $value = ++$initialvalue;
+            array_push($expectedPatients, new ExpectedPatient($value, null, 'Included'));
+        } 
+        return $expectedPatients;
     }
 
 }
