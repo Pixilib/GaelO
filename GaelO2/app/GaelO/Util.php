@@ -47,22 +47,24 @@ class Util
 
     public static function addStoredFilesInZipAndClose(ZipArchive $zip, ?string $path)
     {
-
-        $files = FrameworkAdapter::getStoredFiles($path);
-        $temporaryFilesToDelete=[];
-        foreach ($files as $file) {
-            // Add current file to archive using data as stream to prevent running out memory for large files
-            $tempraryFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMPEXP_');
-            $temporaryFilesToDelete[] = $tempraryFilePath;
-            $fileContent = FrameworkAdapter::getFile($file, true);
-            stream_copy_to_stream($fileContent, fopen($tempraryFilePath, 'w'));
-            $zip->addFile($tempraryFilePath, $file);
-        }
-        //Close to build the zip as the operation is async
-        $zip->close();
-        //Delete all temporary files
-        foreach($temporaryFilesToDelete as $temp){
-            unlink($temp);
+        $temporaryFilesToDelete = [];
+        try {
+            $files = FrameworkAdapter::getStoredFiles($path);
+            foreach ($files as $file) {
+                // Add current file to archive using data as stream to prevent running out memory for large files
+                $tempraryFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMPEXP_');
+                $temporaryFilesToDelete[] = $tempraryFilePath;
+                $fileContent = FrameworkAdapter::getFile($file, true);
+                stream_copy_to_stream($fileContent, fopen($tempraryFilePath, 'w'));
+                $zip->addFile($tempraryFilePath, $file);
+            }
+            //Close to build the zip as the operation is async
+            $zip->close();
+        } finally {
+            //Delete all temporary files
+            foreach ($temporaryFilesToDelete as $temp) {
+                unlink($temp);
+            }
         }
     }
 
