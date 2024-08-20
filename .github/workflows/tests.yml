@@ -77,3 +77,6 @@ jobs:
           # determined on this branch.
           diff-branch: GaelO2
           diff-storage: GaelO2_code_coverage
+permissions:
+  contents: write
+  packages: write
