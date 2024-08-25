@@ -62,7 +62,7 @@ class GaelODeleteRessourcesRepository
 
     public function deleteDocumentation(string $studyName)
     {
-        $documentations = $this->documentation->where('study_name', $studyName)->withTrashed();
+        $documentations = $this->documentation->where('study_name', $studyName)->withTrashed()->get();
         foreach($documentations as $documentation){
             $this->frameworkInterface->deleteFile($documentation['path']);
             $documentation->forceDelete();
