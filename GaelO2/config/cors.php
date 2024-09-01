@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => env('APP_ENV', 'production') === 'production' ? ['*.gaelo.fr', '*.pixilib.fr'] : ['*'], //['*'] for non production environements
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => ['*'],
 
