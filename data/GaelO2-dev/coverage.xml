@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83688871000201" branch-rate="0" lines-covered="8317" lines-valid="9938" branches-covered="0" branches-valid="0" complexity="2687" version="0.4" timestamp="1728316237">
+<coverage line-rate="0.83688871000201" branch-rate="0" lines-covered="8317" lines-valid="9938" branches-covered="0" branches-valid="0" complexity="2688" version="0.4" timestamp="1728317268">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -939,9 +939,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Adapters/HttpClientAdapter.php" line-rate="0.047619047619048" branch-rate="0" complexity="28">
+    <package name="GaelO/Adapters/HttpClientAdapter.php" line-rate="0.047619047619048" branch-rate="0" complexity="29">
       <classes>
-        <class name="App\GaelO\Adapters\HttpClientAdapter" filename="GaelO/Adapters/HttpClientAdapter.php" line-rate="0.047619047619048" branch-rate="0" complexity="28">
+        <class name="App\GaelO\Adapters\HttpClientAdapter" filename="GaelO/Adapters/HttpClientAdapter.php" line-rate="0.047619047619048" branch-rate="0" complexity="29">
           <methods>
             <method name="__construct" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -981,7 +981,7 @@
                 <line number="60" hits="0"/>
               </lines>
             </method>
-            <method name="requestUploadArrayDicom" signature="string $method, string $uri, array $files" line-rate="0" branch-rate="0" complexity="3">
+            <method name="requestUploadArrayDicom" signature="string $method, string $uri, array $files" line-rate="0" branch-rate="0" complexity="4">
               <lines>
                 <line number="66" hits="0"/>
                 <line number="68" hits="0"/>
