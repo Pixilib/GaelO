@@ -8,15 +8,15 @@ class BaseVisitEvent extends BaseStudyEvent
 {
     protected array $visitEntity;
 
-    public function __construct(GaelOStudyEventEnum $type, array $visitEntity)
+    public function __construct(GaelOStudyEventEnum $type, array $visitEntity, string $studyName)
     {
-        parent::__construct($type);
+        parent::__construct($type, $studyName);
         $this->visitEntity = $visitEntity;
     }
 
     public function getStudyName(): string
     {
-        return $this->visitEntity['patient']['study_name'];
+        return $this->studyName;
     }
 
     public function getVisitId(): int

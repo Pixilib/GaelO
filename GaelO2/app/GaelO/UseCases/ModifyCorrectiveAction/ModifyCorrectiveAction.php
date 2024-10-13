@@ -93,7 +93,7 @@ class ModifyCorrectiveAction
                 $actionDetails
             );
 
-            $qcModifiedEvent = new CorrectiveActionEvent($visitContext);
+            $qcModifiedEvent = new CorrectiveActionEvent($visitContext, $studyName);
             $qcModifiedEvent->setCurrentUserId($modifyCorrectiveActionRequest->currentUserId);
             $qcModifiedEvent->setCorrrectiveActionDone($modifyCorrectiveActionRequest->correctiveActionDone);
     
