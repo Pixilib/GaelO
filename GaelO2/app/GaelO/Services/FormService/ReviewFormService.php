@@ -105,12 +105,12 @@ class ReviewFormService extends FormService
 
         //Send Notification emails
         if ($reviewStatus === ReviewStatusEnum::WAIT_ADJUDICATION->value) {
-            $awaitingAdjudicationEvent = new AwaitingAdjudicationEvent($this->visitContext);
+            $awaitingAdjudicationEvent = new AwaitingAdjudicationEvent($this->visitContext, $this->studyName);
             $studyObject = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
             $studyObject->onEventStudy($awaitingAdjudicationEvent);
         } else if ($reviewStatus === ReviewStatusEnum::DONE->value) {
             //In case of conclusion reached send conclusion (but not to uploader if ancillary study)
-            $visitConcludedEvent = new VisitConcludedEvent($this->visitContext);
+            $visitConcludedEvent = new VisitConcludedEvent($this->visitContext, $this->studyName);
             $visitConcludedEvent->setConclusion($conclusion);
             $visitConcludedEvent->setUploaderUserId($this->studyEntity->isAncillaryStudy() ? null : $this->uploaderId);
             $studyObject = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
