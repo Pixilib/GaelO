@@ -26,6 +26,9 @@ class ExportStudyData
 
         try {
 
+            #increase memory limit as php zip stores metadata file in memory until final generation of zip
+            ini_set("memory_limit", "512")
+
             $studyName = $exportStudyDataRequest->studyName;
 
             $this->checkAuthorization($exportStudyDataRequest->currentUserId, $studyName);
