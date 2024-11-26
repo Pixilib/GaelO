@@ -36,7 +36,6 @@ class ExportStudyDataTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $response = $this->get('/api/studies/'.$this->study->name.'/export-files');
-        dd($response);
         ob_start();
         $response->sendContent();
         ob_end_clean();
