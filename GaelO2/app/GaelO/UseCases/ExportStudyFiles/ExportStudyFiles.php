@@ -34,10 +34,10 @@ class ExportStudyFiles
 
             $zipStream = Util::exportAssociatedFiles($studyName);
 
-            $exportStudyFilesResponse->zipFile = $zipStream->getStream();
+            $exportStudyFilesResponse->stream = $zipStream->getStream();
             $exportStudyFilesResponse->status = 200;
             $exportStudyFilesResponse->statusText = 'OK';
-            $exportStudyFilesResponse->fileName = "export_" . $studyName . ".zip";
+            $exportStudyFilesResponse->fileName = "export_files_" . $studyName . ".zip";
         } catch (AbstractGaelOException $e) {
             $exportStudyFilesResponse->status = $e->statusCode;
             $exportStudyFilesResponse->statusText = $e->statusText;

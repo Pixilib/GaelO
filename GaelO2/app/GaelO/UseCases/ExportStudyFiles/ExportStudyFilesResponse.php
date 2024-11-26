@@ -8,6 +8,6 @@ class ExportStudyFilesResponse
 {
     public int $status;
     public string $statusText;
-    public StreamInterface $zipFile;
+    public StreamInterface $stream;
     public string $fileName;
 }
