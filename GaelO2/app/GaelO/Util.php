@@ -3,8 +3,11 @@
 namespace App\GaelO;
 
 use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Adapters\ZipStreamAdapter;
+use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
 use Carbon\Carbon;
 use FilesystemIterator;
+use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -145,5 +148,23 @@ class Util
     public static function isUrlSafeString(string $value): bool
     {
         return preg_match('/^[a-zA-Z0-9_-]*$/', $value);
+    }
+
+    public static function exportAssociatedFiles(string $studyName): ZipStreamInterface
+    {
+        $zipStream = new ZipStreamAdapter();
+        $zipStream->addFileFromString('Readme', 'Folder Containing associated files the ' + $studyName + ' study');
+        //send stored file for this study
+        try {
+            $files = FrameworkAdapter::getStoredFiles($studyName);
+            foreach ($files as $file) {
+                $fileStream = FrameworkAdapter::getFile($file, true);
+                $zipStream->addFileFromStream($file, $fileStream);
+            }
+            $zipStream->finish();
+        } finally {
+            Log::error('Error building ZIP Achive');
+        }
+        return $zipStream;
     }
 }

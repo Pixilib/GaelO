@@ -216,7 +216,7 @@ class ExportStudyService
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
 
-    public function exportAll() :void
+    public function exportAllTables() :void
     {
         $this->exportPatientTable();
         $this->exportVisitTable();
@@ -225,7 +225,6 @@ class ExportStudyService
         $this->exportReviewerForms();
         $this->exportTrackerTable();
         $this->exportUsersOfStudy();
-        $this->exportAssociatedFiles();
     }
 
     private function groupReviewPerVisitType(array $reviewEntities, string $role): void
@@ -301,21 +300,6 @@ class ExportStudyService
         }
 
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
-    }
-
-    public function exportAssociatedFiles(): void
-    {
-        $zip = new ZipArchive();
-        $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_' . $this->studyName . '_');
-        $zip->open($tempZip, ZipArchive::OVERWRITE);
-        //Add a file to create zip
-        $zip->addFromString('Readme', 'Folder Containing associated files to study');
-        //send stored file for this study
-        Util::addStoredFilesInZipAndClose($zip, $this->studyName);
-
-        $exporFileResult = new ExportFileResults();
-        $exporFileResult->addExportFile(ExportDataResults::EXPORT_TYPE_ZIP, $tempZip);
-        $this->exportStudyResults->setExportFileResults($exporFileResult);
     }
 
     public function getExportStudyResult(): ExportStudyResults
