@@ -10,12 +10,10 @@ class ZipStreamAdapter implements ZipStreamInterface
 {
 
     private ZipStream\ZipStream $zipStream;
-    private StreamInterface $stream;
 
     public function init(string $filename): void
     {
         $this->zipStream = new ZipStream\ZipStream(
-            outputStream: $this->stream,
             outputName: $filename,
             sendHttpHeaders: true,
         );
@@ -31,7 +29,7 @@ class ZipStreamAdapter implements ZipStreamInterface
 
     public function addFileFromStream(string $filename, $stream): void
     {
-        $this->zipStream->addFileFromPsr7Stream(
+        $this->zipStream->addFileFromStream(
             fileName: $filename,
             stream: $stream,
         );
@@ -40,9 +38,5 @@ class ZipStreamAdapter implements ZipStreamInterface
     public function finish()
     {
         return $this->zipStream->finish();
-    }
-
-    public function getStream() : StreamInterface{
-        return $this->stream;
     }
 }

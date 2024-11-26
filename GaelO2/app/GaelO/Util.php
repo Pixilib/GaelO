@@ -153,7 +153,8 @@ class Util
     public static function exportAssociatedFiles(string $studyName): ZipStreamInterface
     {
         $zipStream = new ZipStreamAdapter();
-        $zipStream->addFileFromString('Readme', 'Folder Containing associated files the ' + $studyName + ' study');
+        $zipStream->init('export_'. $studyName .'_files.zip');
+        $zipStream->addFileFromString('README', 'Folder Containing associated files the ' . $studyName . ' study');
         //send stored file for this study
         try {
             $files = FrameworkAdapter::getStoredFiles($studyName);

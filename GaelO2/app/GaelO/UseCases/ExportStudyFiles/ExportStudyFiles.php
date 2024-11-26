@@ -13,6 +13,7 @@ class ExportStudyFiles
 {
 
     private AuthorizationStudyService $authorizationStudyService;
+    private string $studyName;
 
     public function __construct(AuthorizationStudyService $authorizationStudyService)
     {
@@ -29,12 +30,11 @@ class ExportStudyFiles
 
             $this->checkAuthorization($exportStudyFilesRequest->currentUserId, $studyName);
 
+            $this->studyName = $studyName;
+
             //Operation might be long, set max execution time to 30 minutes
             set_time_limit(1800);
 
-            $zipStream = Util::exportAssociatedFiles($studyName);
-
-            $exportStudyFilesResponse->stream = $zipStream->getStream();
             $exportStudyFilesResponse->status = 200;
             $exportStudyFilesResponse->statusText = 'OK';
             $exportStudyFilesResponse->fileName = "export_files_" . $studyName . ".zip";
@@ -54,5 +54,9 @@ class ExportStudyFiles
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
+    }
+
+    public function readExport(){
+        Util::exportAssociatedFiles($this->studyName);
     }
 }

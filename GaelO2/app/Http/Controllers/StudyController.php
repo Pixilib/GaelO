@@ -250,7 +250,7 @@ class StudyController extends Controller
         $exportStudyFiles->execute($exportStudyFilesRequest, $exportStudyFilesResponse);
 
         if ($exportStudyFilesResponse->status === 200) {
-            return $exportStudyFilesResponse->stream;
+            return response()->stream(function () use ($exportStudyFiles): void {$exportStudyFiles->readExport();});
         } else {
             return response()->noContent()
                 ->setStatusCode($exportStudyFilesResponse->status, $exportStudyFilesResponse->statusText);

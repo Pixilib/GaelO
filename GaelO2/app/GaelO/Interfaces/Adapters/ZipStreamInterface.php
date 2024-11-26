@@ -9,5 +9,4 @@ Interface ZipStreamInterface {
     public function addFileFromString(string $filename, string $content): void;
     public function addFileFromStream(string $filename, $stream) :void;
     public function finish();
-    public function getStream() : StreamInterface;
 }
