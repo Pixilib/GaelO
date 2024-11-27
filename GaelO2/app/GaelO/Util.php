@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use Throwable;
 use ZipArchive;
 
 class Util
@@ -163,7 +164,7 @@ class Util
                 $zipStream->addFileFromStream($file, $fileStream);
             }
             $zipStream->finish();
-        } finally {
+        } catch(Throwable $t) {
             Log::error('Error building ZIP Achive');
         }
         return $zipStream;
