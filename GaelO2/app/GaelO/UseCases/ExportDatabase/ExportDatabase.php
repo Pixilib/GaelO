@@ -57,7 +57,7 @@ class ExportDatabase
         try {
             $filePathSql = tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
             $this->databaseDumperInterface->createDatabaseDumpFile($filePathSql);
-            $zipStream->addFileFromStream(fopen($filePathSql, 'rb'), "export_database_$date.sql");
+            $zipStream->addFileFromStream("export_database_$date.sql", fopen($filePathSql, 'rb'), );
             $files = FrameworkAdapter::getStoredFiles();
             foreach ($files as $file) {
                 $fileStream = FrameworkAdapter::getFile($file, true);
