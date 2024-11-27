@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.8335508483084" branch-rate="0" lines-covered="8303" lines-valid="9961" branches-covered="0" branches-valid="0" complexity="2693" version="0.4" timestamp="1732666566">
+<coverage line-rate="0.83186107207388" branch-rate="0" lines-covered="8287" lines-valid="9962" branches-covered="0" branches-valid="0" complexity="2695" version="0.4" timestamp="1732694425">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -695,18 +695,18 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Adapters/DatabaseDumperAdapter.php" line-rate="0.13333333333333" branch-rate="0" complexity="5">
+    <package name="GaelO/Adapters/DatabaseDumperAdapter.php" line-rate="0" branch-rate="0" complexity="5">
       <classes>
-        <class name="App\GaelO\Adapters\DatabaseDumperAdapter" filename="GaelO/Adapters/DatabaseDumperAdapter.php" line-rate="0.13333333333333" branch-rate="0" complexity="5">
+        <class name="App\GaelO\Adapters\DatabaseDumperAdapter" filename="GaelO/Adapters/DatabaseDumperAdapter.php" line-rate="0" branch-rate="0" complexity="5">
           <methods>
-            <method name="createDatabaseDumpFile" signature="string $filePath" line-rate="0.66666666666667" branch-rate="0" complexity="3">
+            <method name="createDatabaseDumpFile" signature="string $filePath" line-rate="0" branch-rate="0" complexity="3">
               <lines>
-                <line number="18" hits="1"/>
-                <line number="19" hits="1"/>
+                <line number="18" hits="0"/>
+                <line number="19" hits="0"/>
                 <line number="20" hits="0"/>
-                <line number="21" hits="1"/>
+                <line number="21" hits="0"/>
                 <line number="22" hits="0"/>
-                <line number="25" hits="1"/>
+                <line number="25" hits="0"/>
               </lines>
             </method>
             <method name="getMysqlDump" signature="string $file" line-rate="0" branch-rate="0" complexity="1">
@@ -743,12 +743,12 @@
             </method>
           </methods>
           <lines>
-            <line number="18" hits="1"/>
-            <line number="19" hits="1"/>
+            <line number="18" hits="0"/>
+            <line number="19" hits="0"/>
             <line number="20" hits="0"/>
-            <line number="21" hits="1"/>
+            <line number="21" hits="0"/>
             <line number="22" hits="0"/>
-            <line number="25" hits="1"/>
+            <line number="25" hits="0"/>
             <line number="32" hits="0"/>
             <line number="33" hits="0"/>
             <line number="34" hits="0"/>
@@ -15754,9 +15754,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/ExportDatabase/ExportDatabase.php" line-rate="0.92" branch-rate="0" complexity="6">
+    <package name="GaelO/UseCases/ExportDatabase/ExportDatabase.php" line-rate="0.46153846153846" branch-rate="0" complexity="8">
       <classes>
-        <class name="App\GaelO\UseCases\ExportDatabase\ExportDatabase" filename="GaelO/UseCases/ExportDatabase/ExportDatabase.php" line-rate="0.92" branch-rate="0" complexity="6">
+        <class name="App\GaelO\UseCases\ExportDatabase\ExportDatabase" filename="GaelO/UseCases/ExportDatabase/ExportDatabase.php" line-rate="0.46153846153846" branch-rate="0" complexity="8">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\DatabaseDumperInterface $databaseDumperInterface, App\GaelO\Services\AuthorizationService\AuthorizationUserService $authorizationUserService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -15764,35 +15764,40 @@
                 <line number="22" hits="2"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\ExportDatabase\ExportDatabaseRequest $exportDatabaseRequest, App\GaelO\UseCases\ExportDatabase\ExportDatabaseResponse $exportDatabaseResponse" line-rate="0.9" branch-rate="0" complexity="3">
+            <method name="execute" signature="App\GaelO\UseCases\ExportDatabase\ExportDatabaseRequest $exportDatabaseRequest, App\GaelO\UseCases\ExportDatabase\ExportDatabaseResponse $exportDatabaseResponse" line-rate="0.77777777777778" branch-rate="0" complexity="3">
               <lines>
                 <line number="29" hits="2"/>
                 <line number="31" hits="1"/>
-                <line number="32" hits="1"/>
                 <line number="33" hits="1"/>
                 <line number="34" hits="1"/>
+                <line number="35" hits="1"/>
                 <line number="36" hits="1"/>
                 <line number="37" hits="1"/>
-                <line number="39" hits="1"/>
-                <line number="40" hits="1"/>
-                <line number="41" hits="1"/>
-                <line number="44" hits="1"/>
-                <line number="46" hits="1"/>
-                <line number="47" hits="1"/>
-                <line number="48" hits="1"/>
-                <line number="49" hits="1"/>
-                <line number="50" hits="1"/>
-                <line number="51" hits="1"/>
-                <line number="52" hits="1"/>
-                <line number="53" hits="0"/>
-                <line number="54" hits="0"/>
+                <line number="38" hits="0"/>
+                <line number="39" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="60" hits="2"/>
-                <line number="61" hits="2"/>
-                <line number="62" hits="1"/>
+                <line number="45" hits="2"/>
+                <line number="46" hits="2"/>
+                <line number="47" hits="1"/>
+              </lines>
+            </method>
+            <method name="readExport" signature="" line-rate="0" branch-rate="0" complexity="2">
+              <lines>
+                <line number="53" hits="0"/>
+                <line number="54" hits="0"/>
+                <line number="55" hits="0"/>
+                <line number="58" hits="0"/>
+                <line number="59" hits="0"/>
+                <line number="60" hits="0"/>
+                <line number="61" hits="0"/>
+                <line number="62" hits="0"/>
+                <line number="63" hits="0"/>
+                <line number="64" hits="0"/>
+                <line number="66" hits="0"/>
+                <line number="68" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -15801,27 +15806,28 @@
             <line number="22" hits="2"/>
             <line number="29" hits="2"/>
             <line number="31" hits="1"/>
-            <line number="32" hits="1"/>
             <line number="33" hits="1"/>
             <line number="34" hits="1"/>
+            <line number="35" hits="1"/>
             <line number="36" hits="1"/>
             <line number="37" hits="1"/>
-            <line number="39" hits="1"/>
-            <line number="40" hits="1"/>
-            <line number="41" hits="1"/>
-            <line number="44" hits="1"/>
-            <line number="46" hits="1"/>
+            <line number="38" hits="0"/>
+            <line number="39" hits="0"/>
+            <line number="45" hits="2"/>
+            <line number="46" hits="2"/>
             <line number="47" hits="1"/>
-            <line number="48" hits="1"/>
-            <line number="49" hits="1"/>
-            <line number="50" hits="1"/>
-            <line number="51" hits="1"/>
-            <line number="52" hits="1"/>
             <line number="53" hits="0"/>
             <line number="54" hits="0"/>
-            <line number="60" hits="2"/>
-            <line number="61" hits="2"/>
-            <line number="62" hits="1"/>
+            <line number="55" hits="0"/>
+            <line number="58" hits="0"/>
+            <line number="59" hits="0"/>
+            <line number="60" hits="0"/>
+            <line number="61" hits="0"/>
+            <line number="62" hits="0"/>
+            <line number="63" hits="0"/>
+            <line number="64" hits="0"/>
+            <line number="66" hits="0"/>
+            <line number="68" hits="0"/>
           </lines>
         </class>
       </classes>
@@ -26254,38 +26260,38 @@
         </class>
       </classes>
     </package>
-    <package name="Http/Controllers/ExportDBController.php" line-rate="1" branch-rate="0" complexity="2">
+    <package name="Http/Controllers/ExportDBController.php" line-rate="0.90909090909091" branch-rate="0" complexity="2">
       <classes>
-        <class name="App\Http\Controllers\ExportDBController" filename="Http/Controllers/ExportDBController.php" line-rate="1" branch-rate="0" complexity="2">
+        <class name="App\Http\Controllers\ExportDBController" filename="Http/Controllers/ExportDBController.php" line-rate="0.90909090909091" branch-rate="0" complexity="2">
           <methods>
-            <method name="exportDB" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ExportDatabase\ExportDatabase $exportDatabase, App\GaelO\UseCases\ExportDatabase\ExportDatabaseRequest $exportDatabaseRequest, App\GaelO\UseCases\ExportDatabase\ExportDatabaseResponse $exportDatabaseResponse" line-rate="1" branch-rate="0" complexity="2">
+            <method name="exportDB" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ExportDatabase\ExportDatabase $exportDatabase, App\GaelO\UseCases\ExportDatabase\ExportDatabaseRequest $exportDatabaseRequest, App\GaelO\UseCases\ExportDatabase\ExportDatabaseResponse $exportDatabaseResponse" line-rate="0.90909090909091" branch-rate="0" complexity="2">
               <lines>
-                <line number="15" hits="2"/>
                 <line number="16" hits="2"/>
-                <line number="18" hits="2"/>
+                <line number="17" hits="2"/>
                 <line number="19" hits="2"/>
-                <line number="21" hits="2"/>
+                <line number="20" hits="2"/>
                 <line number="22" hits="2"/>
-                <line number="23" hits="1"/>
+                <line number="23" hits="2"/>
                 <line number="24" hits="1"/>
-                <line number="25" hits="1"/>
-                <line number="27" hits="1"/>
+                <line number="25" hits="0"/>
+                <line number="26" hits="1"/>
                 <line number="28" hits="1"/>
+                <line number="29" hits="1"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="15" hits="2"/>
             <line number="16" hits="2"/>
-            <line number="18" hits="2"/>
+            <line number="17" hits="2"/>
             <line number="19" hits="2"/>
-            <line number="21" hits="2"/>
+            <line number="20" hits="2"/>
             <line number="22" hits="2"/>
-            <line number="23" hits="1"/>
+            <line number="23" hits="2"/>
             <line number="24" hits="1"/>
-            <line number="25" hits="1"/>
-            <line number="27" hits="1"/>
+            <line number="25" hits="0"/>
+            <line number="26" hits="1"/>
             <line number="28" hits="1"/>
+            <line number="29" hits="1"/>
           </lines>
         </class>
       </classes>
