@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature\TestReviewForm;
+
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\Review;
