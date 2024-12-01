@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83186107207388" branch-rate="0" lines-covered="8287" lines-valid="9962" branches-covered="0" branches-valid="0" complexity="2695" version="0.4" timestamp="1733063326">
+<coverage line-rate="0.83187794840911" branch-rate="0" lines-covered="8288" lines-valid="9963" branches-covered="0" branches-valid="0" complexity="2695" version="0.4" timestamp="1733095847">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -15848,9 +15848,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/ExportStudyData/ExportStudyData.php" line-rate="0.9047619047619" branch-rate="0" complexity="6">
+    <package name="GaelO/UseCases/ExportStudyData/ExportStudyData.php" line-rate="0.90909090909091" branch-rate="0" complexity="6">
       <classes>
-        <class name="App\GaelO\UseCases\ExportStudyData\ExportStudyData" filename="GaelO/UseCases/ExportStudyData/ExportStudyData.php" line-rate="0.9047619047619" branch-rate="0" complexity="6">
+        <class name="App\GaelO\UseCases\ExportStudyData\ExportStudyData" filename="GaelO/UseCases/ExportStudyData/ExportStudyData.php" line-rate="0.90909090909091" branch-rate="0" complexity="6">
           <methods>
             <method name="__construct" signature="App\GaelO\Services\AuthorizationService\AuthorizationStudyService $authorizationStudyService, App\GaelO\Services\ExportStudyService $exportStudyService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -15858,31 +15858,32 @@
                 <line number="21" hits="2"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest $exportStudyDataRequest, App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse $exportStudyDataResponse" line-rate="0.86666666666667" branch-rate="0" complexity="3">
+            <method name="execute" signature="App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest $exportStudyDataRequest, App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse $exportStudyDataResponse" line-rate="0.875" branch-rate="0" complexity="3">
               <lines>
                 <line number="28" hits="2"/>
                 <line number="30" hits="2"/>
                 <line number="33" hits="1"/>
                 <line number="35" hits="1"/>
-                <line number="36" hits="1"/>
                 <line number="37" hits="1"/>
+                <line number="38" hits="1"/>
                 <line number="39" hits="1"/>
-                <line number="40" hits="1"/>
                 <line number="41" hits="1"/>
                 <line number="42" hits="1"/>
                 <line number="43" hits="1"/>
+                <line number="44" hits="1"/>
                 <line number="45" hits="1"/>
-                <line number="46" hits="1"/>
-                <line number="47" hits="0"/>
-                <line number="48" hits="0"/>
+                <line number="47" hits="1"/>
+                <line number="48" hits="1"/>
+                <line number="49" hits="0"/>
+                <line number="50" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $currentUserId, string $studyName" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="55" hits="2"/>
-                <line number="56" hits="2"/>
                 <line number="57" hits="2"/>
-                <line number="58" hits="1"/>
+                <line number="58" hits="2"/>
+                <line number="59" hits="2"/>
+                <line number="60" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -15893,21 +15894,22 @@
             <line number="30" hits="2"/>
             <line number="33" hits="1"/>
             <line number="35" hits="1"/>
-            <line number="36" hits="1"/>
             <line number="37" hits="1"/>
+            <line number="38" hits="1"/>
             <line number="39" hits="1"/>
-            <line number="40" hits="1"/>
             <line number="41" hits="1"/>
             <line number="42" hits="1"/>
             <line number="43" hits="1"/>
+            <line number="44" hits="1"/>
             <line number="45" hits="1"/>
-            <line number="46" hits="1"/>
-            <line number="47" hits="0"/>
-            <line number="48" hits="0"/>
-            <line number="55" hits="2"/>
-            <line number="56" hits="2"/>
+            <line number="47" hits="1"/>
+            <line number="48" hits="1"/>
+            <line number="49" hits="0"/>
+            <line number="50" hits="0"/>
             <line number="57" hits="2"/>
-            <line number="58" hits="1"/>
+            <line number="58" hits="2"/>
+            <line number="59" hits="2"/>
+            <line number="60" hits="1"/>
           </lines>
         </class>
       </classes>
