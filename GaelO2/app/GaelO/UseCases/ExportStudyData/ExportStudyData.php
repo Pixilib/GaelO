@@ -31,6 +31,8 @@ class ExportStudyData
 
             //Make this task continues even the users leave to prevent removing created temporary files
             ignore_user_abort(true);
+            //Increased memory limit
+            ini_set('memory_limit', '1024M');
             //Operation might be long, set max execution time to 30 minutes
             set_time_limit(1800);
 
