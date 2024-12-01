@@ -12,9 +12,9 @@ class QCModifiedEvent extends BaseVisitEvent
     private string $imageQcComment;
     private bool $reviewNeeded;
 
-    public function __construct(array $visitEntity)
+    public function __construct(array $visitEntity, string $studyName)
     {
-        parent::__construct(GaelOStudyEventEnum::QC_MODIFIED_EVENT, $visitEntity);
+        parent::__construct(GaelOStudyEventEnum::QC_MODIFIED_EVENT, $visitEntity, $studyName);
     }
 
     public function setCurrentUserId(int $userId): void

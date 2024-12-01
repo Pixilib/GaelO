@@ -104,7 +104,7 @@ class VisitService
         }
 
         //Notify of the upload done
-        $visitUploadedEvent = new VisitUploadedEvent($visitEntity);
+        $visitUploadedEvent = new VisitUploadedEvent($visitEntity, $studyName);
         $visitUploadedEvent->setReviewNeeded($reviewNeeded);
         $visitUploadedEvent->setUploaderUserId($this->currentUserId);
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
@@ -135,7 +135,7 @@ class VisitService
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);
         }
 
-        $qcModifiedEvent = new QCModifiedEvent($visitEntity);
+        $qcModifiedEvent = new QCModifiedEvent($visitEntity, $studyName);
         $qcModifiedEvent->setCurrentUserId($controllerId);
         $qcModifiedEvent->setQcStatus($stateQc);
         $qcModifiedEvent->setFormQcStatus($formQc ? 'Accepted ' : 'Refused');

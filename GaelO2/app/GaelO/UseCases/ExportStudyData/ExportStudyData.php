@@ -25,19 +25,15 @@ class ExportStudyData
     {
 
         try {
-
             $studyName = $exportStudyDataRequest->studyName;
 
             $this->checkAuthorization($exportStudyDataRequest->currentUserId, $studyName);
-
-            //Operation might be long, set max execution time to 30 minutes
-            set_time_limit(1800);
 
             //Make this task continues even the users leave to prevent removing created temporary files
             ignore_user_abort(true);
 
             $this->exportStudyService->setStudyName($studyName);
-            $this->exportStudyService->exportAll();
+            $this->exportStudyService->exportAllTables();
             $exportResults = $this->exportStudyService->getExportStudyResult();
 
             $exportStudyDataResponse->zipFile = $exportResults->getResultsAsZip();

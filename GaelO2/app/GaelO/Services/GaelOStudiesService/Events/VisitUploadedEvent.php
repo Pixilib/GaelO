@@ -7,9 +7,9 @@ class VisitUploadedEvent extends BaseVisitEvent
     private bool $reviewNeeded;
     private int $uploaderUserId;
 
-    public function __construct(array $visitEntity)
+    public function __construct(array $visitEntity, string $studyName)
     {  
-        parent::__construct(GaelOStudyEventEnum::UPLOAD_VISIT_EVENT, $visitEntity);
+        parent::__construct(GaelOStudyEventEnum::UPLOAD_VISIT_EVENT, $visitEntity, $studyName);
     }
 
     public function setUploaderUserId(int $userId): void

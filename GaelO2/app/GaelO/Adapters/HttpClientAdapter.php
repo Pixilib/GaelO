@@ -5,6 +5,7 @@ namespace App\GaelO\Adapters;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -82,10 +83,10 @@ class HttpClientAdapter implements HttpClientInterface
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[$index] = new Psr7ResponseAdapter($response);
             },
-            'rejected' => function (RequestException $exception, $index) {
+            'rejected' => function (RequestException|ConnectException $exception, $index) {
                 $reason = "Error sending dicom to orthanc";
 
-                if ($exception->hasResponse()) {
+                if ($exception instanceof RequestException && $exception->hasResponse()) {
                     $reason = $exception->getResponse()->getStatusCode();
                     Log::error($exception->getResponse()->getBody()->getContents());
                 } else {

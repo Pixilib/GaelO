@@ -31,6 +31,14 @@ class ExportStudyDataTest extends TestCase
         $response->assertHeader('content-type', 'application/zip');
     }
 
+    public function testExportStudyFiles()
+    {
+        $userId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $response = $this->get('/api/studies/'.$this->study->name.'/export-files');
+        $response->assertStatus(200);
+    }
+
     public function testExportStudyDataShouldBeForbiddenNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);

@@ -7,9 +7,9 @@ class VisitConcludedEvent extends BaseVisitEvent
     private ?int $uploaderUserId;
     private ?string $conclusion;
 
-    public function __construct(array $visitEntity)
+    public function __construct(array $visitEntity, string $studyName)
     {
-        parent::__construct(GaelOStudyEventEnum::VISIT_CONCLUDED_EVENT, $visitEntity);
+        parent::__construct(GaelOStudyEventEnum::VISIT_CONCLUDED_EVENT, $visitEntity, $studyName);
     }
 
     public function setUploaderUserId(?int $userId): void

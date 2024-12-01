@@ -79,4 +79,5 @@ jobs:
           diff-storage: GaelO2_code_coverage
 permissions:
   contents: write
-  packages: write
+  packages: read
+  pull-requests: write

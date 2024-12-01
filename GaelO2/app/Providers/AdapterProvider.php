@@ -6,18 +6,22 @@ use App\Console\Commands\GaelODeleteRessourcesRepository;
 use App\GaelO\Adapters\AzureCacheAdapter;
 use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Adapters\FtpClientAdapter;
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\JobAdapter;
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Adapters\PdfAdapter;
 use App\GaelO\Adapters\PhoneNumberAdapter;
+use App\GaelO\Adapters\ZipStreamAdapter;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Adapters\FTPClientInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
+use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
@@ -44,6 +48,8 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(JobInterface::class, JobAdapter::class);
         $this->app->bind(PdfInterface::class, PdfAdapter::class);
         $this->app->bind(GaelODeleteRessourcesRepository::class, GaelODeleteRessourcesRepository::class);
+        $this->app->bind(FTPClientInterface::class, FtpClientAdapter::class);
+        $this->app->bind(ZipStreamInterface::class, ZipStreamAdapter::class);
     }
 
     /**

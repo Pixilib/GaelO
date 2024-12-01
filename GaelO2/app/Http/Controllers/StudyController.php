@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
+use App\GaelO\UseCases\ExportStudyFiles\ExportStudyFiles;
+use App\GaelO\UseCases\ExportStudyFiles\ExportStudyFilesRequest;
+use App\GaelO\UseCases\ExportStudyFiles\ExportStudyFilesResponse;
 use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatients;
 use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsRequest;
 use App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsResponse;
@@ -235,6 +238,22 @@ class StudyController extends Controller
         } else {
             return response()->noContent()
                 ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
+        }
+    }
+
+    public function exportStudyFiles(ExportStudyFiles $exportStudyFiles, ExportStudyFilesRequest $exportStudyFilesRequest, ExportStudyFilesResponse $exportStudyFilesResponse, string $studyName)
+    {
+        $currentUser = Auth::user();
+        $exportStudyFilesRequest->currentUserId = $currentUser['id'];
+        $exportStudyFilesRequest->studyName = $studyName;
+
+        $exportStudyFiles->execute($exportStudyFilesRequest, $exportStudyFilesResponse);
+
+        if ($exportStudyFilesResponse->status === 200) {
+            return response()->stream(function () use ($exportStudyFiles): void {$exportStudyFiles->readExport();});
+        } else {
+            return response()->noContent()
+                ->setStatusCode($exportStudyFilesResponse->status, $exportStudyFilesResponse->statusText);
         }
     }
 
