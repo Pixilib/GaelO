@@ -39,7 +39,7 @@ class GetUsersFromStudy
             foreach ($dbData as $data) {
                 $userEntity = [];
                 if ($role === Constants::ROLE_SUPERVISOR) {
-                    $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
+                    $userEntity = UserEntity::fillMinimalFromDBReponseArray($data, true);
                     $userEntity->setMainCenter(CenterEntity::fillFromDBReponseArray($data['main_center']));
                     $affiliatedCenters = array_map(function($center){return CenterEntity::fillFromDBReponseArray($center);}, $data['affiliated_centers']);
                     $userEntity->setAffiliatedCenters($affiliatedCenters);

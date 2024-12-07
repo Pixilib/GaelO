@@ -20,7 +20,7 @@ class UserEntity
     public ?String $onboardingVersion;
     public ?string $emailVerifiedAt;
     public ?string $lastConnection;
-    
+
     public CenterEntity $mainCenter;
     public array $affiliatedCenters;
 
@@ -47,7 +47,7 @@ class UserEntity
         return $userEntity;
     }
 
-    public static function fillMinimalFromDBReponseArray(array $array): UserEntity
+    public static function fillMinimalFromDBReponseArray(array $array, bool $withOnboarding = false): UserEntity
     {
         $userEntity  = new UserEntity();
         $userEntity->id = $array['id'];
@@ -56,6 +56,7 @@ class UserEntity
         $userEntity->centerCode = $array['center_code'];
         $userEntity->email = $array['email'];
         $userEntity->phone = $array['phone'];
+        if ($withOnboarding) $userEntity->onboardingVersion = $array['onboarding_version'];
         return $userEntity;
     }
 
@@ -74,12 +75,12 @@ class UserEntity
         $this->roles = $roles;
     }
 
-    public function setMainCenter(CenterEntity $mainCenter) :void 
+    public function setMainCenter(CenterEntity $mainCenter): void
     {
         $this->mainCenter = $mainCenter;
     }
 
-    public function setAffiliatedCenters(array $affiliatedCenters) :void
+    public function setAffiliatedCenters(array $affiliatedCenters): void
     {
         $this->affiliatedCenters = $affiliatedCenters;
     }
