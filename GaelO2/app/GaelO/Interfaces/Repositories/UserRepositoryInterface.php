@@ -2,6 +2,8 @@
 
 namespace App\GaelO\Interfaces\Repositories;
 
+use App\Notifications\BaseGaelONotification;
+
 interface UserRepositoryInterface
 {
 
@@ -83,6 +85,8 @@ interface UserRepositoryInterface
     public function getAllUsersCenters(int $userId): array;
 
     public function getUsersFromStudy(string $studyName, bool $withCenter): array;
+
+    public function addUserNotification(int $userId, BaseGaelONotification $notification);
 
     public function getUserNotifications(int $userId, bool $onlyUnread): array;
 

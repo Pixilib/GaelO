@@ -8,6 +8,8 @@ use App\Models\CenterUser;
 use App\Models\User;
 use App\Models\Role;
 
+use App\Notifications\BaseGaelONotification;
+
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Util;
@@ -363,6 +365,11 @@ class UserRepository implements UserRepositoryInterface
 
         $users = $userQuery->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
+    }
+
+    public function addUserNotification(int $userId, BaseGaelONotification $notification) : void {
+        $user  = $this->userModel->findOrFail($userId);
+        $user->notify($notification);
     }
 
     public function getUserNotifications(int $userId, bool $onlyUnread): array
