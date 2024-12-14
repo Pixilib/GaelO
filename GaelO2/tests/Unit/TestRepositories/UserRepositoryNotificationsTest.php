@@ -5,8 +5,6 @@ namespace Tests\Unit\TestRepositories;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-use App\Models\Study;
-use App\Models\Center;
 use App\GaelO\Repositories\UserRepository;
 use App\Models\User;
 use App\Notifications\AutoImportPatients;
@@ -25,11 +23,11 @@ class UserRepositoryNotificationsTest extends TestCase
         $this->artisan('db:seed');
         $this->userRepository = App::make(UserRepository::class);
         $users = User::factory()->count(5)->create();
-        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated"));
-        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated2"));
-        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated3"));
-        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated4"));
         $this->userId = $users->first()->id;
+        $this->userRepository->addUserNotification($this->userId, new AutoImportPatients("AutoImportReport","patientCreated"));
+        $this->userRepository->addUserNotification($this->userId, new AutoImportPatients("AutoImportReport","patientCreated2"));
+        $this->userRepository->addUserNotification($this->userId, new AutoImportPatients("AutoImportReport","patientCreated3"));
+        $this->userRepository->addUserNotification($this->userId, new AutoImportPatients("AutoImportReport","patientCreated4"));
     }
 
     public function testGetUserNotifications()
