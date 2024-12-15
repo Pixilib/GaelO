@@ -5,6 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -66,16 +67,13 @@ class ImportPatientService
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
-                if ($patientEntity['inclusionStatus']  === InclusionStatusEnum::INCLUDED->value && $patientEntity['registrationDate'] == null) {
-                    throw new GaelOBadRequestException('Registration Date Missing or Invalid');
-                }
-                if ($patientEntity['inclusionStatus']  !== null) {
+                if ($patientEntity['inclusionStatus']  !== InclusionStatusEnum::PRE_INCLUDED->value) {
                     $this->isRegistrationDateValid($patientEntity['registrationDate']);
                 }
                 if (!array_key_exists('metadata', $patientEntity)) {
                     $patientEntity['metadata'] = null;
-                }else{
-                    if(!array_key_exists('tags', $patientEntity) || !is_array($patientEntity['metadata']['tags'])){
+                } else {
+                    if (!array_key_exists('tags', $patientEntity) || !is_array($patientEntity['metadata']['tags'])) {
                         throw new GaelOBadRequestException('Tags key mandatory for metadata with array structure');
                     };
                 }
@@ -180,7 +178,8 @@ class ImportPatientService
     private function isRegistrationDateValid(?string $registrationDate): void
     {
         try {
-            new DateTime($registrationDate);
+            $date = DateTime::createFromFormat("Y-m-d", $registrationDate);
+            if (!$date) throw new GaelOException("malformed date");
         } catch (Throwable) {
             throw new GaelOBadRequestException('Registration Date Missing or Invalid');
         }
