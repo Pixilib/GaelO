@@ -56,7 +56,7 @@ class CreateUserRoles
                 "study_name" => $studyName,
                 "new_role" => $role
             ];
-            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER_ROLE, $actionDetails);
 
             $createRoleResponse->statusText = "Created";
             $createRoleResponse->status = 201;
