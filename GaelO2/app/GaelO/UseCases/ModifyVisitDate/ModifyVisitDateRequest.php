@@ -8,4 +8,5 @@ class ModifyVisitDateRequest
     public string $studyName;
     public int $visitId;
     public string $visitDate;
+    public string $reason;
 }

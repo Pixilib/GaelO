@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\ModifyVisitDate;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -32,11 +33,16 @@ class ModifyVisitDate
             $visitId = $modifyVisitDateRequest->visitId;
             $currentUserId = $modifyVisitDateRequest->currentUserId;
             $newVisitDate = $modifyVisitDateRequest->visitDate;
+            $reason = $modifyVisitDateRequest->reason ?? null;
+
+            if (!$reason || empty($reason)) {
+                throw new GaelOBadRequestException('Reason must be specified');
+            }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
 
-            if($modifyVisitDateRequest->studyName !== $studyName){
+            if ($modifyVisitDateRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("should be called from original study");
             }
 
