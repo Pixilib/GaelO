@@ -41,7 +41,7 @@ class DeleteUserRole
                 'deleted_role' => $role
             ];
 
-            $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER_ROLE, $actionDetails);
 
             $deleteUserRoleResponse->status = 200;
             $deleteUserRoleResponse->statusText = 'OK';
