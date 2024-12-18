@@ -205,7 +205,11 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/files/{key}', [ReviewController::class, 'getReviewFile']);
     Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
+
+    //Wsi routes
+    // Route::get('/', [])
 });
+
 
 
 /*
