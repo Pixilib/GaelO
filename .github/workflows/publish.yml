@@ -3,9 +3,7 @@ name: 'publish'
 on:
   push:
     branches:
-      - GaelO2
-      - GaelO2-dev
-      - new-export
+      - '*'
     tags:
       - '*'
 
