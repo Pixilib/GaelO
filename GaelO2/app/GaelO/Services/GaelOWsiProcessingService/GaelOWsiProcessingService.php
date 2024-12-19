@@ -24,15 +24,15 @@ class GaelOWsiProcessingService
         set_time_limit(3600);
         //Set address of Processing Server
         $url = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_WSI_PROCESSING_URL);
-        // $login = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_WSI_PROCESSING_LOGIN);
-        // $password = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_WSI_PROCESSING_PASSWORD);
+        $login = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_WSI_PROCESSING_LOGIN);
+        $password = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_WSI_PROCESSING_PASSWORD);
         $this->httpClientInterface->setUrl($url);
-        // $this->httpClientInterface->setBasicAuthentication($login, $password);
+        $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getWelcomeGaeloWsiProcessing()
     {
-        $request = $this->get("/");
+        $request = $this->httpClientInterface->rawRequest("GET", "/", null, null);
         return $request->getBody();
     }
 }
