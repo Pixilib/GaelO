@@ -33,6 +33,7 @@ class GaelOWsiProcessingService
     public function getWelcomeGaeloWsiProcessing()
     {
         $request = $this->httpClientInterface->rawRequest("GET", "/", null, null);
-        return $request->getBody();
+        return $request;
     }
+
 }
