@@ -19,12 +19,11 @@ class GaelOWsiProcessingServiceTest extends TestCase
 
     public function testWelcome()
     {
-        // Call the service method
         $resultat = $this->gaeloWsiProcessingService->getWelcomeGaeloWsiProcessing();
-
-        // Assert the status code and the response body
         $this->assertEquals(200, $resultat->getStatusCode());
         $this->assertEquals('Welcome to GaelO Pathology Processing Backend !', $resultat->getBody());
     }
+
+    
 }
 
