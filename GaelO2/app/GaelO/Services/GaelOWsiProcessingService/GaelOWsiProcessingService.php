@@ -36,4 +36,10 @@ class GaelOWsiProcessingService
         return $request;
     }
 
+
+    public function getWsiImage()
+    {
+        
+    }
+
 }
