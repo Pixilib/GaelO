@@ -227,6 +227,19 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(123, $resp['fail']['Incorrect Patient Code Length'][0]);
     }
 
+    public function testWrongFormatInclusionDate()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $this->validPayload[0]['registrationDate'] = '01-01-2024';
+        $resp = $this->json('POST', '/api/studies/' . $this->study->name . '/import-patients?role=Supervisor', $this->validPayload);
+        //dd($resp);
+        $this->assertEquals(0, count($resp['success']));
+        $this->assertNotEmpty($resp['fail']['Registration Date Missing or Invalid']);
+        $this->assertEquals(12341231234123, $resp['fail']['Registration Date Missing or Invalid'][0]);
+    }
+
     public function testMissingInclusionDateWhileIncluded()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);

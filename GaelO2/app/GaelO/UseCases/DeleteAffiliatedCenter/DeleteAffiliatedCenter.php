@@ -40,7 +40,7 @@ class DeleteAffiliatedCenter
                 'deleted_affiliated_center' => $deleteAffiliatedCenterRequest->centerCode
             ];
 
-            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER_AFFILIATED_CENTER, $actionDetails);
 
             $deleteAffiliatedCenterResponse->status = 200;
             $deleteAffiliatedCenterResponse->statusText = 'OK';

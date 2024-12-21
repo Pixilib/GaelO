@@ -27,12 +27,28 @@ class ModifyVisitDateTest extends TestCase {
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [
-            'visitDate' => now()
+            'visitDate' => now(),
+            'reason' => 'changeDate'
         ];
 
         $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
 
         $response->assertStatus(200);
+
+    }
+
+    public function testModifyVisitDateShouldFailMissingReason()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [
+            'visitDate' => now(),
+        ];
+
+        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
+
+        $response->assertStatus(400);
 
     }
 
@@ -42,7 +58,8 @@ class ModifyVisitDateTest extends TestCase {
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [
-            'visitDate' => now()
+            'visitDate' => now(),
+            'reason' => 'changeDate'
         ];
 
         $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName. 'wrong', $payload);
@@ -57,7 +74,8 @@ class ModifyVisitDateTest extends TestCase {
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
 
         $payload = [
-            'visitDate' => now()
+            'visitDate' => now(),
+            'reason' => 'changeDate'
         ];
 
         $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);

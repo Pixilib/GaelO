@@ -47,7 +47,7 @@ class AddAffiliatedCenter
                     'user_id' => $userId,
                     'add_affiliated_center' => $centerCode
                 ];
-                $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+                $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER_AFFILIATED_CENTER, $actionDetails);
 
                 $addAffiliatedCenterResponse->status = '201';
                 $addAffiliatedCenterResponse->statusText = 'Created';
