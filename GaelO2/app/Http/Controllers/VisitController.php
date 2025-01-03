@@ -116,7 +116,7 @@ class VisitController extends Controller
         return $this->getJsonResponse($validateDicomUploadResponse->body, $validateDicomUploadResponse->status, $validateDicomUploadResponse->statusText);
     }
 
-    public function validateWsi(Request $request, ValidateWsiUpload $validateWsiUpload, ValidateWsiUploadRequest $validateWsiUploadRequest, ValidateWsiUploadResponse $validateWsiUploadResponse)
+    public function validateWsi(Request $request, ValidateWsiUpload $validateWsiUpload, ValidateWsiUploadRequest $validateWsiUploadRequest, ValidateWsiUploadResponse $validateWsiUploadResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
