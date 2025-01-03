@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.82743142144638" branch-rate="0" lines-covered="8295" lines-valid="10025" branches-covered="0" branches-valid="0" complexity="2709" version="0.4" timestamp="1735903496">
+<coverage line-rate="0.82743142144638" branch-rate="0" lines-covered="8295" lines-valid="10025" branches-covered="0" branches-valid="0" complexity="2709" version="0.4" timestamp="1735913360">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -28068,7 +28068,7 @@
                 <line number="116" hits="0"/>
               </lines>
             </method>
-            <method name="validateWsi" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUpload $validateWsiUpload, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadRequest $validateWsiUploadRequest, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadResponse $validateWsiUploadResponse" line-rate="0" branch-rate="0" complexity="1">
+            <method name="validateWsi" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUpload $validateWsiUpload, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadRequest $validateWsiUploadRequest, App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadResponse $validateWsiUploadResponse, int $visitId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
                 <line number="121" hits="0"/>
                 <line number="122" hits="0"/>
