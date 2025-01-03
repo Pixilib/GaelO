@@ -126,6 +126,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', [VisitController::class, 'validateDicom']);
+    Route::post('visits/{id}/validate-wsi', [VisitController::class, 'validateWsi']);
     Route::patch('visits/{id}/quality-control', [VisitController::class, 'modifyQualityControl']);
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset']);
     Route::post('visits/{id}/quality-control/unlock', [VisitController::class, 'unlockQc']);

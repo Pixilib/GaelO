@@ -38,58 +38,62 @@ class GaelOWsiProcessingService
 
     public function postWsiImage(string $filename)
     {
-        $request = $this->httpClientInterface->uploadFile('POST', '/wsi', $filename);
-        return $request->getBody();
+        $request = $this->httpClientInterface->uploadFile('POST', '/wsi/', $filename);
+        return $request;
     }
 
-    public function getWsiImage(string $wsiId) : string
+    public function getWsiImage(string $wsiId)
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_WSI_');
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/wsi/" . $wsiId, $downloadedFilePath, ['Content-Type' => 'application/zip'] );
+        return $this->httpClientInterface->requestStreamResponseToFile('GET', "/wsi/" . $wsiId, $downloadedFilePath, ['Content-Type' => 'application/zip']);
     }
 
-    public function getDicom(string $dicomId) : string
+    public function getDicom(string $dicomId)
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_DICOM_');
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/dicom/" . $dicomId, $downloadedFilePath, ['Content-Type' => 'application/zip'] );
+        return $this->httpClientInterface->requestStreamResponseToFile('GET', "/dicom/" . $dicomId, $downloadedFilePath, ['Content-Type' => 'application/zip']);
     }
 
-    public function convertToDicom(string $PatientID, string $PatientName, string $StudyDescription, string $StudyID, string $SeriesNumber, string $AccessionNumber, string $Manufacturer, string $ImageType, array $SeriesDecription, array $wsiId)
+    public function convertToDicom(string $patientID, string $patientName, string $studyDescription, string $studyID, string $accessionNumber, array $wsiData,  string $manufacturer = null, string $imageType = null)
     {
-        // Construire les slides
-        $slides = [];
-        foreach ($SeriesDescriptions as $index => $description) {
+        foreach ($wsiData as $wsi) {
+            if (!isset($wsi['SeriesDescription']) || !isset($wsi['SeriesNumber'])) {
+                throw new \InvalidArgumentException('Missing SeriesDescription or SeriesNumber in WSI data');
+            }
+        
             $slides[] = [
                 "dicom_tags_series" => [
-                    "SeriesDescription" => $description
+                    "SeriesDescription" => $wsi['SeriesDescription'],
+                    "SeriesNumber" => $wsi['SeriesNumber'],
                 ],
-                "wsi_id" => $wsiIds[$index]
+                "wsi_id" => $wsi['id']
             ];
         }
 
         $payload = [
-            'dicoms_tags_study' => [ 
-                'PatientID' => $PatientID,
-            'PatientName' => $PatientName,
-            'StudyDescription' => $StudyDescription,
-            'StudyID' => $StudyID,
-            'SeriesNumber' => $SeriesNumber,
-            'AccessionNumber' => $AccessionNumber,
-            'Manufacturer' => $Manufacturer,
-            'FocusMethod' => 'AUTO',
-            'ExtendedDepthOfField' => 'NO',
-            'ImageType' => $ImageType,
-            'SpecimenDescriptionSequence' => [
-                "SpecimenIdentifier" => "Specimen^Identifier",
-                "SpecimenUID" => "1.2.276.0.7230010.3.1.4.3252829876.4112.1426166133.871",
-                "IssuerOfTheSpecimenIdentifierSequence" => [],
-                "SpecimenPreparationSequence" => []
-                ]
+            'dicoms_tags_study' => [
+                'PatientID' => $patientID,
+                'PatientName' => $patientName,
+                'StudyDescription' => $studyDescription,
+                'StudyID' => $studyID,
+                'AccessionNumber' => $accessionNumber,
+                'Manufacturer' => $manufacturer,
+                'FocusMethod' => 'AUTO',
+                'ExtendedDepthOfField' => 'NO',
+                'ImageType' => $imageType,
+                'SpecimenDescriptionSequence' => [[
+                    "SpecimenIdentifier" => "Specimen^Identifier",
+                    "SpecimenUID" => "1.2.276.0.7230010.3.1.4.3252829876.4112.1426166133.871",
+                    "IssuerOfTheSpecimenIdentifierSequence" => [],
+                    "SpecimenPreparationSequence" => []
+                ]]
             ],
             'slides' => $slides
-            
+
         ];
-        $request = $this->httpClientInterface->requestJson('POST', "/tools/conversion", $payload);
-        return $request->getBody();
+        
+        
+            $request =  $this->httpClientInterface->requestJson('POST', "/tools/conversion/", $payload);
+            return $request->getBody();
     }
 }
