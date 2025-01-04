@@ -130,13 +130,13 @@ class VisitRepository implements VisitRepositoryInterface
     {
         $reviewableVisitTypeIds = $this->getReviewableVisitTypeIds($studyName);
         $reviewablePatientTags = $this->getReviwablePatientTags($studyName);
-        $newVisits = array_map(function ($visit) use ($studyName, $reviewableVisitTypeIds, $reviewablePatientTags) {
-            return $this->computeMissingReviewStatusForVisit($visit, $studyName, $reviewableVisitTypeIds, $reviewablePatientTags);
+        $newVisits = array_map(function ($visit) use ($reviewableVisitTypeIds, $reviewablePatientTags) {
+            return $this->computeMissingReviewStatusForVisit($visit, $reviewableVisitTypeIds, $reviewablePatientTags);
         }, $visits);
         return $newVisits;
     }
 
-    private function computeMissingReviewStatusForVisit(array $visit, string $studyName, array $reviewableVisitTypeIds = null, array $reviewablePatientTags = null): array
+    private function computeMissingReviewStatusForVisit(array $visit, ?array $reviewableVisitTypeIds, ?array $reviewablePatientTags): array
     {
 
         //In case of a default value indicating default data has been injected in relationship
