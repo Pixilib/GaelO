@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.8320962888666" branch-rate="0" lines-covered="8296" lines-valid="9970" branches-covered="0" branches-valid="0" complexity="2699" version="0.4" timestamp="1735997679">
+<coverage line-rate="0.8320962888666" branch-rate="0" lines-covered="8296" lines-valid="9970" branches-covered="0" branches-valid="0" complexity="2699" version="0.4" timestamp="1735997996">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -4811,7 +4811,7 @@
                 <line number="136" hits="46"/>
               </lines>
             </method>
-            <method name="computeMissingReviewStatusForVisit" signature="array $visit, string $studyName, array $reviewableVisitTypeIds, array $reviewablePatientTags" line-rate="0.92857142857143" branch-rate="0" complexity="9">
+            <method name="computeMissingReviewStatusForVisit" signature="array $visit, ?array $reviewableVisitTypeIds, ?array $reviewablePatientTags" line-rate="0.92857142857143" branch-rate="0" complexity="9">
               <lines>
                 <line number="143" hits="46"/>
                 <line number="145" hits="7"/>
