@@ -434,7 +434,7 @@ class VisitRepository implements VisitRepositoryInterface
                 $patientIds[] = $visit['patient_id'];
             }
         }
-        $uniquePatientIds = array_unique($patientIds);
+        $uniquePatientIds = array_values(array_unique($patientIds));
 
         return $uniquePatientIds;
     }
@@ -465,9 +465,9 @@ class VisitRepository implements VisitRepositoryInterface
         $visits = $patientVisitAvailableForReview->toArray();
         //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
         $visitsWithReviewStatus = $this->computeMissingReviewStatusForVisitArray($visits, $studyName);
-        $reviewAvailableVisits = array_filter($visitsWithReviewStatus, function ($visitArray) {
+        $reviewAvailableVisits = array_values(array_filter($visitsWithReviewStatus, function ($visitArray) {
             return $visitArray['review_status']['review_available'] === true;
-        });
+        }));
 
         return sizeof($reviewAvailableVisits) === 0 ? false  : true;
     }
