@@ -58,7 +58,7 @@ class UserTest extends TestCase
         $this->json('GET', '/api/users?withTrashed')->assertJsonCount(7);
     }
 
-    public function testGetAllUserShouldFailNotAdmin()
+    public function testGetAllUsersShouldFailNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);
         //Test get all users
