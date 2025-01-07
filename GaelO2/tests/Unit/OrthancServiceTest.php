@@ -71,7 +71,7 @@ class OrthancServiceTest extends TestCase
     }
 
     /**
-     * @depends testSendDicomFile
+     * @ testSendDicomFile
      */
     public function testGetStudyOrthancDetails($testingOrthancStudyID)
     {

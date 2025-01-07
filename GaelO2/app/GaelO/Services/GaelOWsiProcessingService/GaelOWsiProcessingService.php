@@ -5,6 +5,7 @@ namespace App\GaelO\Services\GaelOWsiProcessingService;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use Throwable;
 
 class GaelOWsiProcessingService
 {
@@ -18,7 +19,7 @@ class GaelOWsiProcessingService
         $this->setParams();
     }
 
-    public function setParams(): void
+    private function setParams(): void
     {
         //Set Time Limit at 1H as operation could be long
         set_time_limit(3600);
@@ -30,37 +31,52 @@ class GaelOWsiProcessingService
         $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
-    public function getWelcomeGaeloWsiProcessing()
+    public function ping(): bool
     {
-        $request = $this->httpClientInterface->rawRequest("GET", "/", null, null);
-        return $request;
+        try {
+            $this->httpClientInterface->rawRequest("GET", "/", null, null);
+            return true;
+        } catch (Throwable $e) {
+        }
+        return false;
     }
 
     public function postWsiImage(string $filename)
     {
         $request = $this->httpClientInterface->uploadFile('POST', '/wsi/', $filename);
-        return $request;
+        return $request->getJsonBody();
     }
 
-    public function getWsiImage(string $wsiId)
+    public function getWsiImage(string $wsiId): bool
     {
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_WSI_');
-        return $this->httpClientInterface->requestStreamResponseToFile('GET', "/wsi/" . $wsiId, $downloadedFilePath, ['Content-Type' => 'application/zip']);
+        try {
+            $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_WSI_');
+            $this->httpClientInterface->requestStreamResponseToFile('GET', "/wsi/" . $wsiId, $downloadedFilePath, ['Content-Type' => 'application/zip']);
+            return true;
+        } catch (Throwable $e) {
+        }
+        return false;
+        
     }
 
-    public function getDicom(string $dicomId)
+    public function getDicom(string $studyInstanceUID)
     {
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_DICOM_');
-        return $this->httpClientInterface->requestStreamResponseToFile('GET', "/dicom/" . $dicomId, $downloadedFilePath, ['Content-Type' => 'application/zip']);
+        try {
+            $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_WSI_');
+            $this->httpClientInterface->requestStreamResponseToFile('GET', "/dicom/" . $studyInstanceUID, $downloadedFilePath, ['Content-Type' => 'application/zip']);
+            return true;
+        } catch (Throwable $e) {
+        }
+        return false;
+        
     }
-
-    public function convertToDicom(string $patientID, string $patientName, string $studyDescription, string $studyID, string $accessionNumber, array $wsiData,  string $manufacturer = null, string $imageType = null)
+    public function convertToDicom(array $wsiData, string $patientID, string $patientName, string $studyDescription, string $accessionNumber, ?string $studyId = null, ?string $manufacturer = null, ?string $imageType = null)
     {
         foreach ($wsiData as $wsi) {
             if (!isset($wsi['SeriesDescription']) || !isset($wsi['SeriesNumber'])) {
                 throw new \InvalidArgumentException('Missing SeriesDescription or SeriesNumber in WSI data');
             }
-        
+
             $slides[] = [
                 "dicom_tags_series" => [
                     "SeriesDescription" => $wsi['SeriesDescription'],
@@ -71,11 +87,11 @@ class GaelOWsiProcessingService
         }
 
         $payload = [
-            'dicoms_tags_study' => [
+            'dicom_tags_study' => [
                 'PatientID' => $patientID,
                 'PatientName' => $patientName,
                 'StudyDescription' => $studyDescription,
-                'StudyID' => $studyID,
+                'StudyID' => $studyId,
                 'AccessionNumber' => $accessionNumber,
                 'Manufacturer' => $manufacturer,
                 'FocusMethod' => 'AUTO',
@@ -91,9 +107,19 @@ class GaelOWsiProcessingService
             'slides' => $slides
 
         ];
-        
-        
-            $request =  $this->httpClientInterface->requestJson('POST', "/tools/conversion/", $payload);
-            return $request->getBody();
+
+
+        $request =  $this->httpClientInterface->requestJson('POST', "/tools/conversion/", $payload);
+        return $request->getJsonBody();
+    }
+
+    public function getWsiMetadata(string $wsiId)
+    {
+        try {
+            $this->httpClientInterface->rawRequest('GET', "/wsi/" . $wsiId . "/metadata", null, null);
+            return true;
+        } catch (Throwable $e) {
+        }
+        return false;
     }
 }

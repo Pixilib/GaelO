@@ -16,38 +16,35 @@ class GaelOWsiProcessingServiceTest extends TestCase
 
         parent::setUp();
         $this->gaeloWsiProcessingService = App::make(GaelOWsiProcessingService::class);
-        $this->markTestSkipped();
+        //$this->markTestSkipped();
     }
-    
-    public function testWelcome()
+
+    public function testWelcomeApi()
     {
-        $resultat = $this->gaeloWsiProcessingService->getWelcomeGaeloWsiProcessing();
-        $this->assertEquals(200, $resultat->getStatusCode());
-        $this->assertEquals('Welcome to GaelO Pathology Processing Backend !', $resultat->getBody());
+        $result = $this->gaeloWsiProcessingService->ping();
+        $this->assertTrue($result);
     }
 
 
-    public function  testPostWsiImage()
+    public function testPostWsiImage()
     {
-        $path = getcwd() . "/tests/data/images_wsi.zip";
-        $resultat = $this->gaeloWsiProcessingService->postWsiImage($path);
-        $this->assertEquals(200, $resultat->getStatusCode());
+        $path = getcwd() . "/tests/data/wsi-sample";
+        $result = $this->gaeloWsiProcessingService->postWsiImage($path);
+        $this->assertNotNull($result['id']);
+        return $result['id'];
     }
 
 
-    public function testGetWsiImage()
+    /**
+     * @depends testPostWsiImage
+     */
+    public function testGetWsiImage($wsiId)
     {
-        $resultat = $this->gaeloWsiProcessingService->getWsiImage('a38c8a8f747e3858c615614e4e0f6d30');
-        $this->assertEquals(200, $resultat->getStatusCode());
+        $result = $this->gaeloWsiProcessingService->getWsiImage($wsiId);
+        $this->assertTrue($result);
     }
 
-    public function testGetDicom()
-    {
-        $resultat = $this->gaeloWsiProcessingService->getDicom('a38c8a8f747e3858c615614e4e0f6d30');
-        $this->assertEquals(200, $resultat->getStatusCode());
-    }
-
-    public function  testConvertToDicom()
+    public function testConvertToDicom()
     {
 
         $patientID = "12345";
@@ -70,18 +67,37 @@ class GaelOWsiProcessingServiceTest extends TestCase
         $manufacturer = "manufcaturer";
         $imageType = "ORIGINAL\\SECONDARY";
 
-        $resultat = $this->gaeloWsiProcessingService->convertToDicom(
+        $result = $this->gaeloWsiProcessingService->convertToDicom(
+            $wsiData,
             $patientID,
             $patientName,
             $studyDescription,
-            $studyID,
             $accessionNumber,
-            $wsiData,
+            $studyID,
             $manufacturer,
             $imageType
         );
 
 
-        $this->assertEquals(200, $resultat->getStatusCode());
+        $this->assertIsArray($result);
+        return $result['study_instance_uid'];
+    }
+
+    /**
+     * @depends testConvertToDicom
+     */
+    public function testGetDicom($studyInstanceUID)
+    {
+        $result = $this->gaeloWsiProcessingService->getDicom($studyInstanceUID);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @depends testPostWsiImage
+     */
+    public function testGetWsiMetadata($wsiId)
+    {
+        $result = $this->gaeloWsiProcessingService->getWsiMetadata($wsiId);
+        $this->assertTrue($result);
     }
 }
