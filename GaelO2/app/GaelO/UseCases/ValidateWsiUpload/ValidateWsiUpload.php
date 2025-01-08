@@ -121,12 +121,13 @@ class ValidateWsiUpload
             );
 
             $expectedNumberOfInstances = $responseCreateDicom['number_of_instances'];
-            $originalOrthancId = $responseCreateDicom['study_instance_uid'];
+            $studyInstanceUID = $responseCreateDicom['study_instance_uid'];
+            $originalOrthancId = $responseCreateDicom['study_orthanc_id'];
 
             $this->orthancService->setOrthancServer(false);
 
             //Retrieve created DICOMs
-            $dicomZip = $this->gaelOWsiProcessingService->getDicom($originalOrthancId);
+            $dicomZip = $this->gaelOWsiProcessingService->getDicom($studyInstanceUID);
             //Unzip dicoms to a temporary folder
             $unzipedPath = Util::getUploadTemporaryFolder();
             $zip = new ZipArchive();

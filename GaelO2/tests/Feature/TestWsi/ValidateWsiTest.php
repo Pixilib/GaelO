@@ -61,7 +61,6 @@ class ValidateWsiTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         AuthorizationTools::addAffiliatedCenter($currentUserId, $this->patientCenterCode);
         $payload = [
-            'visitId'=>1,
             'uploadedFileTusId'=>$this->tusIdArray,
         ];
 
@@ -75,7 +74,6 @@ class ValidateWsiTest extends TestCase
     public function testValidateWsiShouldBeForbidden()
     {
         $payload = [
-            'visitId'=>1,
             'uploadedFileTusId'=>$this->tusIdArray,
         ];
 
