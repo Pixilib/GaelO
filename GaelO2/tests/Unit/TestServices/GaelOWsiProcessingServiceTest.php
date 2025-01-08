@@ -29,9 +29,9 @@ class GaelOWsiProcessingServiceTest extends TestCase
     public function testPostWsiImage()
     {
         $path = getcwd() . "/tests/data/wsi-sample";
-        $result = $this->gaeloWsiProcessingService->postWsiImage($path);
-        $this->assertNotNull($result['id']);
-        return $result['id'];
+        $id = $this->gaeloWsiProcessingService->postWsiImage($path);
+        $this->assertNotNull($id);
+        return $id;
     }
 
 
@@ -89,7 +89,7 @@ class GaelOWsiProcessingServiceTest extends TestCase
     public function testGetDicom($studyInstanceUID)
     {
         $result = $this->gaeloWsiProcessingService->getDicom($studyInstanceUID);
-        $this->assertTrue($result);
+        $this->assertNotNull($result);
     }
 
     /**

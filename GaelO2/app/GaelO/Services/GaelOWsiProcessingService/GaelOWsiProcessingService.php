@@ -44,7 +44,7 @@ class GaelOWsiProcessingService
     public function postWsiImage(string $filename)
     {
         $request = $this->httpClientInterface->uploadFile('POST', '/wsi/', $filename);
-        return $request->getJsonBody();
+        return $request->getJsonBody()['id'];
     }
 
     public function getWsiImage(string $wsiId): bool
@@ -64,23 +64,18 @@ class GaelOWsiProcessingService
         try {
             $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_WSI_');
             $this->httpClientInterface->requestStreamResponseToFile('GET', "/dicom/" . $studyInstanceUID, $downloadedFilePath, ['Content-Type' => 'application/zip']);
-            return true;
-        } catch (Throwable $e) {
-        }
-        return false;
+            return $downloadedFilePath;
+        } catch (Throwable $e) {}
+        return null;
         
     }
     public function convertToDicom(array $wsiData, string $patientID, string $patientName, string $studyDescription, string $accessionNumber, ?string $studyId = null, ?string $manufacturer = null, ?string $imageType = null)
     {
         foreach ($wsiData as $wsi) {
-            if (!isset($wsi['SeriesDescription']) || !isset($wsi['SeriesNumber'])) {
-                throw new \InvalidArgumentException('Missing SeriesDescription or SeriesNumber in WSI data');
-            }
-
             $slides[] = [
                 "dicom_tags_series" => [
-                    "SeriesDescription" => $wsi['SeriesDescription'],
-                    "SeriesNumber" => $wsi['SeriesNumber'],
+                    "SeriesDescription" => $wsi['SeriesDescription'] ?? "",
+                    "SeriesNumber" => $wsi['SeriesNumber'] ?? "1",
                 ],
                 "wsi_id" => $wsi['id']
             ];

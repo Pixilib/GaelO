@@ -24,6 +24,7 @@ use ZipArchive;
 class ValidateWsiUpload
 {
 
+    private array $wsiFiles = [];
     private AuthorizationVisitService $authorizationService;
     private TusService $tusService;
     private OrthancService $orthancService;
@@ -79,9 +80,6 @@ class ValidateWsiUpload
             $currentUserId = $validateWsiUploadRequest->currentUserId;
             $visitId  = $validateWsiUploadRequest->visitId;
 
-            $expectedNumberOfInstances = $validateWsiUploadRequest->numberOfInstances;
-            $originalOrthancId = $validateWsiUploadRequest->originalOrthancId;
-
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
             $this->visitService->setCurrentUserId($currentUserId);
 
@@ -93,55 +91,58 @@ class ValidateWsiUpload
             set_time_limit(1800);
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
-            //Get uploaded Zips from TUS and upzip it in a temporary folder
+            //Retrieve uploaded wsi from tus
             foreach ($validateWsiUploadRequest->uploadedFileTusId as $tusFileId) {
-                $tusTempZip = $this->tusService->getFile($tusFileId);
-
-                $zipSize = filesize($tusTempZip);
-                $uncompressedzipSize = Util::getZipUncompressedSize($tusTempZip);
-                if ($uncompressedzipSize / $zipSize > 50) {
-                    throw new GaelOValidateWsiException("Bomb Zip");
-                }
-
-
-                $zip = new ZipArchive();
-                $zip->open($tusTempZip);
-                $zip->extractTo($unzipedPath);
-                $zip->close();
-
-                //Remove file from TUS and downloaded temporary zip
+                $this->wsiFiles[] = $this->tusService->getFile($tusFileId);
                 $this->tusService->deleteFile($tusFileId);
-                unlink($tusTempZip);
             }
 
-            foreach (glob($unzipedPath . DIRECTORY_SEPARATOR . '*') as $file) {
-                $destinationPath = DIRECTORY_SEPARATOR . basename($file);
-                if (!rename($file, $destinationPath)) {
-                    throw new GaelOValidateWsiException("Failed to move file to processing path"); 
-                }
-    
-                $this->gaelOWsiProcessingService->postWsiImage($destinationPath); 
-                
-                $dicomPath = $this->gaelOWsiProcessingService->convertToDicom(
-                    $patientCode,
-                    $validateWsiUploadRequest->patientName,
-                    $validateWsiUploadRequest->studyDescription,
-                    $validateWsiUploadRequest->studyID,
-                    $validateWsiUploadRequest->accessionNumber,
-                    $validateWsiUploadRequest->slides,
-                    $validateWsiUploadRequest->manufacturer,
-                    $validateWsiUploadRequest->imageType
-                );
-
-                $this->orthancService->setOrthancServer(false);
-
-                $orthancStudyImport = $this->orthancService->importDicomFolder($dicomPath);
-                $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
-                $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
+            $wsiProcessingIds = [];
+            foreach ($this->wsiFiles as $filePath) {
+                $wsiProcessingIds[] = $this->gaelOWsiProcessingService->postWsiImage($filePath);
             }
-            
-        
-        if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
+
+            $this->purgeTemporaryWsiFiles();
+
+            $wsiSildes = [];
+            foreach ($wsiProcessingIds as $id) {
+                $wsiSildes[] = [
+                    'id' => $id,
+                    //TODO ajouter series description depuis metadataTUS
+                ];
+            }
+
+            $responseCreateDicom = $this->gaelOWsiProcessingService->convertToDicom(
+                $wsiSildes,
+                $patientId,
+                $patientCode,
+                $visitType,
+                "GaelO"
+            );
+
+            $expectedNumberOfInstances = $responseCreateDicom['number_of_instances'];
+            $originalOrthancId = $responseCreateDicom['study_instance_uid'];
+
+            $this->orthancService->setOrthancServer(false);
+
+            //Retrieve created DICOMs
+            $dicomZip = $this->gaelOWsiProcessingService->getDicom($originalOrthancId);
+            //Unzip dicoms to a temporary folder
+            $unzipedPath = Util::getUploadTemporaryFolder();
+            $zip = new ZipArchive();
+            $zip->open($dicomZip);
+            $zip->extractTo($unzipedPath);
+            $zip->close();
+
+            unlink($dicomZip);
+
+            //Les dezipper dans une destination temporaire
+
+            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
+            $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
+            $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
+
+            if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
                 $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
                 throw new GaelOValidateWsiException("Imported DICOM (" . $importedNumberOfInstances . ") not matching announced number of Instances (" . $expectedNumberOfInstances . ")");
             }
@@ -244,6 +245,13 @@ class ValidateWsiUpload
         $this->authorizationService->setVisitContext($visitContext);
         if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== UploadStatusEnum::NOT_DONE->value || $visitStatus !== VisitStatusDoneEnum::DONE->value) {
             throw new GaelOForbiddenException();
+        }
+    }
+
+    private function purgeTemporaryWsiFiles()
+    {
+        foreach ($this->wsiFiles as $filePath) {
+            unlink($filePath);
         }
     }
 
