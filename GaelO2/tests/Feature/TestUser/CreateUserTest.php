@@ -3,14 +3,20 @@
 namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Study;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
+use PHPUnit\TextUI\Configuration\Constant;
 use Tests\AuthorizationTools;
 
 class CreateUserTest extends TestCase
 {
+
+    private MockInterface $trackerSpy;
     //Run Migration at each test
     use RefreshDatabase;
 
@@ -33,6 +39,9 @@ class CreateUserTest extends TestCase
                 'orthancLogin' => 'test',
                 'orthancPassword' => 'test'
             ];
+
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     /**
@@ -40,7 +49,7 @@ class CreateUserTest extends TestCase
      */
     public function testCreateCorrectPayload()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         //Test user creation
         $this->json('POST', '/api/users', $this->validPayload)->assertSuccessful();
 
@@ -50,6 +59,7 @@ class CreateUserTest extends TestCase
         //Check defaut value at user creation
         $this->assertNull($createdUser['email_verified_at']);
         $this->assertEquals($createdUser['phone'],  $this->validPayload['phone']);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_USER, Mockery::any());
     }
 
     public function testCreateCorrectPayloadShouldFailNotAdmin()
@@ -66,6 +76,7 @@ class CreateUserTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $study->name);
         //Test user creation
         $this->json('POST', '/api/users?studyName=' . $study->name, $this->validPayload)->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_USER, Mockery::any());
     }
 
     public function testCreateCreateUserForSupervisorShouldFailNoRole()
