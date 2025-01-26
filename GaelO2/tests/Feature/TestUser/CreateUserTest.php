@@ -10,15 +10,15 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\TextUI\Configuration\Constant;
 use Tests\AuthorizationTools;
 
 class CreateUserTest extends TestCase
 {
 
-    private MockInterface $trackerSpy;
+    
     //Run Migration at each test
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
 
     //This method is called before each test, it needs to call the parent setup methods
     protected function setUp(): void
