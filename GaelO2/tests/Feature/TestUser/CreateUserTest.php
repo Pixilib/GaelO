@@ -18,6 +18,8 @@ class CreateUserTest extends TestCase
     
     //Run Migration at each test
     use RefreshDatabase;
+    private array $validPayload;
+    private Study $study;
     private MockInterface $trackerSpy;
 
     //This method is called before each test, it needs to call the parent setup methods
