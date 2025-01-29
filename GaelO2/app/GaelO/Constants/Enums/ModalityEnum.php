@@ -9,5 +9,6 @@ enum ModalityEnum :string
     case CT = 'CT';
     case US = 'US';
     case NM = 'NM';
+    case SM = 'SM';
     case RTSTRUCT = 'RTSTRUCT';
 }
