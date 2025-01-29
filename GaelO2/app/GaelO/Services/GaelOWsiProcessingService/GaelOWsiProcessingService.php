@@ -70,14 +70,15 @@ class GaelOWsiProcessingService
         
     }
     public function convertToDicom(array $wsiData, string $patientID, string $patientName, string $studyDescription, string $accessionNumber, ?string $studyId = null, ?string $manufacturer = null, ?string $imageType = null)
-    {
+    { 
+        $slides = [];
         foreach ($wsiData as $wsi) {
             $slides[] = [
                 "dicom_tags_series" => [
                     "SeriesDescription" => $wsi['SeriesDescription'] ?? "",
                     "SeriesNumber" => $wsi['SeriesNumber'] ?? "1",
                 ],
-                "wsi_id" => $wsi['id']
+                "wsi_id" => $wsi['wsi_id']
             ];
         }
 
@@ -114,6 +115,29 @@ class GaelOWsiProcessingService
             $this->httpClientInterface->rawRequest('GET', "/wsi/" . $wsiId . "/metadata", null, null);
             return true;
         } catch (Throwable $e) {
+        }
+        return false;
+    }
+
+
+    public function deleteDicom(string $studyInstanceUID)
+    {
+        try {
+            $this->httpClientInterface->rawRequest('DELETE', "/dicom/" . $studyInstanceUID, null, null);
+            return true;
+        } catch (Throwable $e) {
+
+        }
+        return false;
+    }
+
+    public function deleteWsi(string $wsiId)
+    {
+        try {
+            $this->httpClientInterface->rawRequest('DELETE', "/wsi/" . $wsiId, null, null);
+            return true;
+        } catch (Throwable $e) {
+
         }
         return false;
     }

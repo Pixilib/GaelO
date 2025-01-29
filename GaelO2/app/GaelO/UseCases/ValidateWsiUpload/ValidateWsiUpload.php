@@ -18,6 +18,7 @@ use App\GaelO\Services\RegisterDicomStudyService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
 
@@ -93,22 +94,32 @@ class ValidateWsiUpload
             $unzipedPath = Util::getUploadTemporaryFolder();
             //Retrieve uploaded wsi from tus
             foreach ($validateWsiUploadRequest->uploadedFileTusId as $tusFileId) {
-                $this->wsiFiles[] = $this->tusService->getFile($tusFileId);
+                $fileName = $this->tusService->getFile($tusFileId);
+                $metadata = $this->tusService->getMetadata($tusFileId);
+                Log::info($metadata);
+                Log::info($tusFileId);
+                $this->wsiFiles[] = [
+                    'filename' => $fileName,
+                    'metadata' => $metadata
+                ];
                 $this->tusService->deleteFile($tusFileId);
             }
-
-            $wsiProcessingIds = [];
-            foreach ($this->wsiFiles as $filePath) {
-                $wsiProcessingIds[] = $this->gaelOWsiProcessingService->postWsiImage($filePath);
+            Log::info($this->wsiFiles);
+            for ($i = 0 ; $i < sizeof($this->wsiFiles) ; $i++){
+                $wsiProcessingId = $this->gaelOWsiProcessingService->postWsiImage($this->wsiFiles[$i]['filename']);
+                $this->wsiFiles[$i]['wsiProcessingId'] = $wsiProcessingId;
             }
-
+            
+            Log::info($this->wsiFiles);
             $this->purgeTemporaryWsiFiles();
 
             $wsiSildes = [];
-            foreach ($wsiProcessingIds as $id) {
+            foreach ($this->wsiFiles as $file) {
                 $wsiSildes[] = [
-                    'id' => $id,
-                    //TODO ajouter series description depuis metadataTUS
+                    'wsi_id' => $file['wsiProcessingId'],
+                    'SeriesDescription' =>  $file['metadata']['SeriesDescription'] ?? 'wsi',
+                    'SeriesNumber' => $file['metadata']['SeriesNumber'] ?? '1'
+                    
                 ];
             }
 
@@ -136,10 +147,12 @@ class ValidateWsiUpload
             $zip->close();
 
             unlink($dicomZip);
+            $this->gaelOWsiProcessingService->deleteWsi($wsiProcessingId);
 
-            //Les dezipper dans une destination temporaire
+            $this->gaelOWsiProcessingService->deleteDicom($studyInstanceUID);
 
-            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
+            # Concurrency to one until investigating transcoding issues for WSI
+            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath, 5);
             $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
             $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
@@ -251,8 +264,8 @@ class ValidateWsiUpload
 
     private function purgeTemporaryWsiFiles()
     {
-        foreach ($this->wsiFiles as $filePath) {
-            unlink($filePath);
+        foreach ($this->wsiFiles as $file) {
+            unlink($file['filename']);
         }
     }
 

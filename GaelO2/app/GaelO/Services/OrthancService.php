@@ -183,9 +183,9 @@ class OrthancService
         return $this->httpClientInterface->requestJson('POST', '/transfers/send', $data);
     }
 
-    public function importFiles(array $files): array
+    public function importFiles(array $files, int $concurrency = 5): array
     {
-        $psr7ResponseAdapterArray = $this->httpClientInterface->requestUploadArrayDicom('POST', '/instances', $files);
+        $psr7ResponseAdapterArray = $this->httpClientInterface->requestUploadArrayDicom('POST', '/instances', $files, $concurrency);
         $arrayAnswer = array_map(function ($response) {
             return json_decode($response->getBody(), true);
         }, $psr7ResponseAdapterArray);
@@ -418,14 +418,14 @@ class OrthancService
     /**
      * Send folder content to orthanc, and treat responses to output the uploaded studyOrthancId
      */
-    public function importDicomFolder(string $unzipedPath): OrthancStudyImport
+    public function importDicomFolder(string $unzipedPath, $concurrency = 5): OrthancStudyImport
     {
         //Recursive scann of the unzipped folder
         $filesArray = Util::getPathAsFileArray($unzipedPath);
 
         $importedMap = [];
 
-        $uploadSuccessResponseArray = $this->importFiles($filesArray);
+        $uploadSuccessResponseArray = $this->importFiles($filesArray, $concurrency);
 
         //Import dicom file one by one
         foreach ($uploadSuccessResponseArray as $response) {

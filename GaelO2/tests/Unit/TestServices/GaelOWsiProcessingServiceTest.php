@@ -100,4 +100,22 @@ class GaelOWsiProcessingServiceTest extends TestCase
         $result = $this->gaeloWsiProcessingService->getWsiMetadata($wsiId);
         $this->assertTrue($result);
     }
+
+    /**
+     * @depends testConvertToDicom
+     */
+    public function testDeleteDicom($studyInstanceUID)
+    {
+        $result = $this->gaeloWsiProcessingService->deleteDicom($studyInstanceUID);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @depends testPostWsiImage
+     */
+    public function testDeleteWsi($wsiId)
+    {
+        $result = $this->gaeloWsiProcessingService->deleteWsi($wsiId);
+        $this->assertTrue($result);
+    }
 }
