@@ -2,15 +2,21 @@
 
 namespace Tests\Feature\TestStudy;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class CreateStudyTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private array $payload;
 
     protected function setUp(): void
     {
@@ -26,12 +32,15 @@ class CreateStudyTest extends TestCase
             'contactEmail' => 'test@gaelo.fr',
             'creatablePatientsInvestigator' => false
         ];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testCreateStudy()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
         $this->json('POST', '/api/studies', $this->payload)->assertNoContent(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_STUDY, Mockery::any());
     }
 
     public function testCreateStudyShouldFailBecauseNotAlfaNumerical()
@@ -52,11 +61,12 @@ class CreateStudyTest extends TestCase
 
     public function testCreateAncillaryStudy()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
         $study = Study::factory()->create();
         $this->payload['ancillaryOf'] = $study->name;
 
         $this->json('POST', '/api/studies', $this->payload)->assertStatus(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_STUDY, Mockery::any());
     }
 
     public function testCreateStudyForbiddenNotAdmin()

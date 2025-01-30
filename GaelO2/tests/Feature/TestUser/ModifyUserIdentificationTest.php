@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -11,11 +15,15 @@ class ModifyUserIdentificationTest extends TestCase
 {
 
     use RefreshDatabase;
+    private User $user;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testValidModifyUserIdentification()
@@ -43,6 +51,7 @@ class ModifyUserIdentificationTest extends TestCase
         foreach($updatedArray as $key){
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::TRACKER_ROLE_USER, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_USER, Mockery::any());
     }
 
     public function testModifyIdentificationShouldFailNotSameUser(){

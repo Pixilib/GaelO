@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
@@ -9,15 +11,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Mockery;
+use Mockery\MockInterface;
 
 class ForgotPasswordTest extends TestCase
 {
     use RefreshDatabase;
+    private User $user;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testValidResetPassword()
@@ -31,6 +39,7 @@ class ForgotPasswordTest extends TestCase
         Notification::assertSentTo(
             [$user], ResetPasswordNotification::class
         );
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($user->id, Constants::TRACKER_ROLE_USER, Mockery::any(), Mockery::any(), Constants::TRACKER_RESET_PASSWORD, Mockery::any());
         
     }
 

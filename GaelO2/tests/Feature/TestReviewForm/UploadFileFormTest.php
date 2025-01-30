@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -14,16 +15,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
+use Mockery\MockInterface;
 
 class UploadFileFormTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
         Storage::fake();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     private function createVisit() {
@@ -49,6 +55,7 @@ class UploadFileFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
         $response = $this->post('api/reviews/' . $review->id . '/files/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SAVE_INVESTIGATOR_FORM, Mockery::any());
     }
 
     public function testUploadFileShouldFailNoRole()

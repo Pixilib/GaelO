@@ -2,19 +2,27 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Mockery;
+use Mockery\MockInterface;
 
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
+    private User $user;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     /**
@@ -66,7 +74,7 @@ class LoginTest extends TestCase
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser->save();
-        $response = $this->json('POST', '/api/login', $data)->assertStatus(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
 
     public function testLoginWrongPassword()
@@ -111,6 +119,7 @@ class LoginTest extends TestCase
 
         $adminDefaultUser = User::where('id', 1)->first();
         $this->assertEquals($adminDefaultUser['attempts'], 3);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with(1, Constants::TRACKER_ROLE_USER, Mockery::any(), Mockery::any(), Constants::TRACKER_ACCOUNT_BLOCKED, Mockery::any());
 
     }
 
