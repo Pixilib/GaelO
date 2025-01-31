@@ -19,6 +19,7 @@ class CenterTest extends TestCase
 
     use RefreshDatabase;
     private MockInterface $trackerSpy;
+    private Study $study;
 
     //This method is called before each test, it needs to call the parent setup methods
     protected function setUp() : void{
