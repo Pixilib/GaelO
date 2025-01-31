@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use Tests\TestCase;
 use App\Models\Visit;
@@ -13,11 +14,19 @@ use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\VisitGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class QcTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Patient $patient;
+    private VisitGroup $visitGroup;
+    private Visit $visit;
+    private ReviewStatus $reviewStatus;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -41,6 +50,8 @@ class QcTest extends TestCase
         $this->studyName = $this->visit->patient->study_name;
 
         $this->reviewStatus = ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->studyName)->create();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testQc()
@@ -59,6 +70,7 @@ class QcTest extends TestCase
 
         $reviewStatus = ReviewStatus::where('visit_id', $this->visit->id)->where('study_name', $this->studyName)->sole();
         $this->assertEquals(1, $reviewStatus->review_available);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_CONTROLLER, Mockery::any(), Mockery::any(), Constants::TRACKER_QUALITY_CONTROL, Mockery::any());
     }
 
     public function testQcForbiddenNotRole()
@@ -207,6 +219,7 @@ class QcTest extends TestCase
         $response = $this->post('/api/visits/' . $this->visit->id . '/quality-control/unlock', $payload);
 
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_CONTROLLER, Mockery::any(), Mockery::any(), Constants::TRACKER_ASK_UNLOCK, Mockery::any());
     }
 
     public function testAskResetQcShouldFailNoRole()
