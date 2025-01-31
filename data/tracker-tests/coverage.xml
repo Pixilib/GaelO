@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83303267187813" branch-rate="0" lines-covered="8312" lines-valid="9978" branches-covered="0" branches-valid="0" complexity="2702" version="0.4" timestamp="1738320383">
+<coverage line-rate="0.83294896219793" branch-rate="0" lines-covered="8307" lines-valid="9973" branches-covered="0" branches-valid="0" complexity="2702" version="0.4" timestamp="1738359256">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -4084,15 +4084,15 @@
             </method>
             <method name="writeAction" signature="int $userId, string $role, ?string $studyName, ?int $id_visit, string $actionType, array $actionDetails" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="21" hits="26"/>
-                <line number="23" hits="26"/>
-                <line number="24" hits="26"/>
-                <line number="25" hits="26"/>
-                <line number="26" hits="26"/>
-                <line number="27" hits="26"/>
-                <line number="28" hits="26"/>
-                <line number="29" hits="26"/>
-                <line number="31" hits="26"/>
+                <line number="21" hits="25"/>
+                <line number="23" hits="25"/>
+                <line number="24" hits="25"/>
+                <line number="25" hits="25"/>
+                <line number="26" hits="25"/>
+                <line number="27" hits="25"/>
+                <line number="28" hits="25"/>
+                <line number="29" hits="25"/>
+                <line number="31" hits="25"/>
               </lines>
             </method>
             <method name="getTrackerOfRole" signature="string $role" line-rate="1" branch-rate="0" complexity="2">
@@ -4130,15 +4130,15 @@
           </methods>
           <lines>
             <line number="16" hits="63"/>
-            <line number="21" hits="26"/>
-            <line number="23" hits="26"/>
-            <line number="24" hits="26"/>
-            <line number="25" hits="26"/>
-            <line number="26" hits="26"/>
-            <line number="27" hits="26"/>
-            <line number="28" hits="26"/>
-            <line number="29" hits="26"/>
-            <line number="31" hits="26"/>
+            <line number="21" hits="25"/>
+            <line number="23" hits="25"/>
+            <line number="24" hits="25"/>
+            <line number="25" hits="25"/>
+            <line number="26" hits="25"/>
+            <line number="27" hits="25"/>
+            <line number="28" hits="25"/>
+            <line number="29" hits="25"/>
+            <line number="31" hits="25"/>
             <line number="36" hits="2"/>
             <line number="37" hits="2"/>
             <line number="42" hits="2"/>
@@ -13728,9 +13728,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94736842105263" branch-rate="0" complexity="9">
+    <package name="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.93939393939394" branch-rate="0" complexity="9">
       <classes>
-        <class name="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup" filename="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.94736842105263" branch-rate="0" complexity="9">
+        <class name="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup" filename="GaelO/UseCases/CreateVisitGroup/CreateVisitGroup.php" line-rate="0.93939393939394" branch-rate="0" complexity="9">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Repositories\StudyRepositoryInterface $studyRepositoryInterface, App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface $visitGroupRepositoryInterface, App\GaelO\Interfaces\Repositories\VisitRepositoryInterface $visitRepositoryInterface, App\GaelO\Services\AuthorizationService\AuthorizationUserService $authorizationUserService, App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface $trackerRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -13741,7 +13741,7 @@
                 <line number="36" hits="4"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupRequest $createVisitGroupRequest, App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupResponse $createVisitGroupResponse" line-rate="0.93333333333333" branch-rate="0" complexity="6">
+            <method name="execute" signature="App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupRequest $createVisitGroupRequest, App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupResponse $createVisitGroupResponse" line-rate="0.92" branch-rate="0" complexity="6">
               <lines>
                 <line number="43" hits="4"/>
                 <line number="44" hits="4"/>
@@ -13762,24 +13762,19 @@
                 <line number="68" hits="1"/>
                 <line number="69" hits="1"/>
                 <line number="70" hits="1"/>
-                <line number="71" hits="1"/>
-                <line number="73" hits="1"/>
-                <line number="74" hits="1"/>
-                <line number="75" hits="1"/>
-                <line number="76" hits="1"/>
-                <line number="78" hits="3"/>
-                <line number="79" hits="3"/>
-                <line number="80" hits="3"/>
-                <line number="81" hits="3"/>
-                <line number="82" hits="0"/>
-                <line number="83" hits="0"/>
+                <line number="72" hits="3"/>
+                <line number="73" hits="3"/>
+                <line number="74" hits="3"/>
+                <line number="75" hits="3"/>
+                <line number="76" hits="0"/>
+                <line number="77" hits="0"/>
               </lines>
             </method>
             <method name="checkAuthorization" signature="int $userId" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="89" hits="3"/>
-                <line number="90" hits="3"/>
-                <line number="91" hits="1"/>
+                <line number="83" hits="3"/>
+                <line number="84" hits="3"/>
+                <line number="85" hits="1"/>
               </lines>
             </method>
           </methods>
@@ -13808,20 +13803,15 @@
             <line number="68" hits="1"/>
             <line number="69" hits="1"/>
             <line number="70" hits="1"/>
-            <line number="71" hits="1"/>
-            <line number="73" hits="1"/>
-            <line number="74" hits="1"/>
-            <line number="75" hits="1"/>
-            <line number="76" hits="1"/>
-            <line number="78" hits="3"/>
-            <line number="79" hits="3"/>
-            <line number="80" hits="3"/>
-            <line number="81" hits="3"/>
-            <line number="82" hits="0"/>
-            <line number="83" hits="0"/>
-            <line number="89" hits="3"/>
-            <line number="90" hits="3"/>
-            <line number="91" hits="1"/>
+            <line number="72" hits="3"/>
+            <line number="73" hits="3"/>
+            <line number="74" hits="3"/>
+            <line number="75" hits="3"/>
+            <line number="76" hits="0"/>
+            <line number="77" hits="0"/>
+            <line number="83" hits="3"/>
+            <line number="84" hits="3"/>
+            <line number="85" hits="1"/>
           </lines>
         </class>
       </classes>
