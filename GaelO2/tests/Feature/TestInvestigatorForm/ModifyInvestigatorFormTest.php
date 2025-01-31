@@ -4,6 +4,7 @@ namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\Study;
@@ -11,12 +12,19 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ModifyInvestigatorFormTest extends TestCase
 {
     use RefreshDatabase;
+    private string $studyName;
+    private string $centerCode;
+    private Visit $visit;
+    private Review $review;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -30,6 +38,8 @@ class ModifyInvestigatorFormTest extends TestCase
         $this->centerCode = $patient->center_code;
         $this->visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         Review::factory()->visitId($this->visit->id)->sentFiles(['41'=>'path'])->studyName($study->name)->create();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
 
@@ -49,8 +59,6 @@ class ModifyInvestigatorFormTest extends TestCase
 
     public function testModifyInvestigatorForm()
     {
-
-
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         AuthorizationTools::addAffiliatedCenter($currentUserId, $this->centerCode);
@@ -61,13 +69,12 @@ class ModifyInvestigatorFormTest extends TestCase
         ];
 
         $this->put('api/visits/' . $this->visit->id . '/investigator-form', $payload)->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_MODIFY_INVESTIGATOR_FORM, Mockery::any());
     }
 
 
     public function testModifyInvestigatorFormShouldFailedValidationContent()
     {
-
-
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         AuthorizationTools::addAffiliatedCenter($currentUserId, $this->centerCode);

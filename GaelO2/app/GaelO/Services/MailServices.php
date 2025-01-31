@@ -443,7 +443,7 @@ class MailServices
 
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
         foreach ($userIds as $userId) {
-            return $mailListBuilder->withUserEmail($userId);
+            $mailListBuilder->withUserEmail($userId);
         };
         $mailListBuilder->withUserEmail($senderId);
 

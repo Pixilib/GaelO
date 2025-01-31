@@ -18,6 +18,7 @@ class GetDicomsStudiesFromStudyTest extends TestCase
 {
 
     use RefreshDatabase;
+    private string $studyName;
 
     protected function setUp(): void
     {

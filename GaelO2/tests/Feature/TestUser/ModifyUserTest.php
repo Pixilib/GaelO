@@ -2,17 +2,24 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\JobEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class ModifyUserTest extends TestCase
 {
 
     use RefreshDatabase;
+    private array $validPayload;
+    private User $user;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -33,6 +40,8 @@ class ModifyUserTest extends TestCase
             'orthancLogin'=>'gaelo',
             'orthancPassword'=>'gaelo'
         ];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     /**
@@ -42,7 +51,7 @@ class ModifyUserTest extends TestCase
      */
     public function testValidModify()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
         //Save database state before update
         $beforeChangeUser = User::where('id', $this->user['id'])->get()->first()->toArray();
         //Update with update API, shoud be success
@@ -67,6 +76,7 @@ class ModifyUserTest extends TestCase
         foreach ($notUpdatedArray as $key) {
             $this->assertEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_USER, Mockery::any());
     }
 
     public function testModifyForbiddenNotAdmin()
@@ -115,6 +125,7 @@ class ModifyUserTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         $this->json('POST', '/api/users/' . $userId . '/onboarding', ['onboardingVersion' => '1.0.0'])
             ->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::TRACKER_ROLE_USER, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_USER, Mockery::any());
     }
 
     public function testModifyUserOnboardingShouldPreventDowngrading()

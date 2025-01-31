@@ -5,10 +5,13 @@ namespace Tests\Feature\TestVisits;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -16,6 +19,10 @@ class CorrectiveActionTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private string $studyName;
+    private Visit $visit;
+    private int $currentUserId;
 
     protected function setUp(): void
     {
@@ -36,6 +43,8 @@ class CorrectiveActionTest extends TestCase
         $userEntity = User::find($this->currentUserId);
         $userEntity->center_code = $centerCode;
         $userEntity->save();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
 
@@ -51,6 +60,7 @@ class CorrectiveActionTest extends TestCase
         ];
         $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName, $payload);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($this->currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CORRECTIVE_ACTION, Mockery::any());
     }
 
     public function testCorrectiveActionShouldFailWrongStudy()

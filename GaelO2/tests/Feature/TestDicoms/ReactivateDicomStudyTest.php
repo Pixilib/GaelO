@@ -5,10 +5,13 @@ namespace Tests\Feature\TestDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\DicomSeries;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -16,6 +19,10 @@ class ReactivateDicomStudyTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private DicomSeries $dicomSeries;
+    private Review $investigatorForm;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -35,12 +42,14 @@ class ReactivateDicomStudyTest extends TestCase
         //Set visit QC at Not Done
         $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::NOT_DONE->value;
         $this->dicomSeries->dicomStudy->visit->save();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testReactivateStudy()
     {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->dicomStudy->delete();
         //At study deletion the investigator form is Draft or Not Done
@@ -49,6 +58,7 @@ class ReactivateDicomStudyTest extends TestCase
 
         $response = $this->post('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid.'/activate?studyName='.$this->studyName, ['reason' => 'correct study']);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_REACTIVATE_DICOM_STUDY, Mockery::any());
     }
 
     public function testReactivateStudyShouldFailNotSameStudyName()
@@ -68,7 +78,6 @@ class ReactivateDicomStudyTest extends TestCase
 
     public function testReactivateStudyShouldFailNoReason()
     {
-
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
@@ -84,7 +93,6 @@ class ReactivateDicomStudyTest extends TestCase
 
     public function testReactivateStudyShouldFailNoRole()
     {
-
         AuthorizationTools::actAsAdmin(false);
 
         $this->dicomSeries->dicomStudy->delete();

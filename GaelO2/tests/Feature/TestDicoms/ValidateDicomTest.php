@@ -3,9 +3,11 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\TusService;
 use App\Models\ReviewStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
@@ -15,6 +17,7 @@ class ValidateDicomTest extends TestCase
 
     use RefreshDatabase;
 
+    private MockInterface $trackerSpy;
     private ReviewStatus $reviewStatus;
     private string $studyName;
     private int $visitId;
@@ -44,12 +47,14 @@ class ValidateDicomTest extends TestCase
 
         $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
         $this->numberOfInstances = 22;
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
 
     public function testValidateDicom()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        $currentUserId = AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $payload = [
             'visitId'=>1,
             'originalOrthancId'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
@@ -59,7 +64,7 @@ class ValidateDicomTest extends TestCase
 
         $response = $this->json('POST', 'api/visits/'.$this->visitId.'/validate-dicom', $payload);
         $response->assertStatus(200);
-
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPLOAD_SERIES, Mockery::any());
 
     }
 

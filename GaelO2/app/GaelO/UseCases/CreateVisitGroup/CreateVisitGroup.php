@@ -65,12 +65,6 @@ class CreateVisitGroup
 
             $createdVisitGroup = $this->visitGroupRepositoryInterface->createVisitGroup($studyName, $visitGroupName, $visitGroupModality);
 
-            $actionDetails = [
-                'modality' => $visitGroupModality,
-                'name' => $visitGroupName
-            ];
-
-            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_CREATE_VISIT_GROUP, $actionDetails);
             $createVisitGroupResponse->status = 201;
             $createVisitGroupResponse->statusText = 'Created';
             $createVisitGroupResponse->body=['id' => $createdVisitGroup['id']];

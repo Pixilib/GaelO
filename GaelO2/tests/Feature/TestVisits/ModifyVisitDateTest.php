@@ -4,14 +4,20 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ModifyVisitDateTest extends TestCase {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Visit $visit;
+    private string $studyName;
 
     protected function setUp() : void {
 
@@ -19,6 +25,8 @@ class ModifyVisitDateTest extends TestCase {
         $this->artisan('db:seed');
         $this->visit = Visit::factory()->create();
         $this->studyName = $this->visit->patient->study_name;
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testModifyVisitDate()
@@ -34,6 +42,7 @@ class ModifyVisitDateTest extends TestCase {
         $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
 
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPDATE_VISIT_DATE, Mockery::any());
 
     }
 
