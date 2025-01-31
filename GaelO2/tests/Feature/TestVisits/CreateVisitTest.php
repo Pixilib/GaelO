@@ -5,6 +5,7 @@ namespace Tests\Feature\TestVisits;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Visit;
@@ -12,12 +13,22 @@ use App\Models\VisitType;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class CreateVisitTest extends TestCase
 {
 
     use RefreshDatabase;
+
+    private MockInterface $trackerSpy;
+    private Study $study;
+    private Patient $patient;
+    private int $visitTypeId;
+    private int $visitGroupId;
+    private int $currentUserId;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -32,12 +43,14 @@ class CreateVisitTest extends TestCase
         $this->patient = Patient::factory()->inclusionStatus(InclusionStatusEnum::INCLUDED->value)->studyName($this->studyName)->create();
         $centerCode = $this->patient->center_code;
 
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        $this->currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
 
-        $userEntity = User::find($currentUserId);
+        $userEntity = User::find($this->currentUserId);
         $userEntity->center_code = $centerCode;
         $userEntity->save();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testCreateVisit()
@@ -50,6 +63,7 @@ class CreateVisitTest extends TestCase
         ];
 
         $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($this->currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_VISIT, Mockery::any());
     }
 
     public function testCreateVisitShouldBeForbiddenForAncillaries()

@@ -4,15 +4,21 @@ namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class DeleteVisitTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Visit $visit;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -20,6 +26,8 @@ class DeleteVisitTest extends TestCase
         $this->artisan('db:seed');
         $this->visit = Visit::factory()->create();
         $this->studyName = $this->visit->patient->study->name;
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
 
@@ -35,6 +43,7 @@ class DeleteVisitTest extends TestCase
 
         $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $resp->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_VISIT, Mockery::any());
     }
 
     public function testDeleteVisitShouldFailWrongStudy()
