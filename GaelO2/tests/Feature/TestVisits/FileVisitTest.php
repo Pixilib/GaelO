@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use App\Models\Visit;
@@ -12,16 +13,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
+use Mockery\MockInterface;
 
 class FileVisitTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
         Storage::fake();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     private function createVisit()
@@ -70,6 +76,7 @@ class FileVisitTest extends TestCase
         $visit->save();
         $response = $this->delete('api/visits/' . $visit->id . '/files/41?studyName=TEST&role=Supervisor');
         $response->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPDATE_VISIT_FILE, Mockery::any());
     }
 
     public function testDeleteFileOfVisitShouldFailNoRole()
@@ -85,12 +92,12 @@ class FileVisitTest extends TestCase
 
     public function testCreateFileOfVisit()
     {
-
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
         $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', ['content' => base64_encode("testFileContent"), "extension" => 'csv', 'contentType'=>'text/csv']);
         $response->assertStatus(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPDATE_VISIT_FILE, Mockery::any());
     }
 
     public function testCreateFileOfVisitShouldFailWrongKey()
