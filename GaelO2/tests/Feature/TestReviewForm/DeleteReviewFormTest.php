@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -11,16 +12,21 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class DeleteReviewFormTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
 
     protected function setUp() : void{
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     private function createVisit() {
@@ -49,7 +55,7 @@ class DeleteReviewFormTest extends TestCase
         ];
 
         $this->delete('api/reviews/'.$visitData['reviewId'], $payload)->assertStatus(200);
-
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_REVIEWER_FORM, Mockery::any());
     }
 
     public function testDeleteReviewFormShouldFailNoReason(){
@@ -107,7 +113,7 @@ class DeleteReviewFormTest extends TestCase
         ];
 
         $this->delete('api/reviews/'.$review['id'], $payload)->assertStatus(200);
-
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_REVIEWER_FORM, Mockery::any());
     }
 
 }
