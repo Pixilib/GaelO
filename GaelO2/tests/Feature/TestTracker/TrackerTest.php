@@ -4,6 +4,7 @@ namespace Tests\Feature\TestTracker;
 
 use Tests\TestCase;
 use App\GaelO\Constants\Constants;
+use App\Models\Study;
 use App\Models\Tracker;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +13,8 @@ use Tests\AuthorizationTools;
 class TrackerTest extends TestCase
 {
     use RefreshDatabase;
+    private Visit $visit;
+    private Study $study;
 
     protected function setUp(): void
     {
