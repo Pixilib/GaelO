@@ -3,15 +3,22 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
 class DeletePatientTagTest extends TestCase
 {
     use RefreshDatabase;
+    private Study $study;
+    private Patient $patient;
+    private MockInterface $trackerSpy;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -21,6 +28,8 @@ class DeletePatientTagTest extends TestCase
         $this->study = Study::factory()->create();
         $this->studyName = $this->study->name;
         $this->patient = Patient::factory()->studyName($this->studyName)->metadata(['tags'=>['Salim']])->create();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testDeletePatientTag()
@@ -31,6 +40,7 @@ class DeletePatientTagTest extends TestCase
         $this->json('DELETE', '/api/patients/' . $this->patient->id . '/metadata/tags/Salim?studyName=' . $this->studyName)->assertStatus(200);
         $patient = Patient::find($this->patient->id);
         $this->assertNotContains('Salim', $patient['metadata']['tags']);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_PATIENT, Mockery::any());
     }
 
     public function testDeletePatientTagNotExisting()

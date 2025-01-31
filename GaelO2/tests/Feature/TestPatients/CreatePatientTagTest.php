@@ -3,15 +3,22 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
 class CreatePatientTagTest extends TestCase
 {
     use RefreshDatabase;
+    private Study $study;
+    private Patient $patient;
+    private MockInterface $trackerSpy;
+    private string $studyName;
 
     protected function setUp(): void
     {
@@ -21,6 +28,8 @@ class CreatePatientTagTest extends TestCase
         $this->study = Study::factory()->create();
         $this->studyName = $this->study->name;
         $this->patient = Patient::factory()->studyName($this->studyName)->metadata(['tags'=>['Salim']])->create();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testCreatePatientTag()
@@ -33,6 +42,7 @@ class CreatePatientTagTest extends TestCase
         $this->json('POST', '/api/patients/' . $this->patient->id . '/metadata/tags?studyName=' . $this->studyName, $payload)->assertStatus(201);
         $patient = Patient::find($this->patient->id);
         $this->assertContains('DLBCL', $patient['metadata']['tags']);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_PATIENT, Mockery::any());
     }
 
     public function testCreatePatientTagShouldNotAcceptSpaces()
