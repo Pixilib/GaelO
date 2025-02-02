@@ -74,7 +74,7 @@ class ModifyPatientTest extends TestCase
         ]);
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(200);
-        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_CENTER, Mockery::any());
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_PATIENT, Mockery::any());
     }
 
     public function testModifyPatientShouldFailWrongStudy()
