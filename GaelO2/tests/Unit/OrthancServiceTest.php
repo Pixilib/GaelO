@@ -20,7 +20,7 @@ class OrthancServiceTest extends TestCase
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
 
-        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
+        $this->markTestSkipped('Need Orthanc Container Running');
     }
 
     public function testPeersFunctions()
@@ -35,19 +35,16 @@ class OrthancServiceTest extends TestCase
 
     public function testOrthancPeerIsTransferAccelerated()
     {
-        $this->markTestSkipped('SK TO DO WITH REAL SETUP');
         $bool = $this->orthancService->isPeerAccelerated('gaelotest');
     }
 
     public function testOrthancSendToPeer()
     {
-        $this->markTestSkipped('SK TO DO WITH REAL SETUP');
         $response = $this->orthancService->sendToPeer('gaelotest', [''], true);
     }
 
     public function testGetOrthancJobDetails()
     {
-        $this->markTestSkipped('SK TO DO');
         $this->orthancService->getJobDetails('id');
     }
 

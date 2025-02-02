@@ -4,6 +4,7 @@ namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\TrackerRepository;
+use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\TusService;
 use App\Models\ReviewStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,6 +19,7 @@ class ValidateDicomTest extends TestCase
     use RefreshDatabase;
 
     private MockInterface $trackerSpy;
+    private MockInterface $orthancServiceSpy;
     private ReviewStatus $reviewStatus;
     private string $studyName;
     private int $visitId;
@@ -49,6 +51,9 @@ class ValidateDicomTest extends TestCase
         $this->numberOfInstances = 22;
         $this->trackerSpy = $this->spy(TrackerRepository::class);
         app()->instance(TrackerRepository::class, $this->trackerSpy);
+
+        $this->orthancServiceSpy = $this->spy(OrthancService::class);
+        app()->instance(OrthancService::class, $this->orthancServiceSpy);
     }
 
 
@@ -65,7 +70,7 @@ class ValidateDicomTest extends TestCase
         $response = $this->json('POST', 'api/visits/'.$this->visitId.'/validate-dicom', $payload);
         $response->assertStatus(200);
         $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPLOAD_SERIES, Mockery::any());
-
+        $this->orthancServiceSpy->shouldHaveReceived('anonymize')->once();
     }
 
     public function testValidateDicomShouldBeForbidden()
