@@ -3,16 +3,21 @@
 namespace Tests\Feature\TestStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\Study;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class SendMailTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Study $study;
 
     protected function setUp(): void
     {
@@ -27,6 +32,8 @@ class SendMailTest extends TestCase
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_REVIEWER, $this->study->name);
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_CONTROLLER, $this->study->name);
         }
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testSendReminderInvestigator()
@@ -123,6 +130,7 @@ class SendMailTest extends TestCase
 
         $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SEND_MESSAGE, Mockery::any());
     }
 
     public function testSendMailToUser()
@@ -138,6 +146,7 @@ class SendMailTest extends TestCase
 
         $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SEND_MESSAGE, Mockery::any());
     }
 
     public function testSendMailToUserNotAllowed()
@@ -167,6 +176,7 @@ class SendMailTest extends TestCase
 
         $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_ADMINISTRATOR, $payload)
             ->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SEND_MESSAGE, Mockery::any());
     }
 
     public function testSendMailToAdmin()
@@ -182,6 +192,7 @@ class SendMailTest extends TestCase
 
         $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SEND_MESSAGE, Mockery::any());
     }
 
     public function testSendPatientsCreationRequest()
@@ -210,6 +221,7 @@ class SendMailTest extends TestCase
 
         $this->json('POST', '/api/studies/'.$this->study->name.'/ask-patient-creation?role=' . Constants::ROLE_INVESTIGATOR , $payload)
             ->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SEND_MESSAGE, Mockery::any());
     }
 
     public function testSendPatientsCreationRequestBadRequestNoPatients()

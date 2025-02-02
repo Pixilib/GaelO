@@ -3,15 +3,22 @@
 namespace Tests\Feature\TestAskUnlock;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\ReviewStatus;
 use Tests\TestCase;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class AskUnlockTest extends TestCase
 {
     use RefreshDatabase;
+    private Visit $visit;
+    private MockInterface $trackerSpy;
+    private string $studyName;
+    private string $patientCenter;
 
     protected function setUp(): void
     {
@@ -21,6 +28,8 @@ class AskUnlockTest extends TestCase
         ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->visit->patient->study_name)->reviewAvailable()->create();
         $this->studyName = $this->visit->patient->study->name;
         $this->patientCenter = $this->visit->patient->center->code;
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testAskUnlockInvestigator()
@@ -34,6 +43,7 @@ class AskUnlockTest extends TestCase
         ];
         $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Investigator&studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_ASK_UNLOCK, Mockery::any());
     }
 
     public function testAskUnlockReviewer()
@@ -46,6 +56,7 @@ class AskUnlockTest extends TestCase
         ];
         $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Reviewer&studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_REVIEWER, Mockery::any(), Mockery::any(), Constants::TRACKER_ASK_UNLOCK, Mockery::any());
     }
 
     public function testAskUnlockFailBecauseMessageEmpty()

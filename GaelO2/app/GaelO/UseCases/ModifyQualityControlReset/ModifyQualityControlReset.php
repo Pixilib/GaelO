@@ -64,7 +64,7 @@ class ModifyQualityControlReset
 
             $this->trackerRepositoryInterface->writeAction(
                 $currentUserId,
-                Constants::ROLE_CONTROLLER,
+                Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
                 Constants::TRACKER_RESET_QC,

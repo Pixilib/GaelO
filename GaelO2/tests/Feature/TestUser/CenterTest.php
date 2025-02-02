@@ -3,11 +3,14 @@
 namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Center;
 use App\Models\Patient;
 use App\Models\Study;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
@@ -15,11 +18,15 @@ class CenterTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Study $study;
 
     //This method is called before each test, it needs to call the parent setup methods
     protected function setUp() : void{
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
 
@@ -71,7 +78,7 @@ class CenterTest extends TestCase
 
     public function testAddCenter()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'Paris',
             'code' => 8,
@@ -79,6 +86,7 @@ class CenterTest extends TestCase
 
         ];
         $this->json('POST', '/api/centers', $payload)->assertStatus(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_CREATE_CENTER, Mockery::any());
     }
 
     public function testAddCenterShouldFailNotAdmin()
@@ -125,22 +133,24 @@ class CenterTest extends TestCase
 
     public function testModifyCenterName()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
         ];
         $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_CENTER, Mockery::any());
     }
 
     public function testModifyCenterCountryCode()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         $payload = [
             'countryCode' => 'US',
         ];
         $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_CENTER, Mockery::any());
     }
 
     public function testModifyCenterShouldFailNotAdmin()
@@ -205,9 +215,10 @@ class CenterTest extends TestCase
     }
 
     public function testDeleteCenter(){
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         $center = Center::factory()->code(1)->create();
         $this->delete('api/centers/'.$center->code)->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_CENTER, Mockery::any());
     }
 
     public function testDeleteCenterShouldFailNotAdmin(){

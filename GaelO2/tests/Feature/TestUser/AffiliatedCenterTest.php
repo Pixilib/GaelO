@@ -2,17 +2,23 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
 use App\Models\CenterUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class AffiliatedCenterTest extends TestCase
 {
 
     use RefreshDatabase;
+
+    private MockInterface $trackerSpy;
 
     protected function setUp() : void{
         parent::setUp();
@@ -23,6 +29,8 @@ class AffiliatedCenterTest extends TestCase
         $this->payload = [
             'centerCode' => 3
         ];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
 
     }
 
@@ -34,7 +42,6 @@ class AffiliatedCenterTest extends TestCase
     public function testGetAffiliatedAccessShouldFailForNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $this->json('GET', 'api/users/1/affiliated-centers')->assertStatus(403);
-
     }
 
     public function testDeleteAffiliatedCenterShouldFailForNotAdmin(){
@@ -45,12 +52,13 @@ class AffiliatedCenterTest extends TestCase
 
     public function testCreateAffiliatedCenterToUser()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         $this->json('POST', 'api/users/1/affiliated-centers', $this->payload)->assertStatus(201);
 
         $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
         $this->assertEquals(sizeof($affiliatedCenter), 1);
         $this->assertEquals($affiliatedCenter[0]['code'], 3);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_USER_AFFILIATED_CENTER, Mockery::any());
     }
 
     public function testCreateAlreadyExistingAffiliatedCenterToUser(){
@@ -75,11 +83,12 @@ class AffiliatedCenterTest extends TestCase
     }
 
     public function testDeleteAffiliatedCenterOfUser(){
-        AuthorizationTools::actAsAdmin(true);
+        $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addAffiliatedCenter(1, 3);
         $this->json('DELETE', 'api/users/1/affiliated-centers/3')->assertNoContent(200);
         $databaseData = CenterUser::where(['user_id'=>1])->get()->toArray();
         $this->assertEquals(sizeof($databaseData), 0);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($userId, Constants::ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_USER_AFFILIATED_CENTER, Mockery::any());
     }
 
     public function testDeleteAffiliatedCenterOfUserShouldFailBecauseNotExistingAffiliatedCenter(){

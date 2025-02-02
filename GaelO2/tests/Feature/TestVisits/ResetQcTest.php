@@ -6,17 +6,26 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\ReviewStatus;
 use App\Models\VisitGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class ResetQcTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Patient $patient;
+    private VisitGroup $visitGroup;
+    private Visit $visit;
+    private ReviewStatus $reviewStatus;
+    private string $studyName;
 
     protected function setUp() : void {
         parent::setUp();
@@ -37,10 +46,9 @@ class ResetQcTest extends TestCase
         ->create();
 
         $this->studyName = $this->visit->patient->study_name;
-
         $this->reviewStatus = ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->studyName)->create();
-
-
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testResetQc()
@@ -53,9 +61,9 @@ class ResetQcTest extends TestCase
         ];
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset?studyName='.$this->studyName, $payload);
-
         $response->assertStatus(200);
 
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_RESET_QC, Mockery::any());
     }
 
     public function testResetQcShouldFailWrongStudy()

@@ -4,10 +4,18 @@ namespace App\GaelO\Constants\Enums;
 
 enum ModalityEnum :string
 {
-    case PT = 'PT';
-    case MR = 'MR';
+    case CR = "CR";
     case CT = 'CT';
-    case US = 'US';
+    case DX = "DX";
+    case ECG = "ECG";
+    case ES = "ES";
+    case MG = "MG";
+    case MR = 'MR';
     case NM = 'NM';
+    case OP = 'OP';
+    case PT = 'PT';
     case RTSTRUCT = 'RTSTRUCT';
+    case SEG = 'SEG';
+    case SM = 'SM';
+    case US = 'US';
 }

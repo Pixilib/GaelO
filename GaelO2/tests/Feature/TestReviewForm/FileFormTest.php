@@ -2,6 +2,7 @@
 namespace Tests\Feature\TestReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -13,16 +14,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
+use Mockery\MockInterface;
 
-class GetFileFormTest extends TestCase
+class FileFormTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private Review $review;
+    private string $studyName;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
         Storage::fake();
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
 
     }
 
@@ -78,6 +86,7 @@ class GetFileFormTest extends TestCase
         $review->save();
         $response = $this->delete('api/reviews/' . $review->id . '/files/41');
         $response->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SAVE_INVESTIGATOR_FORM, Mockery::any());
     }
 
     public function testDeleteFileOfFormShouldFailNoRole(){
