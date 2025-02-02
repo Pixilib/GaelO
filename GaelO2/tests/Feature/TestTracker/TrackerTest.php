@@ -94,4 +94,19 @@ class TrackerTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $response = $this->json('GET', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(403);
     }
+
+    public function testModifyStudyTrackerByVisitShouldNotExist()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('PUT', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
+        $this->json('PATCH', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
+    }
+
+    public function testDeleteStudyTrackerByVisitShouldNotExist()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('DELETE', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
+    }
 }
