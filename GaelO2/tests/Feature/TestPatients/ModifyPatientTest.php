@@ -4,6 +4,7 @@ namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,6 +50,8 @@ class ModifyPatientTest extends TestCase
             "birthYear" => 1955,
             "metadata" => ['tags'=>['Salim']]
         ];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testModifyPatient()
