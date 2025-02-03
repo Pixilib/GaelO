@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\TestServices;
 
 use App\GaelO\Constants\Enums\AnonProfileEnum;
 use App\GaelO\Services\OrthancService;
