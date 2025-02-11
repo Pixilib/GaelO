@@ -28,7 +28,7 @@ class JobQcReport implements ShouldQueue, ShouldBeUnique
     private int $visitId;
 
     public $failOnTimeout = true;
-    public $timeout = 300;
+    public $timeout = 1200;
     public $tries = 1;
 
     /**
