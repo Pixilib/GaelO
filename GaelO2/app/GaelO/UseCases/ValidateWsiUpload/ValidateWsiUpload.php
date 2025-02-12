@@ -151,8 +151,7 @@ class ValidateWsiUpload
 
             $this->gaelOWsiProcessingService->deleteDicom($studyInstanceUID);
 
-            # Concurrency to one until investigating transcoding issues for WSI
-            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath, 5);
+            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
             $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
             $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
