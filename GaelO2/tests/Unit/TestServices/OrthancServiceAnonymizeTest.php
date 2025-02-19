@@ -111,7 +111,7 @@ class OrthancServiceAnonymizeTest extends TestCase
             "0040,A030"
         ];
 
-        $this->assertEquals($result['Keep'], $keepvalues);
+        $this->assertEqualsCanonicalizing($result['Keep'], $keepvalues);
     }
 
     public function testAnonymizeOrthancFullProfile()
@@ -171,7 +171,7 @@ class OrthancServiceAnonymizeTest extends TestCase
                 "0009,103B",
                 "0009,100D",
             ];
-        $this->assertEquals($result['Keep'], $keepvalues);
+        $this->assertEqualsCanonicalizing($result['Keep'], $keepvalues);
     }
 
     public function testIsSecondaryCapture()
