@@ -27,7 +27,7 @@ class OrthancServiceAnonymizeTest extends TestCase
         $result = $method->invokeArgs($orthancService, [AnonProfileEnum::DEFAULT->value, 'patientname', 'patientid', 'description', 'trial']);
         $this->assertEquals($result['KeepPrivateTags'], false);
         $this->assertEquals($result['Force'], true);
-        $this->assertEquals($result['DicomVersion'], '2021b');
+        $this->assertEquals($result['DicomVersion'], '2023b');
         $this->assertEquals($result['Replace']['0008,0050'], 'trial');
         $this->assertEquals($result['Replace']['0010,0020'], 'patientid');
         $this->assertEquals($result['Replace']['0010,0010'], 'patientname');
@@ -87,7 +87,7 @@ class OrthancServiceAnonymizeTest extends TestCase
 
         $this->assertEquals($result['KeepPrivateTags'], false);
         $this->assertEquals($result['Force'], true);
-        $this->assertEquals($result['DicomVersion'], '2021b');
+        $this->assertEquals($result['DicomVersion'], '2023b');
         $this->assertEquals($result['Replace']['0008,0050'], 'trial');
         $this->assertEquals($result['Replace']['0010,0020'], 'patientid');
         $this->assertEquals($result['Replace']['0010,0010'], 'patientname');
@@ -130,7 +130,45 @@ class OrthancServiceAnonymizeTest extends TestCase
                 "7053,1000",
                 "7053,1009",
                 "0009,103B",
-                "0009,100D"
+                "0009,100D",
+                "300C,0127",
+                "0018,1042",
+                "0018,1043",
+                "0018,1202",
+                "0018,9701",
+                "0018,9804",
+                "0018,9074",
+                "0018,9151",
+                "0018,9623",
+                "0018,0012",
+                "0018,0013",
+                "0018,0035",
+                "0018,0027",
+                "0040,A032",
+                "0040,A033",
+                "0070,0082",
+                "0070,0083",
+                "0044,000B",
+                "0018,1078",
+                "0018,1072",
+                "0018,1079",
+                "0018,1073",
+                "0040,A13A",
+                "3008,0162",
+                "3008,0164",
+                "3008,0166",
+                "3008,0168",
+                "0032,1000",
+                "0032,1001",
+                "0032,1010",
+                "0032,1011",
+                "0100,0420",
+                "300A,022C",
+                "300A,022E",
+                "0044,0010",
+                "0018,1201",
+                "0018,700E",
+                "0040,A030",
             ];
         $this->assertEquals($result['Keep'], $keepvalues);
     }
