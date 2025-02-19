@@ -272,6 +272,45 @@ class OrthancService
         $tagsObjects[] = new TagAnon("0040,0003", $date); // Scheduled procedure step start time
         $tagsObjects[] = new TagAnon("0040,0004", $date); // Scheduled procedure step end date
         $tagsObjects[] = new TagAnon("0040,0005", $date); // Scheduled procedure step end time
+        #Additional rules for 2023b DICOM
+        $tagsObjects[] = new TagAnon("300C,0127", $date); // Beam Hold Transition Date time
+        $tagsObjects[] = new TagAnon("0018,1042", $date); // Contrast Bolus Start time
+        $tagsObjects[] = new TagAnon("0018,1043", $date); // Constrast Bolus Stop time
+        $tagsObjects[] = new TagAnon("0018,1202", $date); // Datetime of last calibration
+        $tagsObjects[] = new TagAnon("0018,9701", $date); // Decay correction datetime
+        $tagsObjects[] = new TagAnon("0018,9804", $date); // Exclusion start datetime
+        $tagsObjects[] = new TagAnon("0018,9074", $date); // Frame acquisition datetime
+        $tagsObjects[] = new TagAnon("0018,9151", $date); // Frame reference datetime
+        $tagsObjects[] = new TagAnon("0018,9623", $date); // Functional Sync Pulse
+        $tagsObjects[] = new TagAnon("0018,0012", $date); // Instance Creation Date
+        $tagsObjects[] = new TagAnon("0018,0013", $date); // Instance Creation Time
+        $tagsObjects[] = new TagAnon("0018,0035", $date); // Intervention Drug Start Time
+        $tagsObjects[] = new TagAnon("0018,0027", $date); // Intervention Drug Stop Time
+        $tagsObjects[] = new TagAnon("0040,A032", $date); // Observation DateTime
+        $tagsObjects[] = new TagAnon("0040,A033", $date); // Observation Start Date Time
+        $tagsObjects[] = new TagAnon("0070,0082", $date); // Presentation Creation Date
+        $tagsObjects[] = new TagAnon("0070,0083", $date); // Presentation Creation Time
+        $tagsObjects[] = new TagAnon("0044,000B", $date); // Product Expiration Date Time
+        $tagsObjects[] = new TagAnon("0018,1078", $date); // Radiopharmaceutical Start Date Time
+        $tagsObjects[] = new TagAnon("0018,1072", $date); // Radiopharmaceutical Start Time
+        $tagsObjects[] = new TagAnon("0018,1079", $date); // Radiopharmaceutical Stop Date Time
+        $tagsObjects[] = new TagAnon("0018,1073", $date); // Radiopharmaceutical Stop Time
+        $tagsObjects[] = new TagAnon("0040,A13A", $date); // Referenced Date Time
+        $tagsObjects[] = new TagAnon("3008,0162", $date); // Safe Position Exit Date
+        $tagsObjects[] = new TagAnon("3008,0164", $date); // Safe Position Exit Time
+        $tagsObjects[] = new TagAnon("3008,0166", $date); // Safe Position Return Date
+        $tagsObjects[] = new TagAnon("3008,0168", $date); // Safe Position Return Time
+        $tagsObjects[] = new TagAnon("0032,1000", $date); // Scheduled Study Start Date
+        $tagsObjects[] = new TagAnon("0032,1001", $date); // Scheduled Study Start Time
+        $tagsObjects[] = new TagAnon("0032,1010", $date); // Scheduled Study Stop Date
+        $tagsObjects[] = new TagAnon("0032,1011", $date); // Scheduled Study Stop Time
+        $tagsObjects[] = new TagAnon("0100,0420", $date); // SOP Authorization DateTime
+        $tagsObjects[] = new TagAnon("300A,022C", $date); // Source Strength Reference Date
+        $tagsObjects[] = new TagAnon("300A,022E", $date); // Source Strength Reference Time
+        $tagsObjects[] = new TagAnon("0044,0010", $date); // Substance Administration
+        $tagsObjects[] = new TagAnon("0018,1201", $date); // Time of Last Calibration
+        $tagsObjects[] = new TagAnon("0018,700E", $date); // Time of Last Detector Calibration
+        $tagsObjects[] = new TagAnon("0040,A030", $date); // Verification Date Time
 
         // same for Body characteristics
         $tagsObjects[] = new TagAnon("0010,0040", $body); // Patient's sex
@@ -304,7 +343,7 @@ class OrthancService
         $jsonArrayAnon = [];
         $jsonArrayAnon['KeepPrivateTags'] = false;
         $jsonArrayAnon['Force'] = true;
-        $jsonArrayAnon['DicomVersion'] = "2021b";
+        $jsonArrayAnon['DicomVersion'] = "2023b";
 
         foreach ($tagsObjects as $tag) {
 
