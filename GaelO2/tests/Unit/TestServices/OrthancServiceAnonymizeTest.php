@@ -70,7 +70,6 @@ class OrthancServiceAnonymizeTest extends TestCase
             "7053,1009",
             "0009,103B",
             "0009,100D",
-
             "300C,0127",
             "0018,1042",
             "0018,1043",
@@ -122,7 +121,7 @@ class OrthancServiceAnonymizeTest extends TestCase
         $method = $reflection->getMethod('buildAnonQuery');
         $method->setAccessible(true);
 
-        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::DEFAULT->value, 'patientname', 'patientid', 'description', 'trial']);
+        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::FULL->value, 'patientname', 'patientid', 'description', 'trial']);
 
         $this->assertEquals($result['KeepPrivateTags'], false);
         $this->assertEquals($result['Force'], true);
@@ -134,6 +133,7 @@ class OrthancServiceAnonymizeTest extends TestCase
         $this->assertEquals($result['Replace']['0010,0030'], '19000101');
 
         $keepvalues = [
+            "0008,103E",
             "7053,1000",
             "7053,1009",
             "0009,103B",
