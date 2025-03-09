@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83907475429366" branch-rate="0" lines-covered="8452" lines-valid="10073" branches-covered="0" branches-valid="0" complexity="2717" version="0.4" timestamp="1741177858">
+<coverage line-rate="0.83920246007341" branch-rate="0" lines-covered="8460" lines-valid="10081" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741561040">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1918,20 +1918,20 @@
           <methods>
             <method name="fillFromDBReponseArray" signature="array $array" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="13" hits="18"/>
-                <line number="14" hits="18"/>
-                <line number="15" hits="18"/>
-                <line number="16" hits="18"/>
-                <line number="18" hits="18"/>
+                <line number="13" hits="17"/>
+                <line number="14" hits="17"/>
+                <line number="15" hits="17"/>
+                <line number="16" hits="17"/>
+                <line number="18" hits="17"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="18"/>
-            <line number="14" hits="18"/>
-            <line number="15" hits="18"/>
-            <line number="16" hits="18"/>
-            <line number="18" hits="18"/>
+            <line number="13" hits="17"/>
+            <line number="14" hits="17"/>
+            <line number="15" hits="17"/>
+            <line number="16" hits="17"/>
+            <line number="18" hits="17"/>
           </lines>
         </class>
       </classes>
@@ -2207,7 +2207,7 @@
             </method>
             <method name="fillCenterDetails" signature="App\GaelO\Entities\CenterEntity $centerEntity" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="64" hits="9"/>
+                <line number="64" hits="8"/>
               </lines>
             </method>
             <method name="setVisitsDetails" signature="array $visitEntities" line-rate="1" branch-rate="0" complexity="1">
@@ -2244,7 +2244,7 @@
             <line number="57" hits="2"/>
             <line number="58" hits="2"/>
             <line number="59" hits="2"/>
-            <line number="64" hits="9"/>
+            <line number="64" hits="8"/>
             <line number="72" hits="1"/>
           </lines>
         </class>
@@ -11730,15 +11730,15 @@
             </method>
             <method name="makePatientDetails" signature="array $patientsEntities" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="46" hits="12"/>
-                <line number="47" hits="12"/>
-                <line number="48" hits="4"/>
-                <line number="49" hits="4"/>
-                <line number="50" hits="4"/>
-                <line number="51" hits="4"/>
-                <line number="52" hits="4"/>
-                <line number="53" hits="4"/>
-                <line number="56" hits="12"/>
+                <line number="46" hits="10"/>
+                <line number="47" hits="10"/>
+                <line number="48" hits="3"/>
+                <line number="49" hits="3"/>
+                <line number="50" hits="3"/>
+                <line number="51" hits="3"/>
+                <line number="52" hits="3"/>
+                <line number="53" hits="3"/>
+                <line number="56" hits="10"/>
               </lines>
             </method>
             <method name="makeVisitDetails" signature="array $visitsEntities" line-rate="1" branch-rate="0" complexity="3">
@@ -11774,15 +11774,15 @@
             <line number="35" hits="12"/>
             <line number="40" hits="12"/>
             <line number="41" hits="12"/>
-            <line number="46" hits="12"/>
-            <line number="47" hits="12"/>
-            <line number="48" hits="4"/>
-            <line number="49" hits="4"/>
-            <line number="50" hits="4"/>
-            <line number="51" hits="4"/>
-            <line number="52" hits="4"/>
-            <line number="53" hits="4"/>
-            <line number="56" hits="12"/>
+            <line number="46" hits="10"/>
+            <line number="47" hits="10"/>
+            <line number="48" hits="3"/>
+            <line number="49" hits="3"/>
+            <line number="50" hits="3"/>
+            <line number="51" hits="3"/>
+            <line number="52" hits="3"/>
+            <line number="53" hits="3"/>
+            <line number="56" hits="10"/>
             <line number="61" hits="12"/>
             <line number="62" hits="12"/>
             <line number="63" hits="4"/>
@@ -11883,30 +11883,50 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/TreeService/ReviewerTreeService.php" line-rate="0.85714285714286" branch-rate="0" complexity="2">
+    <package name="GaelO/Services/TreeService/ReviewerTreeService.php" line-rate="0.93333333333333" branch-rate="0" complexity="4">
       <classes>
-        <class name="App\GaelO\Services\TreeService\ReviewerTreeService" filename="GaelO/Services/TreeService/ReviewerTreeService.php" line-rate="0.85714285714286" branch-rate="0" complexity="2">
+        <class name="App\GaelO\Services\TreeService\ReviewerTreeService" filename="GaelO/Services/TreeService/ReviewerTreeService.php" line-rate="0.93333333333333" branch-rate="0" complexity="4">
           <methods>
-            <method name="buildTree" signature="" line-rate="0.85714285714286" branch-rate="0" complexity="2">
+            <method name="makePatientDetails" signature="array $patientsEntities" line-rate="1" branch-rate="0" complexity="2">
               <lines>
                 <line number="15" hits="2"/>
                 <line number="16" hits="2"/>
-                <line number="18" hits="2"/>
-                <line number="19" hits="0"/>
-                <line number="22" hits="2"/>
-                <line number="23" hits="2"/>
-                <line number="25" hits="2"/>
+                <line number="17" hits="1"/>
+                <line number="18" hits="1"/>
+                <line number="19" hits="1"/>
+                <line number="20" hits="1"/>
+                <line number="21" hits="1"/>
+                <line number="24" hits="2"/>
+              </lines>
+            </method>
+            <method name="buildTree" signature="" line-rate="0.85714285714286" branch-rate="0" complexity="2">
+              <lines>
+                <line number="30" hits="2"/>
+                <line number="31" hits="2"/>
+                <line number="33" hits="2"/>
+                <line number="34" hits="0"/>
+                <line number="37" hits="2"/>
+                <line number="38" hits="2"/>
+                <line number="40" hits="2"/>
               </lines>
             </method>
           </methods>
           <lines>
             <line number="15" hits="2"/>
             <line number="16" hits="2"/>
-            <line number="18" hits="2"/>
-            <line number="19" hits="0"/>
-            <line number="22" hits="2"/>
-            <line number="23" hits="2"/>
-            <line number="25" hits="2"/>
+            <line number="17" hits="1"/>
+            <line number="18" hits="1"/>
+            <line number="19" hits="1"/>
+            <line number="20" hits="1"/>
+            <line number="21" hits="1"/>
+            <line number="24" hits="2"/>
+            <line number="30" hits="2"/>
+            <line number="31" hits="2"/>
+            <line number="33" hits="2"/>
+            <line number="34" hits="0"/>
+            <line number="37" hits="2"/>
+            <line number="38" hits="2"/>
+            <line number="40" hits="2"/>
           </lines>
         </class>
       </classes>
