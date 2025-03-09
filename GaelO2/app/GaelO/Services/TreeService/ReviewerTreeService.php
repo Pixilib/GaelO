@@ -3,11 +3,26 @@
 namespace App\GaelO\Services\TreeService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
 
 class ReviewerTreeService extends AbstractTreeService
 {
 
     protected string $role = Constants::ROLE_REVIEWER;
+
+    protected function makePatientDetails(array $patientsEntities): array
+    {
+        $patientArray = [];
+        foreach ($patientsEntities as $patientEntity) {
+            $patient = new PatientEntity();
+            $patient->metadata = $patientEntity['metadata'];
+            $patient->code = $patientEntity['code'];
+            $patient->id = $patientEntity['id'];
+            $patientArray[$patient->id] = (array) $patient;
+        }
+
+        return $patientArray;
+    }
 
     public function buildTree(): array
     {
