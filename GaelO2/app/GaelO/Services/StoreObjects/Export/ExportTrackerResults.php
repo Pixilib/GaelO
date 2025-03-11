@@ -14,7 +14,7 @@ class ExportTrackerResults extends ExportDataResults{
         parent::__construct(parent::EXPORT_TYPE_TRACKER);
     }
 
-    public function addExportFile( string $type, string $path, string $key = null ){
+    public function addExportFile( string $type, string $path, ?string $key = null ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_tracker.xlsx', $path);

@@ -571,7 +571,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType = null)
+    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, ?string $visitType = null)
     {
 
         $parameters = [

@@ -339,7 +339,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $visit;
     }
 
-    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, ?string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
     {
 
         $visitQuery = $this->visitModel->whereHas('visitType', function ($query) use ($visitTypeId) {
