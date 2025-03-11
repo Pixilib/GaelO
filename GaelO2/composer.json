@@ -9,7 +9,7 @@
     ],
     "license": "AGPL-3.0-only",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "azure-oss/storage-blob-flysystem": "^1.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "giggsey/libphonenumber-for-php": "^8.13",
