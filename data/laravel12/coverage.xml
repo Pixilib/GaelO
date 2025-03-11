@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83905196350654" branch-rate="0" lines-covered="8461" lines-valid="10084" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741735088">
+<coverage line-rate="0.83905196350654" branch-rate="0" lines-covered="8461" lines-valid="10084" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741735399">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -5019,7 +5019,7 @@
                 <line number="339" hits="1"/>
               </lines>
             </method>
-            <method name="getVisitsInVisitType" signature="int $visitTypeId, bool $withReviewStatus, string $studyName, bool $withTrashed, bool $withCenter" line-rate="1" branch-rate="0" complexity="7">
+            <method name="getVisitsInVisitType" signature="int $visitTypeId, bool $withReviewStatus, ?string $studyName, bool $withTrashed, bool $withCenter" line-rate="1" branch-rate="0" complexity="7">
               <lines>
                 <line number="345" hits="6"/>
                 <line number="346" hits="6"/>
@@ -9117,7 +9117,7 @@
                 <line number="571" hits="6"/>
               </lines>
             </method>
-            <method name="sendMagicLink" signature="int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType" line-rate="1" branch-rate="0" complexity="1">
+            <method name="sendMagicLink" signature="int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, ?string $visitType" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="577" hits="2"/>
                 <line number="578" hits="2"/>
@@ -10610,7 +10610,7 @@
                 <line number="19" hits="1"/>
               </lines>
             </method>
-            <method name="addExportFile" signature="string $type, string $path, string $key" line-rate="0.71428571428571" branch-rate="0" complexity="5">
+            <method name="addExportFile" signature="string $type, string $path, ?string $key" line-rate="0.71428571428571" branch-rate="0" complexity="5">
               <lines>
                 <line number="24" hits="1"/>
                 <line number="25" hits="1"/>
@@ -11112,7 +11112,7 @@
                 <line number="14" hits="1"/>
               </lines>
             </method>
-            <method name="addExportFile" signature="string $type, string $path, string $key" line-rate="0.8" branch-rate="0" complexity="3">
+            <method name="addExportFile" signature="string $type, string $path, ?string $key" line-rate="0.8" branch-rate="0" complexity="3">
               <lines>
                 <line number="19" hits="1"/>
                 <line number="20" hits="1"/>
@@ -11208,7 +11208,7 @@
                 <line number="14" hits="1"/>
               </lines>
             </method>
-            <method name="addExportFile" signature="string $type, string $path, string $key" line-rate="0.4" branch-rate="0" complexity="3">
+            <method name="addExportFile" signature="string $type, string $path, ?string $key" line-rate="0.4" branch-rate="0" complexity="3">
               <lines>
                 <line number="19" hits="1"/>
                 <line number="20" hits="1"/>
