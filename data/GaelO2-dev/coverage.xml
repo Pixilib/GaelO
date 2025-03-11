@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83920246007341" branch-rate="0" lines-covered="8460" lines-valid="10081" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741561040">
+<coverage line-rate="0.83921840904582" branch-rate="0" lines-covered="8461" lines-valid="10082" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741729726">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -2058,11 +2058,12 @@
                 <line number="66" hits="2"/>
                 <line number="67" hits="2"/>
                 <line number="68" hits="2"/>
+                <line number="69" hits="2"/>
               </lines>
             </method>
             <method name="addUploaderDetails" signature="App\GaelO\Entities\UserEntity $userDetails" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="73" hits="2"/>
+                <line number="74" hits="2"/>
               </lines>
             </method>
           </methods>
@@ -2095,7 +2096,8 @@
             <line number="66" hits="2"/>
             <line number="67" hits="2"/>
             <line number="68" hits="2"/>
-            <line number="73" hits="2"/>
+            <line number="69" hits="2"/>
+            <line number="74" hits="2"/>
           </lines>
         </class>
       </classes>
