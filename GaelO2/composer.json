@@ -9,38 +9,40 @@
     ],
     "license": "AGPL-3.0-only",
     "require": {
-        "php": "^8.1",
-        "barryvdh/laravel-dompdf": "^2.0",
+        "php": "^8.3",
+        "azure-oss/storage-blob-flysystem": "^1.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "giggsey/libphonenumber-for-php": "^8.13",
-        "guzzlehttp/guzzle": "^7.5",
-        "laravel/framework": "^11.0",
+        "guzzlehttp/guzzle": "^7.9",
+        "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9",
-        "league/flysystem-azure-blob-storage": "^3.0",
-        "league/flysystem-ftp": "^3.0",
-        "league/flysystem-sftp-v3": "^3.0",
-        "league/mime-type-detection": "^1.13",
+        "laravel/tinker": "^2.10",
+        "league/flysystem-ftp": "^3.29",
+        "league/flysystem-sftp-v3": "^3.29",
+        "league/mime-type-detection": "^1.16",
         "maennchen/zipstream-php": "^3.1",
-        "phpoffice/phpspreadsheet": "^1.27",
-        "sentry/sentry-laravel": "^4.4",
-        "spatie/db-dumper": "^3.4",
-        "staudenmeir/eloquent-has-many-deep": "^1.20"
+        "phpoffice/phpspreadsheet": "^4.1",
+        "sentry/sentry-laravel": "^4.13",
+        "spatie/db-dumper": "^3.8",
+        "staudenmeir/eloquent-has-many-deep": "^1.21"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.21",
-        "laravel/telescope": "^5.0",
-        "mockery/mockery": "^1.5",
-        "nunomaduro/collision": "^8.1",
+        "fakerphp/faker": "^1.24",
+        "laravel/telescope": "^5.5",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^10.0",
-        "spatie/laravel-ignition": "^2.5"
+        "phpunit/phpunit": "^11.0",
+        "spatie/laravel-ignition": "^2.9"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "pestphp/pest-plugin": true
         }
     },
     "extra": {
