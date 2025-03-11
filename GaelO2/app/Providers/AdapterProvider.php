@@ -61,10 +61,9 @@ class AdapterProvider extends ServiceProvider
     {
         Storage::extend('azure', function (Application $app, array $config) {
             $blobServiceClient = BlobServiceClient::fromConnectionString($config['dsn']);
-            $containerClient = $blobServiceClient->getContainerClient('quickstart');
+            $containerClient = $blobServiceClient->getContainerClient($config['container']);
             $adapter = new AzureBlobStorageAdapter(
                 $containerClient,
-                $config['container'],
                 $config['prefix'],
             );
 
@@ -73,10 +72,9 @@ class AdapterProvider extends ServiceProvider
 
         Cache::extend('azure', function ($app, $config) {
             $blobServiceClient = BlobServiceClient::fromConnectionString($config['dsn']);
-            $containerClient = $blobServiceClient->getContainerClient('quickstart');
+            $containerClient = $blobServiceClient->getContainerClient($config['container']);
             $adapter = new AzureBlobStorageAdapter(
                 $containerClient,
-                $config['container'],
                 $config['prefix'],
             );
 
