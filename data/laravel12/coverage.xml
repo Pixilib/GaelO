@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83905196350654" branch-rate="0" lines-covered="8461" lines-valid="10084" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741736082">
+<coverage line-rate="0.83921840904582" branch-rate="0" lines-covered="8461" lines-valid="10082" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741737029">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -31044,9 +31044,9 @@
         </class>
       </classes>
     </package>
-    <package name="Providers/AdapterProvider.php" line-rate="0.45161290322581" branch-rate="0" complexity="2">
+    <package name="Providers/AdapterProvider.php" line-rate="0.48275862068966" branch-rate="0" complexity="2">
       <classes>
-        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.45161290322581" branch-rate="0" complexity="2">
+        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.48275862068966" branch-rate="0" complexity="2">
           <methods>
             <method name="register" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -31062,7 +31062,7 @@
                 <line number="52" hits="647"/>
               </lines>
             </method>
-            <method name="boot" signature="" line-rate="0.19047619047619" branch-rate="0" complexity="1">
+            <method name="boot" signature="" line-rate="0.21052631578947" branch-rate="0" complexity="1">
               <lines>
                 <line number="62" hits="647"/>
                 <line number="63" hits="0"/>
@@ -31071,20 +31071,18 @@
                 <line number="66" hits="0"/>
                 <line number="67" hits="0"/>
                 <line number="68" hits="0"/>
-                <line number="69" hits="0"/>
-                <line number="71" hits="0"/>
-                <line number="72" hits="647"/>
-                <line number="74" hits="647"/>
+                <line number="70" hits="0"/>
+                <line number="71" hits="647"/>
+                <line number="73" hits="647"/>
+                <line number="74" hits="0"/>
                 <line number="75" hits="0"/>
                 <line number="76" hits="0"/>
                 <line number="77" hits="0"/>
                 <line number="78" hits="0"/>
                 <line number="79" hits="0"/>
-                <line number="80" hits="0"/>
                 <line number="81" hits="0"/>
                 <line number="83" hits="0"/>
-                <line number="85" hits="0"/>
-                <line number="86" hits="647"/>
+                <line number="84" hits="647"/>
               </lines>
             </method>
           </methods>
@@ -31106,20 +31104,18 @@
             <line number="66" hits="0"/>
             <line number="67" hits="0"/>
             <line number="68" hits="0"/>
-            <line number="69" hits="0"/>
-            <line number="71" hits="0"/>
-            <line number="72" hits="647"/>
-            <line number="74" hits="647"/>
+            <line number="70" hits="0"/>
+            <line number="71" hits="647"/>
+            <line number="73" hits="647"/>
+            <line number="74" hits="0"/>
             <line number="75" hits="0"/>
             <line number="76" hits="0"/>
             <line number="77" hits="0"/>
             <line number="78" hits="0"/>
             <line number="79" hits="0"/>
-            <line number="80" hits="0"/>
             <line number="81" hits="0"/>
             <line number="83" hits="0"/>
-            <line number="85" hits="0"/>
-            <line number="86" hits="647"/>
+            <line number="84" hits="647"/>
           </lines>
         </class>
       </classes>
