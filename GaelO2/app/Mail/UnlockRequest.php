@@ -25,6 +25,7 @@ class UnlockRequest extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
         /*
         array(
+            'username'=>''
             'role'=>'',
             'visitType'=>'',
             'patientNum'=>'',

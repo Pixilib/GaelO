@@ -280,6 +280,7 @@ class MailServices
 
         $parameters = [
             'name' => 'Supervisor',
+            'username' => $this->getUserName($currentUserId),
             'role' => $role,
             'study' => $studyName,
             'patientId' => $patientId,
