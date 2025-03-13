@@ -176,7 +176,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::any('tus/{filename?}', [ReverseProxyController::class, 'tusUpload']);
 
     //DicomWeb Routes
-    Route::get('orthanc/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
+    Route::get('orthanc/dicom-web/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
+    Route::get('orthanc/wsi/{path?}', [ReverseProxyController::class, 'dicomWebWsiProxy'])->where(['path' => '.*']);
 
     //Tracker Routes
     Route::get('tracker', [TrackerController::class, 'getAdminTracker']);

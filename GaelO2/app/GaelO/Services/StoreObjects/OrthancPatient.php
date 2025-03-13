@@ -67,7 +67,7 @@ class OrthancPatient {
             $study=new OrthancStudy($this->orthancService);
             $study->setStudyOrthancID($studyID);
 			//fetch the data of the study level
-			$study->retrieveStudyData();
+			$study->retrieveAllStudyData();
 			//Add the study in the current object
 			$this->studiesDetails[]=$study;
 

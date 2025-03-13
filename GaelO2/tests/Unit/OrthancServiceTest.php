@@ -108,7 +108,8 @@ class OrthancServiceTest extends TestCase
             "code",
             "id",
             "visit",
-            "study"
+            "study",
+            null
         );
         //orthanc ID have 44 character lenght
         $this->assertEquals(44, strlen($anonymized));
