@@ -60,7 +60,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function requestUploadArrayDicom(string $method, string $uri, array $files): array
+    public function requestUploadArrayDicom(string $method, string $uri, array $files, int $concurrency = 5): array
     {
 
         $requests = function ($files) use ($method, $uri) {
@@ -79,7 +79,7 @@ class HttpClientAdapter implements HttpClientInterface
         $responseArray = [];
 
         $pool = new Pool($this->client, $requests($files), [
-            'concurrency' => 5,
+            'concurrency' => $concurrency,
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[$index] = new Psr7ResponseAdapter($response);
             },

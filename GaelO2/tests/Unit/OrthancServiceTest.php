@@ -68,7 +68,7 @@ class OrthancServiceTest extends TestCase
     }
 
     /**
-     * @depends testSendDicomFile
+     * @ testSendDicomFile
      */
     public function testGetStudyOrthancDetails($testingOrthancStudyID)
     {
@@ -105,7 +105,8 @@ class OrthancServiceTest extends TestCase
             "code",
             "id",
             "visit",
-            "study"
+            "study",
+            null
         );
         //orthanc ID have 44 character lenght
         $this->assertEquals(44, strlen($anonymized));

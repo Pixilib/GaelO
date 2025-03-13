@@ -44,8 +44,8 @@ class OrthancService
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        if($url) $this->httpClientInterface->setUrl($url);
-        if($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
+        if ($url) $this->httpClientInterface->setUrl($url);
+        if ($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getOrthancRessourcesDetails(string $level, string $orthancID): array
@@ -183,9 +183,9 @@ class OrthancService
         return $this->httpClientInterface->requestJson('POST', '/transfers/send', $data);
     }
 
-    public function importFiles(array $files): array
+    public function importFiles(array $files, int $concurrency = 5): array
     {
-        $psr7ResponseAdapterArray = $this->httpClientInterface->requestUploadArrayDicom('POST', '/instances', $files);
+        $psr7ResponseAdapterArray = $this->httpClientInterface->requestUploadArrayDicom('POST', '/instances', $files, $concurrency);
         $arrayAnswer = array_map(function ($response) {
             return json_decode($response->getBody(), true);
         }, $psr7ResponseAdapterArray);
@@ -204,10 +204,10 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName): string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID);
 
         $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
@@ -235,6 +235,7 @@ class OrthancService
         string $newPatientID,
         string $newStudyDescription,
         string $studyName,
+        ?string $transfertSyntaxUID
     ): array {
 
         $tagsObjects = [];
@@ -354,6 +355,10 @@ class OrthancService
             }
         }
 
+        if ($transfertSyntaxUID) {
+            $jsonArrayAnon['Transcode'] = $transfertSyntaxUID;
+        }
+
         return $jsonArrayAnon;
     }
 
@@ -366,7 +371,7 @@ class OrthancService
 
         $studyOrthanc = new OrthancStudy($this);
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
-        $studyOrthanc->retrieveStudyData();
+        $studyOrthanc->retrieveAllStudyData();
         $seriesObjects = $studyOrthanc->orthancSeries;
         foreach ($seriesObjects as $serie) {
             if ($serie->isSecondaryCapture()) {
@@ -398,7 +403,7 @@ class OrthancService
     {
         $studyOrthanc = new OrthancStudy($this);
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
-        $studyOrthanc->retrieveStudyData();
+        $studyOrthanc->retrieveAllStudyData();
         return $studyOrthanc;
     }
 
@@ -456,14 +461,14 @@ class OrthancService
     /**
      * Send folder content to orthanc, and treat responses to output the uploaded studyOrthancId
      */
-    public function importDicomFolder(string $unzipedPath): OrthancStudyImport
+    public function importDicomFolder(string $unzipedPath, $concurrency = 5): OrthancStudyImport
     {
         //Recursive scann of the unzipped folder
         $filesArray = Util::getPathAsFileArray($unzipedPath);
 
         $importedMap = [];
 
-        $uploadSuccessResponseArray = $this->importFiles($filesArray);
+        $uploadSuccessResponseArray = $this->importFiles($filesArray, $concurrency);
 
         //Import dicom file one by one
         foreach ($uploadSuccessResponseArray as $response) {
@@ -517,7 +522,6 @@ class OrthancService
         $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
         $this->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $gaelOProcessingService->createDicom($temporaryZipDicom);
-        unlink($temporaryZipDicom);        
+        unlink($temporaryZipDicom);
     }
-
 }

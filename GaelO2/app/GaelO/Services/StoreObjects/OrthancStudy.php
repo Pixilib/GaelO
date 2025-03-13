@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -16,6 +17,7 @@
 namespace App\GaelO\Services\StoreObjects;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ModalityEnum;
 use App\GaelO\Services\OrthancService;
 
 
@@ -23,12 +25,14 @@ use App\GaelO\Services\OrthancService;
  * Collect study's data from Orthanc Server
  */
 
- class OrthancStudy {
-    private OrthancService $orthancService;
+class OrthancStudy
+{
+	private OrthancService $orthancService;
 
-    public string $studyOrthancID;
+	public string $studyOrthancID;
 
 	public bool $studyIsStable;
+	public ?string $modality = null;
 	public ?string $studyDate;
 	public ?string $studyTime;
 	public ?string $studyDescription;
@@ -48,33 +52,48 @@ use App\GaelO\Services\OrthancService;
 
 	public array $orthancSeries = [];
 
-	public function __construct(OrthancService $orthancService) {
-        $this->orthancService = $orthancService;
-    }
+	public function __construct(OrthancService $orthancService)
+	{
+		$this->orthancService = $orthancService;
+	}
 
-    public function setStudyOrthancID($studyOrthancID){
-        $this->studyOrthancID = $studyOrthancID;
-    }
+	public function setStudyOrthancID($studyOrthancID)
+	{
+		$this->studyOrthancID = $studyOrthancID;
+	}
+
+	public function getModality(): string
+	{
+		return $this->modality;
+	}
+
+	public function retrieveStudyData()
+	{
+
+		$studyDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_STUDIES_LEVEL, $this->studyOrthancID);
+
+		//On cree un object patient avec les information
+		$this->modality = $studyDetails['MainDicomTags']['Modality'] ?? null;
+		$this->studyDate = $studyDetails['MainDicomTags']['StudyDate'] ?? null;
+		$this->studyTime = $studyDetails['MainDicomTags']['StudyTime'] ?? null;
+		$this->studyDescription = $studyDetails['MainDicomTags']['StudyDescription'] ?? null;
+		$this->studyInstanceUID = $studyDetails['MainDicomTags']['StudyInstanceUID'];
+		$this->studyLastUpdate = $studyDetails['LastUpdate'];
+		$this->seriesInStudy = $studyDetails['Series'];
+		$this->numberOfSeriesInStudy = sizeof($studyDetails['Series']);
+		$this->studyIsStable = $studyDetails['IsStable'];
+		$this->parentPatientName = $studyDetails['PatientMainDicomTags']['PatientName'] ?? null;
+		$this->parentPatientID = $studyDetails['PatientMainDicomTags']['PatientID'] ?? null;
+		$this->parentPartientOrthancID = $studyDetails['ParentPatient'];
+	}
 
 	/**
 	 *Get study related tags and store them in this object
 	 */
-	public function retrieveStudyData() {
-		$studyDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_STUDIES_LEVEL, $this->studyOrthancID);
-
-		//On cree un object patient avec les information
-		$this->studyDate=$studyDetails['MainDicomTags']['StudyDate'] ?? null;
-		$this->studyTime=$studyDetails['MainDicomTags']['StudyTime'] ?? null;
-		$this->studyDescription=$studyDetails['MainDicomTags']['StudyDescription'] ?? null;
-		$this->studyInstanceUID=$studyDetails['MainDicomTags']['StudyInstanceUID'];
-		$this->studyLastUpdate=$studyDetails['LastUpdate'];
-		$this->seriesInStudy=$studyDetails['Series'];
-		$this->numberOfSeriesInStudy=sizeof($studyDetails['Series']);
-		$this->studyIsStable=$studyDetails['IsStable'];
-		$this->parentPatientName=$studyDetails['PatientMainDicomTags']['PatientName'] ?? null;
-		$this->parentPatientID=$studyDetails['PatientMainDicomTags']['PatientID'] ?? null;
-		$this->parentPartientOrthancID=$studyDetails['ParentPatient'];
-
+	public function retrieveAllStudyData()
+	{
+		//Retrieve study level data
+		$this->retrieveStudyData();
 		//add statistics info
 		$this->retrieveStudyStatistics();
 		//add series tag
@@ -84,23 +103,24 @@ use App\GaelO\Services\OrthancService;
 	/**
 	 *Get study statistics info (size in MB, number of instances) and store them in this object
 	 */
-	private function retrieveStudyStatistics() {
-        $statistics=$this->orthancService->getOrthancRessourcesStatistics(Constants::ORTHANC_STUDIES_LEVEL, $this->studyOrthancID);
-		$this->countInstances=$statistics['CountInstances'];
-		$this->diskSizeMb=$statistics['DiskSizeMB'];
-		$this->uncompressedSizeMb=$statistics['UncompressedSizeMB'];
-
+	private function retrieveStudyStatistics()
+	{
+		$statistics = $this->orthancService->getOrthancRessourcesStatistics(Constants::ORTHANC_STUDIES_LEVEL, $this->studyOrthancID);
+		$this->countInstances = $statistics['CountInstances'];
+		$this->diskSizeMb = $statistics['DiskSizeMB'];
+		$this->uncompressedSizeMb = $statistics['UncompressedSizeMB'];
 	}
 
 	/**
 	 * Create a series object with series data for each series and store them in this object
 	 */
-	private function getSeriesMainTags() {
+	private function getSeriesMainTags()
+	{
 		foreach ($this->seriesInStudy as $seriesOrthancID) {
-            $series=new OrthancSeries($this->orthancService);
-            $series->setSeriesOrthancID($seriesOrthancID);
+			$series = new OrthancSeries($this->orthancService);
+			$series->setSeriesOrthancID($seriesOrthancID);
 			@$series->retrieveSeriesData();
-			$this->orthancSeries[]=$series;
+			$this->orthancSeries[] = $series;
 		}
 	}
 }

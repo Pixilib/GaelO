@@ -44,6 +44,10 @@ use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
+use App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUpload;
+use App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadRequest;
+use App\GaelO\UseCases\ValidateWsiUpload\ValidateWsiUploadResponse;
+
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +116,18 @@ class VisitController extends Controller
         return $this->getJsonResponse($validateDicomUploadResponse->body, $validateDicomUploadResponse->status, $validateDicomUploadResponse->statusText);
     }
 
+    public function validateWsi(Request $request, ValidateWsiUpload $validateWsiUpload, ValidateWsiUploadRequest $validateWsiUploadRequest, ValidateWsiUploadResponse $validateWsiUploadResponse, int $visitId)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        Util::fillObject($requestData, $validateWsiUploadRequest);
+        $validateWsiUploadRequest->currentUserId = $currentUser['id'];
+        $validateWsiUploadRequest->visitId = $visitId;
+
+        $validateWsiUpload->execute($validateWsiUploadRequest, $validateWsiUploadResponse);
+
+        return $this->getJsonResponse($validateWsiUploadResponse->body, $validateWsiUploadResponse->status, $validateWsiUploadResponse->statusText);
+    }
     public function deleteVisit(Request $request, DeleteVisit $deleteVisit, DeleteVisitRequest $deleteVisitRequest, DeleteVisitResponse $deleteVisitResponse, int $visitId)
     {
         $currentUser = Auth::user();

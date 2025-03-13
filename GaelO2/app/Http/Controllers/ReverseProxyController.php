@@ -8,6 +8,9 @@ use App\GaelO\UseCases\ReverseProxyDicomWeb\ReverseProxyDicomWebResponse;
 use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTus;
 use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusRequest;
 use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusResponse;
+use App\GaelO\UseCases\ReverseProxyWsi\ReverseProxyWsi;
+use App\GaelO\UseCases\ReverseProxyWsi\ReverseProxyWsiRequest;
+use App\GaelO\UseCases\ReverseProxyWsi\ReverseProxyWsiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,7 +37,6 @@ class ReverseProxyController extends Controller
 
         $reverseProxyDicomWebRequest->header =$request->header();
         $reverseProxyDicomWebRequest->url =$request->getRequestUri();
-        $reverseProxyDicomWebRequest->method =$request->method();
         $reverseProxyDicomWebRequest->body =$request->getContent();
 
         $reverseProxyDicomWeb->execute($reverseProxyDicomWebRequest, $reverseProxyDicomWebResponse);
@@ -46,5 +48,23 @@ class ReverseProxyController extends Controller
         }
 
 
+    }
+
+    public function dicomWebWsiProxy(Request $request, ReverseProxyWsi $reverseProxyWsi, ReverseProxyWsiRequest $reverseProxyWsiRequest, ReverseProxyWsiResponse $reverseProxyWsiResponse){
+       
+        $currentUser = Auth::user();
+        $reverseProxyWsiRequest->currentUserId = $currentUser['id'];
+
+        $reverseProxyWsiRequest->header =$request->header();
+        $reverseProxyWsiRequest->url =$request->getRequestUri();
+        $reverseProxyWsiRequest->body =$request->getContent();
+
+        $reverseProxyWsi->execute($reverseProxyWsiRequest, $reverseProxyWsiResponse);
+        if($reverseProxyWsiResponse->status === 200){
+            return response($reverseProxyWsiResponse->body, $reverseProxyWsiResponse->status , $reverseProxyWsiResponse->header);
+        }else{
+            return response()->json($reverseProxyWsiResponse->body)
+                ->setStatusCode($reverseProxyWsiResponse->status, $reverseProxyWsiResponse->statusText);
+        }
     }
 }
