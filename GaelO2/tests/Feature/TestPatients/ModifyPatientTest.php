@@ -4,15 +4,23 @@ namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
 class ModifyPatientTest extends TestCase
 {
     use RefreshDatabase;
+    private array $validPayload;
+    private string $studyName;
+    private Study $study;
+    private Patient $patient;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -42,6 +50,8 @@ class ModifyPatientTest extends TestCase
             "birthYear" => 1955,
             "metadata" => ['tags'=>['Salim']]
         ];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testModifyPatient()
@@ -64,6 +74,7 @@ class ModifyPatientTest extends TestCase
         ]);
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_EDIT_PATIENT, Mockery::any());
     }
 
     public function testModifyPatientShouldFailWrongStudy()

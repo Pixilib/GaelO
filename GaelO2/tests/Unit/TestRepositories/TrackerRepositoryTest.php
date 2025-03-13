@@ -25,6 +25,14 @@ class TrackerRepositoryTest extends TestCase
         $this->trackerRepository = new TrackerRepository(new Tracker());
     }
 
+
+    public function testWriteActionTracker()
+    {
+        $this->assertDatabaseCount('trackers', 0);
+        $this->trackerRepository->writeAction(1, Constants::ROLE_INVESTIGATOR, null, null, Constants::TRACKER_CREATE_STUDY, []);
+        $this->assertDatabaseCount('trackers', 1);
+    }
+
     public function testGetTrackerOfRole()
     {
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();

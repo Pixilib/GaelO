@@ -280,6 +280,7 @@ class MailServices
 
         $parameters = [
             'name' => 'Supervisor',
+            'username' => $this->getUserName($currentUserId),
             'role' => $role,
             'study' => $studyName,
             'patientId' => $patientId,
@@ -443,7 +444,7 @@ class MailServices
 
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
         foreach ($userIds as $userId) {
-            return $mailListBuilder->withUserEmail($userId);
+            $mailListBuilder->withUserEmail($userId);
         };
         $mailListBuilder->withUserEmail($senderId);
 
@@ -571,7 +572,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType = null)
+    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, ?string $visitType = null)
     {
 
         $parameters = [

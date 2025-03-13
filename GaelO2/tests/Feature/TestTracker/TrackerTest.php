@@ -4,6 +4,7 @@ namespace Tests\Feature\TestTracker;
 
 use Tests\TestCase;
 use App\GaelO\Constants\Constants;
+use App\Models\Study;
 use App\Models\Tracker;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +13,8 @@ use Tests\AuthorizationTools;
 class TrackerTest extends TestCase
 {
     use RefreshDatabase;
+    private Visit $visit;
+    private Study $study;
 
     protected function setUp(): void
     {
@@ -90,5 +93,20 @@ class TrackerTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $response = $this->json('GET', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(403);
+    }
+
+    public function testModifyStudyTrackerByVisitShouldNotExist()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('PUT', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
+        $this->json('PATCH', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
+    }
+
+    public function testDeleteStudyTrackerByVisitShouldNotExist()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('DELETE', '/api/studies/' . $this->study->name . '/visits/' . $this->visit->id . '/tracker')->assertStatus(405);
     }
 }

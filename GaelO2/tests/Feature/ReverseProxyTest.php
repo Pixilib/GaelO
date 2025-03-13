@@ -31,7 +31,7 @@ class ReverseProxyTest extends TestCase
 
         $this->studyName = $this->orthancStudy->visit->patient->study->name;
 
-        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
+        $this->markTestSkipped('Needs Orthanc To Be Tested');
 
     }
 

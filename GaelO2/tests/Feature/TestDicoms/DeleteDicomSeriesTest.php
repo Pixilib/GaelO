@@ -7,12 +7,15 @@ use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -20,6 +23,10 @@ class DeleteDicomSeriesTest extends TestCase
 {
 
     use RefreshDatabase;
+    private string $studyName;
+    private DicomSeries $dicomSeries;
+    private Review $investigatorForm;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -39,15 +46,19 @@ class DeleteDicomSeriesTest extends TestCase
         //Set visit QC at Not Done
         $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::NOT_DONE->value;
         $this->dicomSeries->dicomStudy->visit->save();
+
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testDeleteSeries()
     {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $payload = ['reason' => 'wrong series'];
         $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_DICOM_SERIES, Mockery::any());
     }
 
     public function testDeleteLastSeries()

@@ -4,9 +4,12 @@ namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
@@ -16,6 +19,7 @@ class ImportPatientTest extends TestCase
 
     private Study $study;
     private array $validPayload;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -36,9 +40,9 @@ class ImportPatientTest extends TestCase
             "centerCode" => 0,
             "inclusionStatus"  => InclusionStatusEnum::INCLUDED->value
         ]];
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
-
-
 
     public function testImportMultiplePatients()
     {
@@ -94,6 +98,7 @@ class ImportPatientTest extends TestCase
 
         $patient1 = Patient::find($this->study->code . '12341231234123')->toArray();
         $this->assertEquals('2011-10-05T00:00:00.000000Z', $patient1['registration_date']);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_IMPORT_PATIENT, Mockery::any());
     }
 
     public function testImportPatient()
@@ -121,6 +126,7 @@ class ImportPatientTest extends TestCase
         $reponse1 = $this->json('POST', '/api/studies/' . $this->study->name . '/import-patients?role=Investigator', $this->validPayload)->assertSuccessful();
         $this->assertEquals(1, sizeof($reponse1['success']));
         $this->assertEquals(0, sizeof($reponse1['fail']));
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_IMPORT_PATIENT, Mockery::any());
 
     }
 

@@ -2,27 +2,36 @@
 
 namespace Tests\Feature\TestStudy;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Tests\TestCase;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class DeleteStudyTest extends TestCase
 {
 
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
+    private array $payload;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testDeleteStudy()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
         $study = Study::factory()->create();
         $this->json('DELETE', '/api/studies/' . $study->name, ['reason' => 'study finished'])->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DEACTIVATE_STUDY, Mockery::any());
     }
 
     public function testDeleteStudyShouldFailNoReason()
@@ -34,12 +43,13 @@ class DeleteStudyTest extends TestCase
 
     public function testReactivateStudy()
     {
-        AuthorizationTools::actAsAdmin(true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
         $study =  Study::factory()->create();
         $studyName = $study->name;
         $study->delete();
         $payload = ['reason' => 'need new analysis'];
         $this->json('POST', '/api/studies/' . $studyName . '/activate', $payload)->assertNoContent(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_REACTIVATE_STUDY, Mockery::any());
     }
 
     public function testReactivateStudyShouldFailNoReason()

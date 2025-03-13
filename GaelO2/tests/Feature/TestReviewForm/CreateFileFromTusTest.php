@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\TusService;
 use App\Models\Patient;
 use App\Models\Review;
@@ -15,11 +16,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use Mockery\MockInterface;
 
 class CreateFileFromTusTest extends TestCase
 {
     use RefreshDatabase;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -40,6 +43,8 @@ class CreateFileFromTusTest extends TestCase
         });
 
         app()->instance(TusService::class, $mockTusService);
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     private function createVisit()
@@ -73,6 +78,7 @@ class CreateFileFromTusTest extends TestCase
 
         $response = $this->post('api/tools/attach-form-file-from-tus', $payload);
         $response->assertSuccessful();
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_INVESTIGATOR, Mockery::any(), Mockery::any(), Constants::TRACKER_SAVE_INVESTIGATOR_FORM, Mockery::any());
     }
 
     public function testUploadFileFromTusDicomUpload()

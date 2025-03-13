@@ -1,4 +1,4 @@
-FROM php:8.3.8-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
@@ -24,17 +24,15 @@ RUN apt-get update -qy && \
     zip \
     libc-client-dev \
     libkrb5-dev \
+    libssl-dev \
     libpng-dev \
     libmemcached-dev \
     mariadb-client \
     postgresql-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pecl install pcov redis memcached
+RUN pecl install pcov redis memcached imap
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl curl ftp
-
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-    docker-php-ext-install imap
 
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache

@@ -1,7 +1,7 @@
 @extends('mails.mail_template')
 
 @section('content')
-    An Unlock {{$role}} form Request was emitted by {{$name}} <br>
+    An Unlock {{$role}} form Request was emitted by {{$username}} <br>
     Visit Type : {{$visitType}}<br>
     Patient Code: {{$patientCode}}<br>
     Study : {{$study}}<br>

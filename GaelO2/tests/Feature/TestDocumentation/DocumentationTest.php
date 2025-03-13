@@ -5,16 +5,22 @@ namespace Tests\Feature\TestDocumentation;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\TrackerRepository;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\AuthorizationTools;
 
 class DocumentationTest extends TestCase
 {
 
     use RefreshDatabase;
+    private Study $study;
+    private array $validPayload;
+    private MockInterface $trackerSpy;
 
     protected function setUp(): void
     {
@@ -31,6 +37,9 @@ class DocumentationTest extends TestCase
             'controller' => false,
             'reviewer' => false
         ];
+
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
     }
 
     public function testForbiddenWhenNotSupervisor()
@@ -48,6 +57,7 @@ class DocumentationTest extends TestCase
         $response = $this->post('api/studies/' . $this->study->name . '/documentations', $this->validPayload);
         $response->assertStatus(201);
         $response->assertJsonStructure(['id']);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_ADD_DOCUMENTATION, Mockery::any());
     }
 
     public function testUploadDocumentation()
@@ -57,6 +67,7 @@ class DocumentationTest extends TestCase
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
         $response = $this->post('api/documentations/' . $documentation['id'] . '/file', ["binaryData" => base64_encode("testFileContent")], ['CONTENT_TYPE' => 'application/pdf']);
         $response->assertStatus(201);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPLOAD_DOCUMENTATION, Mockery::any());
     }
 
     public function testUploadDocumentationShouldFailBecauseWrongMime()
@@ -92,6 +103,7 @@ class DocumentationTest extends TestCase
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
         $response = $this->delete('api/documentations/' . $documentation['id']);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_DELETE_DOCUMENTATION, Mockery::any());
     }
 
     public function testGetDocumentation()
@@ -172,6 +184,7 @@ class DocumentationTest extends TestCase
 
         $response = $this->patch('api/documentations/' . $documentation->id, $newPayload);
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_UPDATE_DOCUMENTATION, Mockery::any());
     }
 
     public function testModifyDocumentationNotSemanticVersioning()
@@ -233,6 +246,7 @@ class DocumentationTest extends TestCase
 
         $response = $this->post('api/documentations/' . $documentation->id . '/activate');
         $response->assertStatus(200);
+        $this->trackerSpy->shouldHaveReceived('writeAction')->once()->with($currentUserId, Constants::ROLE_SUPERVISOR, Mockery::any(), Mockery::any(), Constants::TRACKER_REACTIVATE_DOCUMENTATION, Mockery::any());
     }
 
     public function testReactivateDocumentationShouldFailNoSupervisor()

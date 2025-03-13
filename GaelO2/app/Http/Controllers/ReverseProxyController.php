@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ReverseProxyController extends Controller
 {
-    public function tusUpload(Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse, string $filename=null){
+    public function tusUpload(Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
         $currentUser = Auth::user();
         $reverseProxyTusRequest->currentUserId = $currentUser['id'];
 

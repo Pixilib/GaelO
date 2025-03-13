@@ -24,10 +24,8 @@ class FTPAdapterTest extends TestCase
      */
     public function testReadFile()
     {
-        //$this->markTestSkipped('need external FTP Server');
         $content = $this->ftpClientAdapter->getFileContent('myFile.txt', 100);
         $this->assertEquals('coucou', $content);
-
     }
 
     public function testWriteFile()
