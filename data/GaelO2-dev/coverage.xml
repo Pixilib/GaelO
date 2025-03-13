@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83923435485471" branch-rate="0" lines-covered="8462" lines-valid="10083" branches-covered="0" branches-valid="0" complexity="2719" version="0.4" timestamp="1741785263">
+<coverage line-rate="0.8396432111001" branch-rate="0" lines-covered="8472" lines-valid="10090" branches-covered="0" branches-valid="0" complexity="2722" version="0.4" timestamp="1741824160">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -3560,11 +3560,11 @@
             </method>
             <method name="getPatientsInStudy" signature="string $studyName, bool $withCenters" line-rate="1" branch-rate="0" complexity="3">
               <lines>
-                <line number="35" hits="4"/>
-                <line number="36" hits="4"/>
+                <line number="35" hits="5"/>
+                <line number="36" hits="5"/>
                 <line number="37" hits="2"/>
-                <line number="39" hits="4"/>
-                <line number="40" hits="4"/>
+                <line number="39" hits="5"/>
+                <line number="40" hits="5"/>
               </lines>
             </method>
             <method name="getPatientsInStudyInCenters" signature="string $studyName, array $centerCodes, bool $withCenters" line-rate="1" branch-rate="0" complexity="3">
@@ -3639,11 +3639,11 @@
             <line number="20" hits="35"/>
             <line number="25" hits="12"/>
             <line number="30" hits="4"/>
-            <line number="35" hits="4"/>
-            <line number="36" hits="4"/>
+            <line number="35" hits="5"/>
+            <line number="36" hits="5"/>
             <line number="37" hits="2"/>
-            <line number="39" hits="4"/>
-            <line number="40" hits="4"/>
+            <line number="39" hits="5"/>
+            <line number="40" hits="5"/>
             <line number="45" hits="5"/>
             <line number="46" hits="5"/>
             <line number="47" hits="3"/>
@@ -7362,9 +7362,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/GaelOStudiesService/AbstractGaelOStudy.php" line-rate="0.66891891891892" branch-rate="0" complexity="26">
+    <package name="GaelO/Services/GaelOStudiesService/AbstractGaelOStudy.php" line-rate="0.66216216216216" branch-rate="0" complexity="26">
       <classes>
-        <class name="App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy" filename="GaelO/Services/GaelOStudiesService/AbstractGaelOStudy.php" line-rate="0.66891891891892" branch-rate="0" complexity="26">
+        <class name="App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy" filename="GaelO/Services/GaelOStudiesService/AbstractGaelOStudy.php" line-rate="0.66216216216216" branch-rate="0" complexity="26">
           <methods>
             <method name="__construct" signature="App\GaelO\Services\MailServices $mailServices, App\GaelO\Interfaces\Repositories\UserRepositoryInterface $userRepositoryInterface, App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface $reviewRepositoryInterface, App\GaelO\Interfaces\Adapters\JobInterface $jobInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -7395,9 +7395,9 @@
                 <line number="62" hits="44"/>
               </lines>
             </method>
-            <method name="getExpectedPatients" signature="" line-rate="1" branch-rate="0" complexity="1">
+            <method name="getExpectedPatients" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="71" hits="1"/>
+                <line number="71" hits="0"/>
               </lines>
             </method>
             <method name="onEventStudy" signature="App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent $studyEvent" line-rate="0.8" branch-rate="0" complexity="6">
@@ -7577,7 +7577,7 @@
             <line number="46" hits="6"/>
             <line number="54" hits="46"/>
             <line number="62" hits="44"/>
-            <line number="71" hits="1"/>
+            <line number="71" hits="0"/>
             <line number="79" hits="6"/>
             <line number="80" hits="0"/>
             <line number="81" hits="6"/>
@@ -10241,24 +10241,42 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/SpecificStudiesRules/TEST/TEST.php" line-rate="0.75" branch-rate="0" complexity="3">
+    <package name="GaelO/Services/SpecificStudiesRules/TEST/TEST.php" line-rate="0.81818181818182" branch-rate="0" complexity="6">
       <classes>
-        <class name="App\GaelO\Services\SpecificStudiesRules\TEST\TEST" filename="GaelO/Services/SpecificStudiesRules/TEST/TEST.php" line-rate="0.75" branch-rate="0" complexity="3">
+        <class name="App\GaelO\Services\SpecificStudiesRules\TEST\TEST" filename="GaelO/Services/SpecificStudiesRules/TEST/TEST.php" line-rate="0.81818181818182" branch-rate="0" complexity="6">
           <methods>
-            <method name="getVisitRulesClass" signature="string $visitGroupName, string $visitTypeName" line-rate="0.75" branch-rate="0" complexity="3">
+            <method name="getVisitRulesClass" signature="string $visitGroupName, string $visitTypeName" line-rate="0.6" branch-rate="0" complexity="4">
               <lines>
+                <line number="76" hits="22"/>
                 <line number="77" hits="22"/>
-                <line number="78" hits="22"/>
-                <line number="79" hits="1"/>
+                <line number="78" hits="1"/>
+                <line number="79" hits="0"/>
                 <line number="80" hits="0"/>
+              </lines>
+            </method>
+            <method name="getExpectedPatients" signature="" line-rate="1" branch-rate="0" complexity="2">
+              <lines>
+                <line number="86" hits="1"/>
+                <line number="87" hits="1"/>
+                <line number="88" hits="1"/>
+                <line number="89" hits="1"/>
+                <line number="90" hits="1"/>
+                <line number="92" hits="1"/>
               </lines>
             </method>
           </methods>
           <lines>
+            <line number="76" hits="22"/>
             <line number="77" hits="22"/>
-            <line number="78" hits="22"/>
-            <line number="79" hits="1"/>
+            <line number="78" hits="1"/>
+            <line number="79" hits="0"/>
             <line number="80" hits="0"/>
+            <line number="86" hits="1"/>
+            <line number="87" hits="1"/>
+            <line number="88" hits="1"/>
+            <line number="89" hits="1"/>
+            <line number="90" hits="1"/>
+            <line number="92" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -17091,9 +17109,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/UseCases/GetCreatablePatients/GetCreatablePatients.php" line-rate="0.53333333333333" branch-rate="0" complexity="8">
+    <package name="GaelO/UseCases/GetCreatablePatients/GetCreatablePatients.php" line-rate="0.7" branch-rate="0" complexity="8">
       <classes>
-        <class name="App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatients" filename="GaelO/UseCases/GetCreatablePatients/GetCreatablePatients.php" line-rate="0.53333333333333" branch-rate="0" complexity="8">
+        <class name="App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatients" filename="GaelO/UseCases/GetCreatablePatients/GetCreatablePatients.php" line-rate="0.7" branch-rate="0" complexity="8">
           <methods>
             <method name="__construct" signature="App\GaelO\Services\AuthorizationService\AuthorizationStudyService $authorizationStudyService, App\GaelO\Interfaces\Repositories\PatientRepositoryInterface $patientRepositoryInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -17101,7 +17119,7 @@
                 <line number="23" hits="1"/>
               </lines>
             </method>
-            <method name="execute" signature="App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsRequest $getCreatablePatientsRequest, App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsResponse $getCreatablePatientsResponse" line-rate="0.45454545454545" branch-rate="0" complexity="4">
+            <method name="execute" signature="App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsRequest $getCreatablePatientsRequest, App\GaelO\UseCases\GetCreatablePatients\GetCreatablePatientsResponse $getCreatablePatientsResponse" line-rate="0.68181818181818" branch-rate="0" complexity="4">
               <lines>
                 <line number="30" hits="1"/>
                 <line number="31" hits="1"/>
@@ -17110,13 +17128,13 @@
                 <line number="36" hits="1"/>
                 <line number="37" hits="1"/>
                 <line number="39" hits="1"/>
-                <line number="40" hits="0"/>
-                <line number="41" hits="0"/>
-                <line number="42" hits="0"/>
-                <line number="43" hits="0"/>
-                <line number="44" hits="0"/>
-                <line number="45" hits="0"/>
-                <line number="47" hits="1"/>
+                <line number="40" hits="1"/>
+                <line number="41" hits="1"/>
+                <line number="42" hits="1"/>
+                <line number="43" hits="1"/>
+                <line number="44" hits="1"/>
+                <line number="45" hits="1"/>
+                <line number="47" hits="0"/>
                 <line number="50" hits="1"/>
                 <line number="51" hits="1"/>
                 <line number="52" hits="0"/>
@@ -17148,13 +17166,13 @@
             <line number="36" hits="1"/>
             <line number="37" hits="1"/>
             <line number="39" hits="1"/>
-            <line number="40" hits="0"/>
-            <line number="41" hits="0"/>
-            <line number="42" hits="0"/>
-            <line number="43" hits="0"/>
-            <line number="44" hits="0"/>
-            <line number="45" hits="0"/>
-            <line number="47" hits="1"/>
+            <line number="40" hits="1"/>
+            <line number="41" hits="1"/>
+            <line number="42" hits="1"/>
+            <line number="43" hits="1"/>
+            <line number="44" hits="1"/>
+            <line number="45" hits="1"/>
+            <line number="47" hits="0"/>
             <line number="50" hits="1"/>
             <line number="51" hits="1"/>
             <line number="52" hits="0"/>
