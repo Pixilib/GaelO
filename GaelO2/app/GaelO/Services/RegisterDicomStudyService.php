@@ -70,7 +70,7 @@ class RegisterDicomStudyService
     {
         $studyOrthancObject = new OrthancStudy($this->orthancService);
         $studyOrthancObject->setStudyOrthancID($this->studyOrthancId);
-        $studyOrthancObject->retrieveStudyData();
+        $studyOrthancObject->retrieveAllStudyData();
 
         //Check that original OrthancID is unknown for this study
         if (!$this->dicomStudyRepositoryInterface->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {

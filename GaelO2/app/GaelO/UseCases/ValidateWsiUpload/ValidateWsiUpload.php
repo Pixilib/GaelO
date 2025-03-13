@@ -168,7 +168,8 @@ class ValidateWsiUpload
                 $patientCode,
                 $patientId,
                 $visitType,
-                $studyName
+                $studyName,
+                null
             );
 
             //Delete original import

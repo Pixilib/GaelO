@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ValidateDicomUpload;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\TransferSyntaxEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
@@ -14,6 +15,7 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\RegisterDicomStudyService;
+use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
@@ -119,6 +121,15 @@ class ValidateDicomUpload
                 throw new GaelOValidateDicomException("Imported DICOM (" . $importedNumberOfInstances . ") not matching announced number of Instances (" . $expectedNumberOfInstances . ")");
             }
 
+
+            $studyOrthancObject = new OrthancStudy($this->orthancService);
+            $studyOrthancObject->setStudyOrthancID($importedOrthancStudyID);
+            $studyOrthancObject->retrieveStudyData();
+            $modality = $studyOrthancObject->getModality();
+            //If WSI transcode to JPEG_BASLINE for wsi plugin compatibility, Orthanc PACS is set to quality 100 to avoid image quality loss
+            $tranferSyntax = $modality === 'SM' ? TransferSyntaxEnum::JPEG_BASLINE->value : TransferSyntaxEnum::JPEG_LS_LOSSLESS->value;
+
+
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(
                 $importedOrthancStudyID,
@@ -126,7 +137,8 @@ class ValidateDicomUpload
                 $patientCode,
                 $patientId,
                 $visitType,
-                $studyName
+                $studyName,
+                $tranferSyntax
             );
 
             //Delete original import

@@ -44,8 +44,8 @@ class OrthancService
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        if($url) $this->httpClientInterface->setUrl($url);
-        if($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
+        if ($url) $this->httpClientInterface->setUrl($url);
+        if ($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getOrthancRessourcesDetails(string $level, string $orthancID): array
@@ -204,10 +204,10 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName): string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID);
 
         $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
@@ -235,6 +235,7 @@ class OrthancService
         string $newPatientID,
         string $newStudyDescription,
         string $studyName,
+        ?string $transfertSyntaxUID
     ): array {
 
         $tagsObjects = [];
@@ -315,6 +316,10 @@ class OrthancService
             }
         }
 
+        if ($transfertSyntaxUID) {
+            $jsonArrayAnon['Transcode'] = $transfertSyntaxUID;
+        }
+
         return $jsonArrayAnon;
     }
 
@@ -327,7 +332,7 @@ class OrthancService
 
         $studyOrthanc = new OrthancStudy($this);
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
-        $studyOrthanc->retrieveStudyData();
+        $studyOrthanc->retrieveAllStudyData();
         $seriesObjects = $studyOrthanc->orthancSeries;
         foreach ($seriesObjects as $serie) {
             if ($serie->isSecondaryCapture()) {
@@ -360,7 +365,7 @@ class OrthancService
     {
         $studyOrthanc = new OrthancStudy($this);
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
-        $studyOrthanc->retrieveStudyData();
+        $studyOrthanc->retrieveAllStudyData();
         return $studyOrthanc;
     }
 
@@ -479,7 +484,6 @@ class OrthancService
         $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
         $this->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $gaelOProcessingService->createDicom($temporaryZipDicom);
-        unlink($temporaryZipDicom);        
+        unlink($temporaryZipDicom);
     }
-
 }
