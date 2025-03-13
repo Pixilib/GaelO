@@ -37,17 +37,17 @@ class AuthorizationWsiService {
         } else {
 
             if ($this->level === "studies") {
-                $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
-                $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
-                $visitId = $studyEntity['visit_id'];
+                //$requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
+                //$studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
+                //$visitId = $studyEntity['visit_id'];
             } else if ($this->level === "series") {
-                $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
-                $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
-                $visitId = $this->seriesEntity['dicom_study']['visit_id'];
+                //$requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
+                //$this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
+                //$visitId = $this->seriesEntity['dicom_study']['visit_id'];
             }
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $this->originalStudyName = $visitContext['patient']['study_name'];
+            //$visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            //$this->originalStudyName = $visitContext['patient']['study_name'];
         }
     }
 
