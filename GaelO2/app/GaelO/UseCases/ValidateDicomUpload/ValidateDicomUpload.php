@@ -97,7 +97,9 @@ class ValidateDicomUpload
 
                 $zipSize = filesize($tusTempZip);
                 $uncompressedzipSize = Util::getZipUncompressedSize($tusTempZip);
-                if ($uncompressedzipSize / $zipSize > 50) {
+                # Check max compression factor is less than 1032 https://www.zlib.net/zlib_tech.html
+                # We may add a absolute value check as 15mb chunk are not expected to be larger than 1 GB.
+                if ($uncompressedzipSize / $zipSize > 1032) {
                     throw new GaelOValidateDicomException("Bomb Zip");
                 }
 
