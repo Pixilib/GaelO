@@ -53,13 +53,21 @@ class TrackerRepository implements TrackerRepositoryInterface
     public function getTrackerOfRoleActionInStudy(string $role, string $action, string $studyName): array
     {
         $trackerData = $this->trackerModel->with('user', 'visit', 'visit.visitType', 'visit.visitType.visitGroup', 'visit.patient')
-        ->where('study_name', $studyName)->where('role', $role)->where('action_type', $action)->get();
+            ->where('study_name', $studyName)->where('role', $role)->where('action_type', $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfMessages(string $studyName): array
     {
         $trackerData = $this->trackerModel->with('user')->where('study_name', $studyName)->where('action_type', Constants::TRACKER_SEND_MESSAGE)->get();
+        return empty($trackerData) ? [] : $trackerData->toArray();
+    }
+
+    public function getTrackerOfActionInStudy(string $action, string $studyName, bool $withUser): array
+    {
+        $trackerQuery = $this->trackerModel->where('study_name', $studyName)->where('action_type', $action);
+        if ($withUser) $trackerQuery = $trackerQuery->with('user');
+        $trackerData = $trackerQuery->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Tests\Unit\TestRepositories;
 
+
+use PHPUnit\Framework\Attributes\Depends;
+
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\JobEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,7 +16,6 @@ use App\Models\Center;
 use App\Models\Role;
 use App\Models\CenterUser;
 use App\GaelO\Repositories\UserRepository;
-use Exception;
 use Illuminate\Support\Facades\App;
 use ValueError;
 
@@ -76,9 +78,7 @@ class UserRepositoryTest extends TestCase
 
     }
 
-    /**
-     * @depends testCreateUser
-     */
+    #[Depends("testCreateUser")]
     public function testUpdateUser(array $existingEntity)
     {
 

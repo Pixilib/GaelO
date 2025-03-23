@@ -5,6 +5,7 @@ namespace Tests\Unit\TestServices;
 use App\GaelO\Services\GaelOProcessingService\AzureService;
 use Tests\TestCase;
 use Illuminate\Support\Facades\App;
+use PHPUnit\Framework\Attributes\Depends;
 
 class AzureServiceTest extends TestCase
 {
@@ -23,9 +24,7 @@ class AzureServiceTest extends TestCase
         $this->assertEquals(202,$res);
     }
 
-    /**
-     * @depends testStartAci
-     */
+    #[Depends("testStartAci")]
     public function testStopAci()
     {
         $res = $this->azureService->stopAci();
@@ -40,9 +39,7 @@ class AzureServiceTest extends TestCase
         $this->assertContains($res['state'], $state);
     }
 
-    /**
-     * @depends testStartAci
-     */
+    #[Depends("testStartAci")]
     public function testGetStatusAciIP()
     {
         $res = $this->azureService->getStatusAci();

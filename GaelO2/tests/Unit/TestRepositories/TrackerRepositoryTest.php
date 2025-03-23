@@ -96,11 +96,23 @@ class TrackerRepositoryTest extends TestCase
     public function testGetTrackerOfMessages()
     {
         $study = Study::factory()->create();
-        $studyName=$study->name;
+        $studyName = $study->name;
         Tracker::factory()->studyName($studyName)->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(3)->create();
         Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(5)->create();
 
         $answer = $this->trackerRepository->getTrackerOfMessages($studyName);
+        $this->assertEquals(8, sizeof($answer));
+    }
+
+    public function getTrackerOfActionInStudy()
+    {
+        $study = Study::factory()->create();
+        $studyName = $study->name;
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_EDIT_USER_ROLE)->count(3)->create();
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_EDIT_USER_ROLE)->count(5)->create();
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_CREATE_VISIT)->count(5)->create();
+
+        $answer = $this->trackerRepository->getTrackerOfActionInStudy(Constants::TRACKER_EDIT_USER_ROLE, $studyName, false);
         $this->assertEquals(8, sizeof($answer));
     }
 }
