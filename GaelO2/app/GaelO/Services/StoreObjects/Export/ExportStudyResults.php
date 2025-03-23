@@ -15,6 +15,7 @@ class ExportStudyResults
     private ExportTrackerResults $exportTrackerResults;
     private ExportUserResults $exportUserResults;
     private ExportFileResults $exportFileResults;
+    private ExportRoleChangesResults $exportRoleChangesResults;
 
     public function setExportPatientResults(ExportPatientResults $exportPatientResults)
     {
@@ -56,6 +57,10 @@ class ExportStudyResults
         $this->exportFileResults = $exportFileResults;
     }
 
+    public function setExportsRoleChangesResults(ExportRoleChangesResults $exportRoleChangesResults){
+        $this->exportRoleChangesResults = $exportRoleChangesResults;
+    }
+
     public function getPatientExportResults()
     {
         return $this->exportPatientResults;
@@ -86,6 +91,11 @@ class ExportStudyResults
         return $this->exportUserResults;
     }
 
+    public function getRoleChangesResults()
+    {
+        return $this->exportRoleChangesResults;
+    }
+
     private function getExportResultsObjects(): array
     {
         $exportArray = [
@@ -96,7 +106,8 @@ class ExportStudyResults
             $this->exportVisitResults ?? null,
             $this->exportTrackerResults ?? null,
             $this->exportUserResults ?? null,
-            $this->exportFileResults ?? null
+            $this->exportFileResults ?? null,
+            $this->exportRoleChangesResults ?? null
         ];
         //Filter null ones
         return array_values(array_filter($exportArray));

@@ -5,7 +5,7 @@ namespace Tests\Unit\TestServices;
 use App\GaelO\Services\GaelOWsiProcessingService\GaelOWsiProcessingService;
 use Tests\TestCase;
 use Illuminate\Support\Facades\App;
-
+use PHPUnit\Framework\Attributes\Depends;
 
 class GaelOWsiProcessingServiceTest extends TestCase
 {
@@ -35,9 +35,7 @@ class GaelOWsiProcessingServiceTest extends TestCase
     }
 
 
-    /**
-     * @depends testPostWsiImage
-     */
+    #[Depends("testPostWsiImage")]
     public function testGetWsiImage($wsiId)
     {
         $result = $this->gaeloWsiProcessingService->getWsiImage($wsiId);
@@ -83,36 +81,28 @@ class GaelOWsiProcessingServiceTest extends TestCase
         return $result['study_instance_uid'];
     }
 
-    /**
-     * @depends testConvertToDicom
-     */
+    #[Depends("testConvertToDicom")]
     public function testGetDicom($studyInstanceUID)
     {
         $result = $this->gaeloWsiProcessingService->getDicom($studyInstanceUID);
         $this->assertNotNull($result);
     }
 
-    /**
-     * @depends testPostWsiImage
-     */
+    #[Depends("testPostWsiImage")]
     public function testGetWsiMetadata($wsiId)
     {
         $result = $this->gaeloWsiProcessingService->getWsiMetadata($wsiId);
         $this->assertTrue($result);
     }
 
-    /**
-     * @depends testConvertToDicom
-     */
+    #[Depends("testConvertToDicom")]
     public function testDeleteDicom($studyInstanceUID)
     {
         $result = $this->gaeloWsiProcessingService->deleteDicom($studyInstanceUID);
         $this->assertTrue($result);
     }
 
-    /**
-     * @depends testPostWsiImage
-     */
+    #[Depends("testPostWsiImage")]
     public function testDeleteWsi($wsiId)
     {
         $result = $this->gaeloWsiProcessingService->deleteWsi($wsiId);

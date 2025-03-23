@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestAdapters;
 
 use App\GaelO\Adapters\FtpClientAdapter;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 
 
@@ -19,9 +20,7 @@ class FTPAdapterTest extends TestCase
         $this->ftpClientAdapter->setFTPServer('ftp.dlptest.com', 21, 'dlpuser', 'rNrKYTX9g7z3RgJRmxWuGHbeu', false, false);
     }
 
-    /**
-     * @depends testWriteFile
-     */
+    #[Depends("testWriteFile")]
     public function testReadFile()
     {
         $content = $this->ftpClientAdapter->getFileContent('myFile.txt', 100);

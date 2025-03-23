@@ -14,16 +14,14 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
-use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewDataCollection;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
+use App\GaelO\Services\StoreObjects\Export\ExportRoleChangesResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
 use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
 use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
-use App\GaelO\Util;
-use ZipArchive;
 
 class ExportStudyService
 {
@@ -109,10 +107,32 @@ class ExportStudyService
         $this->exportStudyResults->setUserResults($exportPatientResults);
     }
 
+    public function exportUserRoleChanges(): void
+    {
+        $roleChanges = $this->trackerRepositoryInterface->getTrackerOfActionInStudy(Constants::TRACKER_EDIT_USER_ROLE, $this->studyName, false);
+
+        $rolesChangesData = array_map(function ($roleChange) {
+            $roleChange['action_details'] = json_encode($roleChange['action_details']);
+            return $roleChange;
+        }, $roleChanges);
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+        $spreadsheetAdapter->addSheet('Roles');
+        $spreadsheetAdapter->fillData('Roles', $rolesChangesData);
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Roles');
+
+        $exportRoleChangesResults = new ExportRoleChangesResults();
+        $exportRoleChangesResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportRoleChangesResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
+        $this->exportStudyResults->setExportsRoleChangesResults($exportRoleChangesResults);
+    }
+
     public function exportPatientTable(): void
     {
         $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName, false);
-        foreach($patientData as &$patient){
+        foreach ($patientData as &$patient) {
             //Metadata is an array which need to be serialized back to a string
             $patient['metadata'] = json_encode($patient['metadata']);
         }
@@ -216,7 +236,7 @@ class ExportStudyService
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
 
-    public function exportAllTables() :void
+    public function exportAllTables(): void
     {
         $this->exportPatientTable();
         $this->exportVisitTable();
@@ -225,6 +245,7 @@ class ExportStudyService
         $this->exportReviewerForms();
         $this->exportTrackerTable();
         $this->exportUsersOfStudy();
+        $this->exportUserRoleChanges();
     }
 
     private function groupReviewPerVisitType(array $reviewEntities, string $role): void
