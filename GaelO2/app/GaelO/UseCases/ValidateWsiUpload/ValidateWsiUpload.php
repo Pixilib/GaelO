@@ -96,8 +96,6 @@ class ValidateWsiUpload
             foreach ($validateWsiUploadRequest->uploadedFileTusId as $tusFileId) {
                 $fileName = $this->tusService->getFile($tusFileId);
                 $metadata = $this->tusService->getMetadata($tusFileId);
-                Log::info($metadata);
-                Log::info($tusFileId);
                 $this->wsiFiles[] = [
                     'filename' => $fileName,
                     'metadata' => $metadata

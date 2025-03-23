@@ -48,6 +48,8 @@ class ValidateWsiTest extends TestCase
             });
             $mock->shouldReceive('deleteFile')
             ->andReturn(null);
+            $mock->shouldReceive('getMetadata')
+            ->andReturn([]);
         });
         app()->instance(TusService::class, $mockTusService);
 
