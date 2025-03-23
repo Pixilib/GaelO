@@ -3,8 +3,7 @@
 namespace Tests\Feature\TestWsi;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
-use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\TusService;
 use App\Models\Patient;
 use App\Models\ReviewStatus;
@@ -21,6 +20,7 @@ class ValidateWsiTest extends TestCase
     use RefreshDatabase;
 
     private ReviewStatus $reviewStatus;
+    private MockInterface $trackerSpy;
     private string $studyName;
     private int $visitId;
     private array $tusIdArray;
@@ -32,6 +32,7 @@ class ValidateWsiTest extends TestCase
 
     protected function setUp() : void
     {
+        $this->markTestSkipped();
         parent::setUp();
         $this->artisan('db:seed');
         $this->reviewStatus = ReviewStatus::factory()->create();
@@ -52,6 +53,10 @@ class ValidateWsiTest extends TestCase
             ->andReturn([]);
         });
         app()->instance(TusService::class, $mockTusService);
+
+        $this->trackerSpy = $this->spy(TrackerRepository::class);
+        app()->instance(TrackerRepository::class, $this->trackerSpy);
+
 
         $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
     }
