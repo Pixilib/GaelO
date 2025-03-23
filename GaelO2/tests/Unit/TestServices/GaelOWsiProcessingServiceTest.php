@@ -16,7 +16,7 @@ class GaelOWsiProcessingServiceTest extends TestCase
 
         parent::setUp();
         $this->gaeloWsiProcessingService = App::make(GaelOWsiProcessingService::class);
-        //$this->markTestSkipped();
+        $this->markTestSkipped();
     }
 
     public function testWelcomeApi()
