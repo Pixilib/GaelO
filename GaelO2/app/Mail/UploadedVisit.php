@@ -27,7 +27,8 @@ class UploadedVisit extends Mailable implements ShouldQueue
         array('study'=>'',
         'patientId' => '',
         'visitType' => '',
-        'visitId' => '');
+        'visitId' => ''
+        'centerName' => '');
         */
     }
 

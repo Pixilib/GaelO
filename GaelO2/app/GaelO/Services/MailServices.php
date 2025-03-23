@@ -5,6 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\MailConstants;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailService\MailListBuilder;
@@ -15,15 +16,18 @@ class MailServices
     private MailerInterface $mailInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
+    private CenterRepositoryInterface $centerRepositoryInterface;
 
     public function __construct(
         MailerInterface $mailInterface,
         UserRepositoryInterface $userRepositoryInterface,
-        StudyRepositoryInterface $studyRepositoryInterface
+        StudyRepositoryInterface $studyRepositoryInterface,
+        CenterRepositoryInterface $centerRepositoryInterface
     ) {
         $this->mailInterface = $mailInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->centerRepositoryInterface = $centerRepositoryInterface;
     }
 
     public function getStudyContactEmail(string $studyName): string
@@ -150,14 +154,17 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendUploadedVisitMessage(array $emails, int $visitId, string $studyName, string $patientId, string $patientCode, string $visitType)
+    public function sendUploadedVisitMessage(array $emails, int $visitId, string $studyName, string $patientId, string $patientCode, string $visitType, string $centerCode)
     {
 
+        $center = $this->centerRepositoryInterface->getCenterByCode($centerCode);
+        
         $parameters = [
             'name' => 'User',
             'study' => $studyName,
             'patientId' => $patientId,
             'patientCode' => $patientCode,
+            'centerName' => $center['name'],
             'visitType' => $visitType,
             'visitId' => $visitId
         ];

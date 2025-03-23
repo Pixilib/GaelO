@@ -94,6 +94,7 @@ abstract class AbstractGaelOStudy
         $studyName = $visitUploadedEvent->getStudyName();
         $patientId = $visitUploadedEvent->getPatientId();
         $patientCode = $visitUploadedEvent->getPatientCode();
+        $centerCode = $visitUploadedEvent->getPatientCenterCode();
         $visitId = $visitUploadedEvent->getVisitId();
         $qcNeeded = $visitUploadedEvent->isQcNeeded();
         $visitType = $visitUploadedEvent->getVisitTypeName();
@@ -113,7 +114,7 @@ abstract class AbstractGaelOStudy
             $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
         }
 
-        $this->mailServices->sendUploadedVisitMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
+        $this->mailServices->sendUploadedVisitMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType, $centerCode);
 
         if ($qcNeeded) {
             $this->jobInterface->sendQcReportJob($visitId);
