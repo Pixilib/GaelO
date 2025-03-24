@@ -19,7 +19,7 @@ interface HttpClientInterface
     /**
      * Return array of PSR7 response adapter of multiple request, used to sent multiple files to an endpoint
      */
-    public function requestUploadArrayDicom(string $method, string $uri, array $files): array ;
+    public function requestUploadArrayDicom(string $method, string $uri, array $files, int $concurrency = 5): array ;
 
     /**
      * When request body is a JSON payload

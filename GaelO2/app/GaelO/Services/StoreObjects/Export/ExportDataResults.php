@@ -16,6 +16,7 @@ abstract class ExportDataResults
     const EXPORT_TYPE_TRACKER = 'tracker';
     const EXPORT_TYPE_USERS = 'users';
     const EXPORT_TYPE_FILES = 'files';
+    const EXPORT_TYPE_ROLES_CHANGES = 'roles';
 
     private string $exportDataType;
 

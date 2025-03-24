@@ -66,6 +66,7 @@ class DicomStudyEntity
         $this->visit->visitDate = $visitDetails['visit_date'];
         $this->visit->stateInvestigatorForm = $visitDetails['state_investigator_form'];
         $this->visit->stateQualityControl = $visitDetails['state_quality_control'];
+        $this->visit->id = $visitDetails['id'];
     }
 
     public function addUploaderDetails(UserEntity $userDetails): void

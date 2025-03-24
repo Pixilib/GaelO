@@ -53,6 +53,7 @@ class CreateUserRoles
             //Write in database and return sucess response (error will be handled by laravel)
             $this->userRepositoryInterface->addUserRoleInStudy($userId, $studyName, $createRoleRequest->role);
             $actionDetails = [
+                "user_id" => $userId,
                 "study_name" => $studyName,
                 "new_role" => $role
             ];

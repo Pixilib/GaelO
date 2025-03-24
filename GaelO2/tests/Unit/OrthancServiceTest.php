@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\GaelO\Constants\Enums\AnonProfileEnum;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Support\Facades\App;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 
 class OrthancServiceTest extends TestCase
@@ -68,7 +69,7 @@ class OrthancServiceTest extends TestCase
     }
 
     /**
-     * @depends testSendDicomFile
+     * @ testSendDicomFile
      */
     public function testGetStudyOrthancDetails($testingOrthancStudyID)
     {
@@ -76,27 +77,21 @@ class OrthancServiceTest extends TestCase
         $this->assertInstanceOf(\App\GaelO\Services\StoreObjects\OrthancStudy::class, $studyDetails);
     }
 
-    /**
-     * @depends testSendDicomFile
-     */
+    #[Depends("testSendDicomFile")]
     public function testGetStudyStatistics($testingOrthancStudyID)
     {
         $studyStatistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $testingOrthancStudyID);
         $this->assertIsArray($studyStatistics);
     }
 
-    /**
-     * @depends testSendDicomFile
-     */
+    #[Depends("testSendDicomFile")]
     public function testGetOrthancRessourceDetails($testingOrthancStudyID)
     {
         $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $testingOrthancStudyID);
         $this->assertIsArray($ressourceDetails);
     }
 
-    /**
-     * @depends testSendDicomFile
-     */
+    #[Depends("testSendDicomFile")]
     public function testAnonymizeOrthanc($testingOrthancStudyID)
     {
         $anonymized = $this->orthancService->anonymize(
@@ -105,25 +100,22 @@ class OrthancServiceTest extends TestCase
             "code",
             "id",
             "visit",
-            "study"
+            "study",
+            null
         );
         //orthanc ID have 44 character lenght
         $this->assertEquals(44, strlen($anonymized));
         return $anonymized;
     }
 
-    /**
-     * @depends testSendDicomFile
-     */
+    #[Depends("testSendDicomFile")]
     public function testGetOrthancZipStream($testingOrthancStudyID)
     {
         $seriesIDsArray = [$testingOrthancStudyID];
         $this->orthancService->getOrthancZipStream($seriesIDsArray);
     }
 
-    /**
-     * @depends testAnonymizeOrthanc
-     */
+    #[Depends("testAnonymizeOrthanc")]
     public function testDeleteOrthancStudy($anonymizedID)
     {
         $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $anonymizedID);

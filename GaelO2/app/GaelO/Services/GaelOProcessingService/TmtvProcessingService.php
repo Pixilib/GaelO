@@ -18,6 +18,7 @@ class TmtvProcessingService
     private string $ctOrthancSeriesId;
     private string $ptSeriesUid;
     private string $ctSeriesUid;
+    private ?string $version = null;
     private array $createdFiles = [];
 
 
@@ -30,6 +31,10 @@ class TmtvProcessingService
         $this->gaelOProcessingService = $gaelOProcessingService;
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
+    }
+
+    public function setVersion(string $version){
+        $this->version = $version;
     }
 
     public function runInference(): MaskProcessingService
@@ -49,6 +54,8 @@ class TmtvProcessingService
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
+
+        if ($this->version) $inferencePayload['version'] = $this->version;
 
         $inferenceResponse = $this->gaelOProcessingService->executeInference('pt_seg_attentionunet', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];

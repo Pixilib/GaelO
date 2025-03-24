@@ -33,7 +33,7 @@ class ValidateDicomTest extends TestCase
         $this->artisan('db:seed');
         $this->reviewStatus = ReviewStatus::factory()->create();
         $this->studyName = $this->reviewStatus->visit->patient->study->name;
-        $this->visitId = $this->reviewStatus->visitId;
+        $this->visitId = $this->reviewStatus->visit_id;
 
         $mockTusService = $this->partialMock(TusService::class, function (MockInterface $mock) {
             $mock->shouldReceive('getFile')

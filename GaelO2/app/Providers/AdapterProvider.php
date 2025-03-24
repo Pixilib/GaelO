@@ -22,14 +22,14 @@ use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
+use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
+use AzureOss\Storage\Blob\BlobServiceClient;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
 use League\Flysystem\Filesystem;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 
 class AdapterProvider extends ServiceProvider
 {
@@ -60,27 +60,27 @@ class AdapterProvider extends ServiceProvider
     public function boot()
     {
         Storage::extend('azure', function (Application $app, array $config) {
-            $client = BlobRestProxy::createBlobService($config['dsn']);
+            $blobServiceClient = BlobServiceClient::fromConnectionString($config['dsn']);
+            $containerClient = $blobServiceClient->getContainerClient($config['container']);
             $adapter = new AzureBlobStorageAdapter(
-                $client,
-                $config['container'],
+                $containerClient,
                 $config['prefix'],
             );
 
-            return new FilesystemAdapter(new Filesystem($adapter, $config),$adapter, $config);
+            return new FilesystemAdapter(new Filesystem($adapter, $config), $adapter, $config);
         });
 
-        Cache::extend('azure', function($app, $config){
-            $client = BlobRestProxy::createBlobService($config['dsn']);
+        Cache::extend('azure', function ($app, $config) {
+            $blobServiceClient = BlobServiceClient::fromConnectionString($config['dsn']);
+            $containerClient = $blobServiceClient->getContainerClient($config['container']);
             $adapter = new AzureBlobStorageAdapter(
-                $client,
-                $config['container'],
+                $containerClient,
                 $config['prefix'],
             );
-    
+
             $fileSystem = new Filesystem($adapter, $config);
 
-			return Cache::repository(new AzureCacheAdapter($fileSystem));
-		});
+            return Cache::repository(new AzureCacheAdapter($fileSystem, $config));
+        });
     }
 }

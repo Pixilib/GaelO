@@ -24,6 +24,10 @@ class SettingsConstants {
     const GAELO_PROCESSING_LOGIN='gaelo_processing_login';
     const GAELO_PROCESSING_PASSWORD='gaelo_processing_password';
 
+    const GAELO_WSI_PROCESSING_URL='gaelo_wsi_processing_url';
+    const GAELO_WSI_PROCESSING_LOGIN='gaelo_wsi_processing_login';
+    const GAELO_WSI_PROCESSING_PASSWORD='gaelo_wsi_processing_password';
+
     const AZURE_CLIENT_ID ='azure_client_id';
     const AZURE_DIRECTORY_ID ='azure_directory_id';
     const AZURE_CLIENT_SECRET='azure_client_secret';

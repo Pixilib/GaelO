@@ -66,7 +66,7 @@ interface VisitRepositoryInterface
     
     public function getVisitOfPatientByVisitTypeName(string $patientId, string $visitGroupName, string $visitTypeName, bool $withReviewStatus, string $studyName) : array;
 
-    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array;
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, ?string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array;
 
     public function getVisitContextByVisitIdArray(array $visitIdArray): array;
 

@@ -4,5 +4,6 @@
     The following visit has been uploaded on the platform:<br>
     Study : {{$study}}<br>
     Patient Code : {{$patientCode}}<br>
+    Center Name : {{$centerName}}<br>
     Uploaded visit : {{$visitType}}<br>
 @endsection

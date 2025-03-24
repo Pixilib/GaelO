@@ -4,7 +4,8 @@ namespace App\GaelO\Services\StoreObjects\Export;
 
 use App\GaelO\Exceptions\GaelOException;
 
-class ExportTrackerResults extends ExportDataResults{
+class ExportTrackerResults extends ExportDataResults
+{
 
     private ExportFile $xlsExport;
     private array $csvExport = [];
@@ -14,29 +15,29 @@ class ExportTrackerResults extends ExportDataResults{
         parent::__construct(parent::EXPORT_TYPE_TRACKER);
     }
 
-    public function addExportFile( string $type, string $path, string $key = null ){
+    public function addExportFile(string $type, string $path, ?string $key = null)
+    {
 
-        if($type === ExportDataResults::EXPORT_TYPE_XLS) {
+        if ($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_tracker.xlsx', $path);
-        }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
-            $this->csvExport[] = new ExportFile('export_tracker_'.$key.'.csv', $path);
-        }else{
+        } else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
+            $this->csvExport[] = new ExportFile('export_tracker_' . $key . '.csv', $path);
+        } else {
             throw new GaelOException('Unknown File Type');
         }
-
     }
 
-    public function getXlsExportFiles() : array {
+    public function getXlsExportFiles(): array
+    {
         return [$this->xlsExport];
-
     }
-    public function getCsvExportFiles() : array {
+    public function getCsvExportFiles(): array
+    {
         return [...$this->csvExport];
     }
 
-    public function getZipExportFiles(): array {
+    public function getZipExportFiles(): array
+    {
         return [];
     }
-
-
 }

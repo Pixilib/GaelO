@@ -19,7 +19,7 @@ class ExportDicomResults extends ExportDataResults {
         parent::__construct(parent::EXPORT_TYPE_DICOMS);
     }
 
-    public function addExportFile(string $type, string $path, string $key = null ){
+    public function addExportFile(string $type, string $path, ?string $key = null ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_dicoms.xlsx', $path);

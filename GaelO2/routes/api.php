@@ -126,6 +126,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', [VisitController::class, 'validateDicom']);
+    Route::post('visits/{id}/validate-wsi', [VisitController::class, 'validateWsi']);
     Route::patch('visits/{id}/quality-control', [VisitController::class, 'modifyQualityControl']);
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset']);
     Route::post('visits/{id}/quality-control/unlock', [VisitController::class, 'unlockQc']);
@@ -175,7 +176,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::any('tus/{filename?}', [ReverseProxyController::class, 'tusUpload']);
 
     //DicomWeb Routes
-    Route::get('orthanc/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
+    Route::get('orthanc/dicom-web/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
+    Route::get('orthanc/wsi/{path?}', [ReverseProxyController::class, 'dicomWebWsiProxy'])->where(['path' => '.*']);
 
     //Tracker Routes
     Route::get('tracker', [TrackerController::class, 'getAdminTracker']);
@@ -205,7 +207,11 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/files/{key}', [ReviewController::class, 'getReviewFile']);
     Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
+
+    //Wsi routes
+    // Route::get('/', [])
 });
+
 
 
 /*
