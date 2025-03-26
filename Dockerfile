@@ -37,7 +37,7 @@ RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype 
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 
-RUN docker-php-ext-enable redis memcached pcov
+RUN docker-php-ext-enable redis memcached pcov imap
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
@@ -46,7 +46,7 @@ COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
-ENV APP_HOME /var/www
+ENV APP_HOME=/var/www
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR $APP_HOME
