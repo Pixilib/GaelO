@@ -46,7 +46,7 @@ COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
-ENV APP_HOME /var/www
+ENV APP_HOME=/var/www
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR $APP_HOME
