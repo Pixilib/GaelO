@@ -5,7 +5,7 @@
 ![Coverage](https://github.com/Pixilib/GaelO/blob/GaelO2_code_coverage/data/GaelO2/badge.svg)
 
 # GaelO v2
-Copyright Pixilib 2018-2024
+Copyright Pixilib 2018-2025
 Licence AGPL v.3
 
 GaelO is a free and open source web platform for medical imaging processing in clinical trials.
@@ -14,7 +14,7 @@ Website : http://www.GaelO.fr
 
 Developpers : <br>
 Leader & Maintainer  : Salim Kanoun <br>
-Contributors : Bastien Proudhom, Ludwig Chieng, Emilie Olivié
+Contributors : Emilie Olivié, Lou Anne Costes
 
 # Tips
 
