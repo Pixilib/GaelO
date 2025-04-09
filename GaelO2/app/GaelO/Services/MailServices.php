@@ -351,7 +351,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendVisitConcludedMessage(array $emails, int $visitId, string $studyName, string $patientId, string $patientCode, string $visitType, string $conclusionValue)
+    public function sendVisitConcludedMessage(array $emails, int $visitId, string $studyName, string $patientId, string $patientCode, string $visitType, ?string $conclusionValue = "")
     {
 
         $parameters = [
