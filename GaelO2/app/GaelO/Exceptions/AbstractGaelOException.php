@@ -4,7 +4,7 @@ namespace App\GaelO\Exceptions;
 
 use Exception;
 
-Abstract class AbstractGaelOException extends Exception {
+abstract class AbstractGaelOException extends Exception {
 
     public string $statusCode;
     public string $statusText;
