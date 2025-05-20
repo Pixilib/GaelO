@@ -25,7 +25,7 @@ return [
     | or any other location as required by the application or its packages.
     */
 
-    'version' => '2.9.3',
+    'version' => '2.9.4',
 
     /*
     |--------------------------------------------------------------------------
@@ -157,7 +157,7 @@ return [
     */
     'corporation' => env('APP_CORPORATION'),
     'mail_from_address' => env('MAIL_FROM_ADDRESS'),
-    'mail_reply_to_default' => env('MAIL_REPLY_TO_DEFAULT'),
+    'mail_reply_to_default' => env('MAIL_REPLY_TO_DEFAULT', 'contact@pixilib.fr'),
     'orthanc_temporary_url' => env('ORTHANC_TEMPORARY_URL'),
     'orthanc_temporary_login' => env('ORTHANC_TEMPORARY_LOGIN'),
     'orthanc_temporary_password' => env('ORTHANC_TEMPORARY_PASSWORD'),
