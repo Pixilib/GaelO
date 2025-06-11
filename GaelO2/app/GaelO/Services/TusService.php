@@ -28,7 +28,7 @@ class TusService
 
         $resource  = fopen($downloadedFileName, 'r+');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/api/tus/' . $tusFileId,  $resource, ['Tus-Resumable' => '1.0.0']);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/api/tus/' . $tusFileId,  $resource, ['Tus-Resumable' => '1.0.0', 'Accept-Encoding' => 'gzip, deflate']);
 
         return $downloadedFileName;
     }
