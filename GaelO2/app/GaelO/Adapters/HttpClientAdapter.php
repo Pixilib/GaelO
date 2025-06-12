@@ -69,7 +69,7 @@ class HttpClientAdapter implements HttpClientInterface
                 $body = fopen($file, 'r');
                 $headers = [
                     'Authorization' => "Basic " . base64_encode($this->login . ':' . $this->password),
-                    'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json']
+                    'headers'  => ['Content-Type' => 'application/dicom', 'Accept' => 'application/json', 'Transfer-Encoding' => 'chunked'],
                 ];
 
                 yield new Request($method, $this->address . $uri, $headers, $body);
