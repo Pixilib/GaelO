@@ -109,6 +109,23 @@ class OrthancServiceTest extends TestCase
     }
 
     #[Depends("testSendDicomFile")]
+    public function testAnonymizeOrthancThroughJobs($testingOrthancStudyID)
+    {
+        $anonymized = $this->orthancService->anonymizeUsingOrthancJobs(
+            $testingOrthancStudyID,
+            AnonProfileEnum::DEFAULT->value,
+            "code",
+            "id",
+            "visit",
+            "study",
+            null
+        );
+        //orthanc ID have 44 character lenght
+        $this->assertEquals(44, strlen($anonymized));
+        return $anonymized;
+    }
+
+    #[Depends("testSendDicomFile")]
     public function testGetOrthancZipStream($testingOrthancStudyID)
     {
         $seriesIDsArray = [$testingOrthancStudyID];
