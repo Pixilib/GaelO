@@ -101,6 +101,7 @@ class OrthancServiceTest extends TestCase
             "id",
             "visit",
             "study",
+            null,
             null
         );
         //orthanc ID have 44 character lenght
@@ -118,6 +119,7 @@ class OrthancServiceTest extends TestCase
             "id",
             "visit",
             "study",
+            null,
             null
         );
         //orthanc ID have 44 character lenght

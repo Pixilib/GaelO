@@ -140,7 +140,8 @@ class ValidateDicomUpload
                 $patientId,
                 $visitType,
                 $studyName,
-                $tranferSyntax
+                $tranferSyntax,
+                null
             );
 
             //Delete original import

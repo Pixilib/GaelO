@@ -204,10 +204,10 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID): string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID, ?int $lossyQuality): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID, $lossyQuality);
 
         $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
@@ -231,10 +231,10 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymizeUsingOrthancJobs(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID): string
+    public function anonymizeUsingOrthancJobs(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID, ?int $lossyQuality): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID, $lossyQuality);
         //Use async
         $jsonAnonQuery['Synchronous'] = false;
 
@@ -248,7 +248,7 @@ class OrthancService
         } while ($job['State'] !== "Success" && $job['State'] !== "Failure");
 
 
-        if($job['State'] === "Failure"){
+        if ($job['State'] === "Failure") {
             throw new GaelOException("Error While Anonymizing");
         };
 
@@ -274,7 +274,8 @@ class OrthancService
         string $newPatientID,
         string $newStudyDescription,
         string $studyName,
-        ?string $transfertSyntaxUID
+        ?string $transfertSyntaxUID,
+        ?int $lossyQuality
     ): array {
 
         $tagsObjects = [];
@@ -385,6 +386,7 @@ class OrthancService
         $jsonArrayAnon['Force'] = true;
         $jsonArrayAnon['DicomVersion'] = "2023b";
 
+
         foreach ($tagsObjects as $tag) {
 
             if ($tag->choice == TagAnon::REPLACE) {
@@ -396,6 +398,10 @@ class OrthancService
 
         if ($transfertSyntaxUID) {
             $jsonArrayAnon['Transcode'] = $transfertSyntaxUID;
+        }
+        
+        if ($lossyQuality) {
+            $jsonArrayAnon['LossyQuality'] = $lossyQuality;
         }
 
         return $jsonArrayAnon;
