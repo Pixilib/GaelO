@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83232184808144" branch-rate="0" lines-covered="8503" lines-valid="10216" branches-covered="0" branches-valid="0" complexity="2757" version="0.4" timestamp="1754041021">
+<coverage line-rate="0.83224038367427" branch-rate="0" lines-covered="8503" lines-valid="10217" branches-covered="0" branches-valid="0" complexity="2757" version="0.4" timestamp="1754041146">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -9837,9 +9837,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/OrthancService.php" line-rate="0.44176706827309" branch-rate="0" complexity="57">
+    <package name="GaelO/Services/OrthancService.php" line-rate="0.44" branch-rate="0" complexity="57">
       <classes>
-        <class name="App\GaelO\Services\OrthancService" filename="GaelO/Services/OrthancService.php" line-rate="0.44176706827309" branch-rate="0" complexity="57">
+        <class name="App\GaelO\Services\OrthancService" filename="GaelO/Services/OrthancService.php" line-rate="0.44" branch-rate="0" complexity="57">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\HttpClientInterface $httpClientInterface, App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -9992,25 +9992,25 @@
                 <line number="243" hits="0"/>
                 <line number="246" hits="0"/>
                 <line number="247" hits="0"/>
-                <line number="250" hits="0"/>
+                <line number="248" hits="0"/>
                 <line number="251" hits="0"/>
-                <line number="254" hits="0"/>
-                <line number="257" hits="0"/>
-                <line number="259" hits="0"/>
+                <line number="252" hits="0"/>
+                <line number="255" hits="0"/>
+                <line number="258" hits="0"/>
+                <line number="260" hits="0"/>
               </lines>
             </method>
             <method name="buildAnonQuery" signature="string $profile, string $newPatientName, string $newPatientID, string $newStudyDescription, string $studyName, ?string $transfertSyntaxUID" line-rate="0.98989898989899" branch-rate="0" complexity="7">
               <lines>
-                <line number="279" hits="2"/>
-                <line number="281" hits="2"/>
-                <line number="282" hits="1"/>
+                <line number="280" hits="2"/>
+                <line number="282" hits="2"/>
                 <line number="283" hits="1"/>
                 <line number="284" hits="1"/>
                 <line number="285" hits="1"/>
                 <line number="286" hits="1"/>
                 <line number="287" hits="1"/>
                 <line number="288" hits="1"/>
-                <line number="292" hits="2"/>
+                <line number="289" hits="1"/>
                 <line number="293" hits="2"/>
                 <line number="294" hits="2"/>
                 <line number="295" hits="2"/>
@@ -10032,7 +10032,7 @@
                 <line number="311" hits="2"/>
                 <line number="312" hits="2"/>
                 <line number="313" hits="2"/>
-                <line number="315" hits="2"/>
+                <line number="314" hits="2"/>
                 <line number="316" hits="2"/>
                 <line number="317" hits="2"/>
                 <line number="318" hits="2"/>
@@ -10070,152 +10070,153 @@
                 <line number="350" hits="2"/>
                 <line number="351" hits="2"/>
                 <line number="352" hits="2"/>
-                <line number="355" hits="2"/>
+                <line number="353" hits="2"/>
                 <line number="356" hits="2"/>
                 <line number="357" hits="2"/>
-                <line number="360" hits="2"/>
+                <line number="358" hits="2"/>
                 <line number="361" hits="2"/>
                 <line number="362" hits="2"/>
                 <line number="363" hits="2"/>
                 <line number="364" hits="2"/>
-                <line number="367" hits="2"/>
-                <line number="370" hits="2"/>
+                <line number="365" hits="2"/>
+                <line number="368" hits="2"/>
                 <line number="371" hits="2"/>
                 <line number="372" hits="2"/>
                 <line number="373" hits="2"/>
                 <line number="374" hits="2"/>
-                <line number="377" hits="2"/>
+                <line number="375" hits="2"/>
                 <line number="378" hits="2"/>
                 <line number="379" hits="2"/>
                 <line number="380" hits="2"/>
-                <line number="382" hits="2"/>
+                <line number="381" hits="2"/>
                 <line number="383" hits="2"/>
                 <line number="384" hits="2"/>
                 <line number="385" hits="2"/>
-                <line number="387" hits="2"/>
-                <line number="389" hits="2"/>
+                <line number="386" hits="2"/>
+                <line number="388" hits="2"/>
                 <line number="390" hits="2"/>
                 <line number="391" hits="2"/>
                 <line number="392" hits="2"/>
-                <line number="396" hits="2"/>
-                <line number="397" hits="0"/>
-                <line number="400" hits="2"/>
+                <line number="393" hits="2"/>
+                <line number="397" hits="2"/>
+                <line number="398" hits="0"/>
+                <line number="401" hits="2"/>
               </lines>
             </method>
             <method name="removeSC" signature="string $orthancStudyID" line-rate="0" branch-rate="0" complexity="3">
               <lines>
-                <line number="410" hits="0"/>
                 <line number="411" hits="0"/>
                 <line number="412" hits="0"/>
                 <line number="413" hits="0"/>
                 <line number="414" hits="0"/>
                 <line number="415" hits="0"/>
                 <line number="416" hits="0"/>
+                <line number="417" hits="0"/>
               </lines>
             </method>
             <method name="getJobDetails" signature="string $jobId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="429" hits="0"/>
+                <line number="430" hits="0"/>
               </lines>
             </method>
             <method name="getSystem" signature="" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="437" hits="0"/>
+                <line number="438" hits="0"/>
               </lines>
             </method>
             <method name="getStudyOrthancDetails" signature="string $orthancStudyID" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="442" hits="0"/>
                 <line number="443" hits="0"/>
                 <line number="444" hits="0"/>
                 <line number="445" hits="0"/>
+                <line number="446" hits="0"/>
               </lines>
             </method>
             <method name="getOrthancZipStream" signature="array $seriesOrthancIDs, ?string $transfertSyntaxUID" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="450" hits="0"/>
                 <line number="451" hits="0"/>
                 <line number="452" hits="0"/>
-                <line number="454" hits="0"/>
+                <line number="453" hits="0"/>
                 <line number="455" hits="0"/>
-                <line number="458" hits="0"/>
+                <line number="456" hits="0"/>
+                <line number="459" hits="0"/>
               </lines>
             </method>
             <method name="getOrthancZipAsStream" signature="array $seriesOrthancIDs, ?string $transfertSyntaxUID" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="463" hits="0"/>
                 <line number="464" hits="0"/>
                 <line number="465" hits="0"/>
                 <line number="466" hits="0"/>
                 <line number="467" hits="0"/>
-                <line number="469" hits="0"/>
+                <line number="468" hits="0"/>
+                <line number="470" hits="0"/>
               </lines>
             </method>
             <method name="getZipStreamToFile" signature="array $orthancIDs, $ressource, ?string $transfertSyntaxUID" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="479" hits="0"/>
                 <line number="480" hits="0"/>
                 <line number="481" hits="0"/>
-                <line number="483" hits="0"/>
+                <line number="482" hits="0"/>
                 <line number="484" hits="0"/>
-                <line number="487" hits="0"/>
-                <line number="489" hits="0"/>
+                <line number="485" hits="0"/>
+                <line number="488" hits="0"/>
+                <line number="490" hits="0"/>
               </lines>
             </method>
             <method name="getOrthancNiftiStream" signature="string $seriesOrthancID, bool $compressed" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="494" hits="0"/>
                 <line number="495" hits="0"/>
                 <line number="496" hits="0"/>
+                <line number="497" hits="0"/>
               </lines>
             </method>
             <method name="importDicomFolder" signature="string $unzipedPath, $concurrency" line-rate="0" branch-rate="0" complexity="3">
               <lines>
-                <line number="505" hits="0"/>
-                <line number="507" hits="0"/>
-                <line number="509" hits="0"/>
-                <line number="512" hits="0"/>
+                <line number="506" hits="0"/>
+                <line number="508" hits="0"/>
+                <line number="510" hits="0"/>
                 <line number="513" hits="0"/>
-                <line number="516" hits="0"/>
-                <line number="519" hits="0"/>
-                <line number="521" hits="0"/>
+                <line number="514" hits="0"/>
+                <line number="517" hits="0"/>
+                <line number="520" hits="0"/>
                 <line number="522" hits="0"/>
-                <line number="524" hits="0"/>
+                <line number="523" hits="0"/>
+                <line number="525" hits="0"/>
               </lines>
             </method>
             <method name="getSharedTags" signature="string $seriesOrthancID" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="530" hits="0"/>
                 <line number="531" hits="0"/>
+                <line number="532" hits="0"/>
               </lines>
             </method>
             <method name="getMIP" signature="string $level, string $seriesOrthancID, int $frames, int $delay" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="536" hits="0"/>
-                <line number="538" hits="0"/>
+                <line number="537" hits="0"/>
                 <line number="539" hits="0"/>
+                <line number="540" hits="0"/>
               </lines>
             </method>
             <method name="getMosaic" signature="string $level, string $seriesOrthancID, int $numImages, int $width, int $height" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="544" hits="0"/>
-                <line number="546" hits="0"/>
+                <line number="545" hits="0"/>
                 <line number="547" hits="0"/>
+                <line number="548" hits="0"/>
               </lines>
             </method>
             <method name="getInstancePreview" signature="string $instanceOrthancID" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="552" hits="0"/>
-                <line number="554" hits="0"/>
+                <line number="553" hits="0"/>
                 <line number="555" hits="0"/>
+                <line number="556" hits="0"/>
               </lines>
             </method>
             <method name="sendDicomToProcessing" signature="string $orthancSeriesIdPt, App\GaelO\Services\GaelOProcessingService\GaelOProcessingService $gaelOProcessingService" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="560" hits="0"/>
                 <line number="561" hits="0"/>
                 <line number="562" hits="0"/>
                 <line number="563" hits="0"/>
+                <line number="564" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -10305,21 +10306,21 @@
             <line number="243" hits="0"/>
             <line number="246" hits="0"/>
             <line number="247" hits="0"/>
-            <line number="250" hits="0"/>
+            <line number="248" hits="0"/>
             <line number="251" hits="0"/>
-            <line number="254" hits="0"/>
-            <line number="257" hits="0"/>
-            <line number="259" hits="0"/>
-            <line number="279" hits="2"/>
-            <line number="281" hits="2"/>
-            <line number="282" hits="1"/>
+            <line number="252" hits="0"/>
+            <line number="255" hits="0"/>
+            <line number="258" hits="0"/>
+            <line number="260" hits="0"/>
+            <line number="280" hits="2"/>
+            <line number="282" hits="2"/>
             <line number="283" hits="1"/>
             <line number="284" hits="1"/>
             <line number="285" hits="1"/>
             <line number="286" hits="1"/>
             <line number="287" hits="1"/>
             <line number="288" hits="1"/>
-            <line number="292" hits="2"/>
+            <line number="289" hits="1"/>
             <line number="293" hits="2"/>
             <line number="294" hits="2"/>
             <line number="295" hits="2"/>
@@ -10341,7 +10342,7 @@
             <line number="311" hits="2"/>
             <line number="312" hits="2"/>
             <line number="313" hits="2"/>
-            <line number="315" hits="2"/>
+            <line number="314" hits="2"/>
             <line number="316" hits="2"/>
             <line number="317" hits="2"/>
             <line number="318" hits="2"/>
@@ -10379,96 +10380,97 @@
             <line number="350" hits="2"/>
             <line number="351" hits="2"/>
             <line number="352" hits="2"/>
-            <line number="355" hits="2"/>
+            <line number="353" hits="2"/>
             <line number="356" hits="2"/>
             <line number="357" hits="2"/>
-            <line number="360" hits="2"/>
+            <line number="358" hits="2"/>
             <line number="361" hits="2"/>
             <line number="362" hits="2"/>
             <line number="363" hits="2"/>
             <line number="364" hits="2"/>
-            <line number="367" hits="2"/>
-            <line number="370" hits="2"/>
+            <line number="365" hits="2"/>
+            <line number="368" hits="2"/>
             <line number="371" hits="2"/>
             <line number="372" hits="2"/>
             <line number="373" hits="2"/>
             <line number="374" hits="2"/>
-            <line number="377" hits="2"/>
+            <line number="375" hits="2"/>
             <line number="378" hits="2"/>
             <line number="379" hits="2"/>
             <line number="380" hits="2"/>
-            <line number="382" hits="2"/>
+            <line number="381" hits="2"/>
             <line number="383" hits="2"/>
             <line number="384" hits="2"/>
             <line number="385" hits="2"/>
-            <line number="387" hits="2"/>
-            <line number="389" hits="2"/>
+            <line number="386" hits="2"/>
+            <line number="388" hits="2"/>
             <line number="390" hits="2"/>
             <line number="391" hits="2"/>
             <line number="392" hits="2"/>
-            <line number="396" hits="2"/>
-            <line number="397" hits="0"/>
-            <line number="400" hits="2"/>
-            <line number="410" hits="0"/>
+            <line number="393" hits="2"/>
+            <line number="397" hits="2"/>
+            <line number="398" hits="0"/>
+            <line number="401" hits="2"/>
             <line number="411" hits="0"/>
             <line number="412" hits="0"/>
             <line number="413" hits="0"/>
             <line number="414" hits="0"/>
             <line number="415" hits="0"/>
             <line number="416" hits="0"/>
-            <line number="429" hits="0"/>
-            <line number="437" hits="0"/>
-            <line number="442" hits="0"/>
+            <line number="417" hits="0"/>
+            <line number="430" hits="0"/>
+            <line number="438" hits="0"/>
             <line number="443" hits="0"/>
             <line number="444" hits="0"/>
             <line number="445" hits="0"/>
-            <line number="450" hits="0"/>
+            <line number="446" hits="0"/>
             <line number="451" hits="0"/>
             <line number="452" hits="0"/>
-            <line number="454" hits="0"/>
+            <line number="453" hits="0"/>
             <line number="455" hits="0"/>
-            <line number="458" hits="0"/>
-            <line number="463" hits="0"/>
+            <line number="456" hits="0"/>
+            <line number="459" hits="0"/>
             <line number="464" hits="0"/>
             <line number="465" hits="0"/>
             <line number="466" hits="0"/>
             <line number="467" hits="0"/>
-            <line number="469" hits="0"/>
-            <line number="479" hits="0"/>
+            <line number="468" hits="0"/>
+            <line number="470" hits="0"/>
             <line number="480" hits="0"/>
             <line number="481" hits="0"/>
-            <line number="483" hits="0"/>
+            <line number="482" hits="0"/>
             <line number="484" hits="0"/>
-            <line number="487" hits="0"/>
-            <line number="489" hits="0"/>
-            <line number="494" hits="0"/>
+            <line number="485" hits="0"/>
+            <line number="488" hits="0"/>
+            <line number="490" hits="0"/>
             <line number="495" hits="0"/>
             <line number="496" hits="0"/>
-            <line number="505" hits="0"/>
-            <line number="507" hits="0"/>
-            <line number="509" hits="0"/>
-            <line number="512" hits="0"/>
+            <line number="497" hits="0"/>
+            <line number="506" hits="0"/>
+            <line number="508" hits="0"/>
+            <line number="510" hits="0"/>
             <line number="513" hits="0"/>
-            <line number="516" hits="0"/>
-            <line number="519" hits="0"/>
-            <line number="521" hits="0"/>
+            <line number="514" hits="0"/>
+            <line number="517" hits="0"/>
+            <line number="520" hits="0"/>
             <line number="522" hits="0"/>
-            <line number="524" hits="0"/>
-            <line number="530" hits="0"/>
+            <line number="523" hits="0"/>
+            <line number="525" hits="0"/>
             <line number="531" hits="0"/>
-            <line number="536" hits="0"/>
-            <line number="538" hits="0"/>
+            <line number="532" hits="0"/>
+            <line number="537" hits="0"/>
             <line number="539" hits="0"/>
-            <line number="544" hits="0"/>
-            <line number="546" hits="0"/>
+            <line number="540" hits="0"/>
+            <line number="545" hits="0"/>
             <line number="547" hits="0"/>
-            <line number="552" hits="0"/>
-            <line number="554" hits="0"/>
+            <line number="548" hits="0"/>
+            <line number="553" hits="0"/>
             <line number="555" hits="0"/>
-            <line number="560" hits="0"/>
+            <line number="556" hits="0"/>
             <line number="561" hits="0"/>
             <line number="562" hits="0"/>
             <line number="563" hits="0"/>
+            <line number="564" hits="0"/>
           </lines>
         </class>
       </classes>
