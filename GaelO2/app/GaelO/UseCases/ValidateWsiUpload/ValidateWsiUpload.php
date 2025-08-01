@@ -159,7 +159,7 @@ class ValidateWsiUpload
             }
 
             //Anonymize and store new anonymized study Orthanc ID
-            $anonymizedOrthancStudyID = $this->orthancService->anonymize(
+            $anonymizedOrthancStudyID = $this->orthancService->anonymizeUsingOrthancJobs(
                 $importedOrthancStudyID,
                 $anonProfile,
                 $patientCode,
