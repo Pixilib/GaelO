@@ -243,6 +243,7 @@ class OrthancService
         $jobId = $jobAnswer['ID'];
 
         do {
+            sleep(3);
             $job = $this->getJobDetails($jobId);
         } while ($job['State'] !== "Success" && $job['State'] !== "Failure");
 
