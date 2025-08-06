@@ -133,14 +133,15 @@ class ValidateDicomUpload
 
 
             //Anonymize and store new anonymized study Orthanc ID
-            $anonymizedOrthancStudyID = $this->orthancService->anonymize(
+            $anonymizedOrthancStudyID = $this->orthancService->anonymizeUsingOrthancJobs(
                 $importedOrthancStudyID,
                 $anonProfile,
                 $patientCode,
                 $patientId,
                 $visitType,
                 $studyName,
-                $tranferSyntax
+                $tranferSyntax,
+                null
             );
 
             //Delete original import

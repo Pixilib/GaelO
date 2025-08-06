@@ -24,7 +24,7 @@ class OrthancServiceAnonymizeTest extends TestCase
         $method = $reflection->getMethod('buildAnonQuery');
         $method->setAccessible(true);
 
-        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::DEFAULT->value, 'patientname', 'patientid', 'description', 'trial', null]);
+        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::DEFAULT->value, 'patientname', 'patientid', 'description', 'trial', null, null]);
         $this->assertEquals($result['KeepPrivateTags'], false);
         $this->assertEquals($result['Force'], true);
         $this->assertEquals($result['DicomVersion'], '2023b');
@@ -121,7 +121,7 @@ class OrthancServiceAnonymizeTest extends TestCase
         $method = $reflection->getMethod('buildAnonQuery');
         $method->setAccessible(true);
 
-        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::FULL->value, 'patientname', 'patientid', 'description', 'trial', null]);
+        $result = $method->invokeArgs($orthancService, [AnonProfileEnum::FULL->value, 'patientname', 'patientid', 'description', 'trial', null, null]);
 
         $this->assertEquals($result['KeepPrivateTags'], false);
         $this->assertEquals($result['Force'], true);
