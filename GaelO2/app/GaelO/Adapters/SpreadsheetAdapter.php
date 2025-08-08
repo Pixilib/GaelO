@@ -3,6 +3,8 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -22,6 +24,23 @@ class SpreadsheetAdapter implements SpreadsheetInterface
     {
         if (strlen($spreadsheetName) > 31) return substr($spreadsheetName, 0, 31);
         else return $spreadsheetName;
+    }
+
+    public function readSpreadsheet(string $filePath): array
+    {; 
+        $spreadsheet = IOFactory::load($filePath, IReader::READ_DATA_ONLY|IReader::IGNORE_EMPTY_CELLS|IReader::IGNORE_ROWS_WITH_NO_CELLS);
+        $rawArray = $spreadsheet->getActiveSheet()->toArray();
+        $index = null;
+        $keys = array_shift($rawArray);
+        //to declare new set of array
+        $named = [];
+        
+        // to loop the remaining array 
+        foreach($rawArray as $ln => $vals) {
+            $key = !is_null($index) ? $vals[$index] : $ln;
+            $named[$key] = array_combine($keys, $vals);
+        }
+        return $named;
     }
 
     public function addSheet(String $spreadsheetName): void
