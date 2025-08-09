@@ -12,6 +12,7 @@ use App\GaelO\Adapters\JobAdapter;
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Adapters\PdfAdapter;
 use App\GaelO\Adapters\PhoneNumberAdapter;
+use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Adapters\ZipStreamAdapter;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -21,6 +22,7 @@ use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
+use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
 use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use AzureOss\Storage\Blob\BlobServiceClient;
@@ -50,6 +52,8 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(GaelODeleteRessourcesRepository::class, GaelODeleteRessourcesRepository::class);
         $this->app->bind(FTPClientInterface::class, FtpClientAdapter::class);
         $this->app->bind(ZipStreamInterface::class, ZipStreamAdapter::class);
+        $this->app->bind(SpreadsheetInterface::class, SpreadsheetAdapter::class);
+        
     }
 
     /**

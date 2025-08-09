@@ -37,7 +37,6 @@ class SpreadsheetAdapterTest extends TestCase
     {
         $filePath = getcwd() . '/tests/data/testRead.xlsx';
         $data = $this->spreadsheetAdapter->readSpreadsheet($filePath);
-        dd($data);
         $this->assertIsArray($data);
         $this->assertNotEmpty($data);
     }
