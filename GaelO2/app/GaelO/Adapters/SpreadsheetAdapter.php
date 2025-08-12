@@ -28,7 +28,7 @@ class SpreadsheetAdapter implements SpreadsheetInterface
 
     public function readSpreadsheet(string $filePath): array
     {; 
-        $spreadsheet = IOFactory::load($filePath, IReader::READ_DATA_ONLY|IReader::IGNORE_EMPTY_CELLS|IReader::IGNORE_ROWS_WITH_NO_CELLS);
+        $spreadsheet = IOFactory::load($filePath, IReader::IGNORE_EMPTY_CELLS|IReader::IGNORE_ROWS_WITH_NO_CELLS);
         $rawArray = $spreadsheet->getActiveSheet()->toArray();
         $index = null;
         $keys = array_shift($rawArray);
