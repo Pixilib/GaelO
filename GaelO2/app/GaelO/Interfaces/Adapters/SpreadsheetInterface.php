@@ -4,6 +4,8 @@ namespace App\GaelO\Interfaces\Adapters;
 
 Interface SpreadsheetInterface{
 
+    public function readSpreadsheet(string $filePath) : array ;
+
     public function addSheet(String $title) : void ;
 
     public function fillData(string $spreadsheetName, array $data) : void ;

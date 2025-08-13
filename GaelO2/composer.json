@@ -12,7 +12,7 @@
         "php": "^8.4",
         "azure-oss/storage-blob-flysystem": "^1.2",
         "barryvdh/laravel-dompdf": "^3.1",
-        "giggsey/libphonenumber-for-php": "^8.13",
+        "giggsey/libphonenumber-for-php": "^9.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
@@ -21,7 +21,7 @@
         "league/flysystem-sftp-v3": "^3.29",
         "league/mime-type-detection": "^1.16",
         "maennchen/zipstream-php": "^3.1",
-        "phpoffice/phpspreadsheet": "^4.1",
+        "phpoffice/phpspreadsheet": "^5.0",
         "sentry/sentry-laravel": "^4.13",
         "spatie/db-dumper": "^3.8",
         "staudenmeir/eloquent-has-many-deep": "^1.21"

@@ -32,4 +32,12 @@ class SpreadsheetAdapterTest extends TestCase
         $filename = $this->spreadsheetAdapter->writeToExcel();
         unlink($filename);
     }
+
+    public function testReadSpreadsheet()
+    {
+        $filePath = getcwd() . '/tests/data/testRead.xlsx';
+        $data = $this->spreadsheetAdapter->readSpreadsheet($filePath);
+        $this->assertIsArray($data);
+        $this->assertNotEmpty($data);
+    }
 }
