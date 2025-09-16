@@ -5,6 +5,7 @@ namespace Tests\Unit\TestServices;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use Tests\TestCase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class GaelOProcessingServiceTest extends TestCase
 {
@@ -14,12 +15,19 @@ class GaelOProcessingServiceTest extends TestCase
 
         parent::setUp();
         $this->gaeloProcessingService = App::make(GaelOProcessingService::class);
-        $this->markTestSkipped();
+        //$this->markTestSkipped();
     }
 
+    public function testGetSeg(){
+        Log::info("send gdicom");
+        $resultat=$this->gaeloProcessingService->getRtss("589201abe0658bbfd56a381c0cf782f1");
+        Log::info($resultat);
+    }
+
+    /*
     public function testSendDicom()
     {
         $path = getcwd() . "/tests/data/MR.zip";
         $resultat=$this->gaeloProcessingService->createDicom($path);
-    }
+    }*/
 }
