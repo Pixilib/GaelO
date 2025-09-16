@@ -101,7 +101,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/rtss/" . $rtssId . "/file", $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/rtss/" . $rtssId . "/file", $downloadedFilePath, ['Accept-Encoding' => 'gzip, deflate']);
         return $downloadedFilePath;
     }
 
@@ -120,7 +120,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/seg/" . $segId . "/file", $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/seg/" . $segId . "/file", $downloadedFilePath, ['Accept-Encoding' => 'gzip, deflate']);
         return $downloadedFilePath;
     }
 

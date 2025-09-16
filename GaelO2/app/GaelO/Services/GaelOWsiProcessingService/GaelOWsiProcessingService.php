@@ -43,7 +43,7 @@ class GaelOWsiProcessingService
 
     public function postWsiImage(string $filename)
     {
-        $request = $this->httpClientInterface->uploadFile('POST', '/wsi/', $filename);
+        $request = $this->httpClientInterface->uploadFile('POST', '/wsi', $filename);
         return $request->getJsonBody()['id'];
     }
 
@@ -105,7 +105,7 @@ class GaelOWsiProcessingService
         ];
 
 
-        $request =  $this->httpClientInterface->requestJson('POST', "/tools/conversion/", $payload);
+        $request =  $this->httpClientInterface->requestJson('POST', "/tools/conversion", $payload);
         return $request->getJsonBody();
     }
 
