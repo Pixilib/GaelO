@@ -23,7 +23,16 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(
+            /*
+            [
+                'curl' => [
+                    CURLOPT_TCP_KEEPALIVE => 10,
+                    CURLOPT_TCP_KEEPIDLE => 10
+                ]
+            ]
+                */
+        );
     }
 
     public function setAddress(string $address, int $port): void
