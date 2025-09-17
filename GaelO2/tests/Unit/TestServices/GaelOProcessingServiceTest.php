@@ -5,6 +5,7 @@ namespace Tests\Unit\TestServices;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use Tests\TestCase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class GaelOProcessingServiceTest extends TestCase
 {
@@ -17,6 +18,11 @@ class GaelOProcessingServiceTest extends TestCase
         $this->markTestSkipped();
     }
 
+    public function testGetSeg(){
+        $resultat=$this->gaeloProcessingService->getRtss("589201abe0658bbfd56a381c0cf782f1");
+    }
+
+    
     public function testSendDicom()
     {
         $path = getcwd() . "/tests/data/MR.zip";
