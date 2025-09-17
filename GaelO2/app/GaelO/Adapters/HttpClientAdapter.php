@@ -7,10 +7,14 @@ use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -23,14 +27,35 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function __construct()
     {
-        $this->client = new Client(
-            [
-                'curl' => [
-                    CURLOPT_TCP_KEEPALIVE => 10,
-                    CURLOPT_TCP_KEEPIDLE => 10
-                ]
-            ]
+        $handler = HandlerStack::create();
+        //Retry middelware for curl error download issue
+        $retryMiddleware = Middleware::retry(
+            function (int $retries, RequestInterface $request, ?ResponseInterface $response, ?\RuntimeException $e) {
+                $maxRetries = 5;
+                // Limit the number of retries to maxRetries
+                if ($retries >= $maxRetries) {
+                    return false;
+                }
+
+                // Retry connection exceptions
+                if ($e instanceof RequestException) {
+                    if (str_contains($e->getMessage(), 'cURL error 18')) {
+                        Log::warning("Unable to connect to " . $request->getUri() . ". Retrying (" . ($retries + 1) . "/" . $maxRetries . ")...\n");
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            function (int $retries) {
+                return 1000 * $retries; // Exponential Backoff: Wait longer with each retry
+            }
         );
+        $handler->push($retryMiddleware);
+
+        $this->client = new Client([
+            'handler' => $handler,
+        ]);
     }
 
     public function setAddress(string $address, int $port): void
@@ -159,7 +184,13 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers, array $body = []): Psr7ResponseInterface
     {
-        $response = $this->client->request($method, $this->address . $uri, ['sink' => $ressource, 'auth' => [$this->login, $this->password], 'headers' => $headers, 'json' => $body]);
+
+        $response = $this->client->request($method, $this->address . $uri, [
+            'sink' => $ressource,
+            'auth' => [$this->login, $this->password],
+            'headers' => $headers,
+            'json' => $body
+        ]);
         return new Psr7ResponseAdapter($response);
     }
 
