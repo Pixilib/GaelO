@@ -74,10 +74,28 @@ abstract class AbstractVisitDecisions
     }
 
     /**
+     * Return custom file should be usefull to generate investigator (syntax key => url) form
+     * Empty array by default, to be override in specific models
+     */
+    public function getAssociatedFilesForInvestigatorForm(): array
+    {
+        return [];
+    }
+
+    /**
      * Return custom data should be usefull to generate review form
      * Empty array by default, to be override in specific models
      */
     public function getAssociatedDataForReviewForm(): array
+    {
+        return [];
+    }
+
+    /**
+     * Return custom file should be usefull to generate review (syntax key => url) form
+     * Empty array by default, to be override in specific models
+     */
+    public function getAssociatedFilesForReviewForm(): array
     {
         return [];
     }
