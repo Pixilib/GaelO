@@ -18,7 +18,8 @@ class GetAssociatedDataReviewTest extends TestCase
 
     use RefreshDatabase;
 
-    protected function setUp() : void {
+    protected function setUp(): void
+    {
         parent::setUp();
         $this->artisan('db:seed');
         $study = Study::factory()->name('TEST')->create();
@@ -33,20 +34,38 @@ class GetAssociatedDataReviewTest extends TestCase
     }
 
 
-    public function testGetAssociatedData(){
+    public function testGetAssociatedData()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName );
-        $resp = $this->json('GET', '/api/studies/'.$this->studyName.'/visits/'.$this->visit->id.'/reviewer-associated-data');
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
+        $resp = $this->json('GET', '/api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/reviewer-associated-data');
         $answer = json_decode($resp->content(), true);
         $this->assertArrayHasKey('Radiotherapy', $answer);
         $resp->assertStatus(200);
     }
 
-    public function testGetAssociatedDataShouldFailNoReviewer(){
+    public function testGetAssociatedDataShouldFailNoReviewer()
+    {
         AuthorizationTools::actAsAdmin(false);
-        $resp = $this->json('GET', '/api/studies/'.$this->studyName.'/visits/'.$this->visit->id.'/reviewer-associated-data');
+        $resp = $this->json('GET', '/api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/reviewer-associated-data');
         $resp->assertStatus(403);
-
     }
 
+
+    public function testGetAssociatedFiles()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
+        $resp = $this->json('GET', '/api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/reviewer-associated-files');
+        //$answer = json_decode($resp->content(), true);
+        //$this->assertArrayHasKey('Radiotherapy', $answer);
+        $resp->assertStatus(200);
+    }
+
+    public function testGetAssociatedFilesShouldFailNoReviewer()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $resp = $this->json('GET', '/api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/reviewer-associated-files');
+        $resp->assertStatus(403);
+    }
 }

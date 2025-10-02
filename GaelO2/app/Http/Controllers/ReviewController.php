@@ -29,6 +29,12 @@ use App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInve
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReview;
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewRequest;
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewResponse;
+use App\GaelO\UseCases\GetAssociatedFilesForInvestigator\GetAssociatedFilesForInvestigator;
+use App\GaelO\UseCases\GetAssociatedFilesForInvestigator\GetAssociatedFilesForInvestigatorRequest;
+use App\GaelO\UseCases\GetAssociatedFilesForInvestigator\GetAssociatedFilesForInvestigatorResponse;
+use App\GaelO\UseCases\GetAssociatedFilesForReview\GetAssociatedFilesForReview;
+use App\GaelO\UseCases\GetAssociatedFilesForReview\GetAssociatedFilesForReviewRequest;
+use App\GaelO\UseCases\GetAssociatedFilesForReview\GetAssociatedFilesForReviewResponse;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfForm;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfFormRequest;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfFormResponse;
@@ -113,7 +119,7 @@ class ReviewController extends Controller
 
         $currentUser = Auth::user();
         $requestData = $request->all();
-        
+
         Util::fillObject($requestData, $createInvestigatorFormRequest);
         $createInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $createInvestigatorFormRequest->visitId = $visitId;
@@ -190,7 +196,7 @@ class ReviewController extends Controller
         $queryParam = $request->query();
         $getReviewFormFromVisitRequest->studyName = $queryParam['studyName'];
 
-        if( array_key_exists('userId', $queryParam) ) $getReviewFormFromVisitRequest->userId = $queryParam['userId'];
+        if (array_key_exists('userId', $queryParam)) $getReviewFormFromVisitRequest->userId = $queryParam['userId'];
 
         $getReviewFormFromVisit->execute($getReviewFormFromVisitRequest, $getReviewFormFromVisitResponse);
 
@@ -249,7 +255,7 @@ class ReviewController extends Controller
 
         Util::fillObject($requestData, $createFileToFormFromTusRequest);
         $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
-        
+
         $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
 
         return $this->getJsonResponse($createFileToFormFromTusResponse->body, $createFileToFormFromTusResponse->status, $createFileToFormFromTusResponse->statusText);
@@ -283,7 +289,7 @@ class ReviewController extends Controller
 
 
         if ($getFileOfFormResponse->status === 200) {
-            return Storage::download( $getFileOfFormResponse->filePath, $getFileOfFormResponse->filename);
+            return Storage::download($getFileOfFormResponse->filePath, $getFileOfFormResponse->filename);
         } else {
             return response()->json($getFileOfFormResponse->body)
                 ->setStatusCode($getFileOfFormResponse->status, $getFileOfFormResponse->statusText);
@@ -302,6 +308,18 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText, true);
     }
 
+    public function getAssociatedFilesOfVisitForReviewer(GetAssociatedFilesForReview $getAssociatedFilesForReview, GetAssociatedFilesForReviewRequest $getAssociatedFilesForReviewRequest, GetAssociatedFilesForReviewResponse $getAssociatedFilesForReviewResponse, string $studyName, int $visitId)
+    {
+        $currentUser = Auth::user();
+        $getAssociatedFilesForReviewRequest->currentUserId = $currentUser['id'];
+        $getAssociatedFilesForReviewRequest->studyName = $studyName;
+        $getAssociatedFilesForReviewRequest->visitId = $visitId;
+
+        $getAssociatedFilesForReview->execute($getAssociatedFilesForReviewRequest, $getAssociatedFilesForReviewResponse);
+
+        return $this->getJsonResponse($getAssociatedFilesForReviewResponse->body, $getAssociatedFilesForReviewResponse->status, $getAssociatedFilesForReviewResponse->statusText, true);
+    }
+
     public function getAssociatedDataOfVisitForInvestigator(Request $request, GetAssociatedDataForInvestigator $getAssociatedDataForInvestigator, GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse, int $visitId)
     {
         $currentUser = Auth::user();
@@ -314,5 +332,19 @@ class ReviewController extends Controller
         $getAssociatedDataForInvestigator->execute($getAssociatedDataForInvestigatorRequest, $getAssociatedDataForInvestigatorResponse);
 
         return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText, true);
+    }
+
+    public function getAssociatedFilesOfVisitForInvestigator(Request $request, GetAssociatedFilesForInvestigator $getAssociatedFilesForInvestigator, GetAssociatedFilesForInvestigatorRequest $getAssociatedFilesForInvestigatorRequest, GetAssociatedFilesForInvestigatorResponse $getAssociatedFilesForInvestigatorResponse, int $visitId)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getAssociatedFilesForInvestigatorRequest->currentUserId = $currentUser['id'];
+        $getAssociatedFilesForInvestigatorRequest->visitId = $visitId;
+        $getAssociatedFilesForInvestigatorRequest->role = $queryParam['role'];
+
+        $getAssociatedFilesForInvestigator->execute($getAssociatedFilesForInvestigatorRequest, $getAssociatedFilesForInvestigatorResponse);
+
+        return $this->getJsonResponse($getAssociatedFilesForInvestigatorResponse->body, $getAssociatedFilesForInvestigatorResponse->status, $getAssociatedFilesForInvestigatorResponse->statusText, true);
     }
 }

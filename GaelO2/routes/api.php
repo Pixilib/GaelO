@@ -19,7 +19,6 @@ use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
 use App\Http\Requests\SignedEmailVerificationRequest;
-use App\Models\Country;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +146,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm']);
     Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm']);
     Route::get('visits/{id}/investigator-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForInvestigator']);
+    Route::get('visits/{id}/investigator-associated-files', [ReviewController::class, 'getAssociatedFilesOfVisitForInvestigator']);
 
     //Review routes
     Route::post('visits/{visitId}/reviews', [ReviewController::class, 'createReviewForm']);
@@ -158,6 +158,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::delete('reviews/{id}/files/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
     Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForReviewer']);
+    Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-files', [ReviewController::class, 'getAssociatedFilesOfVisitForReviewer']);
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);
