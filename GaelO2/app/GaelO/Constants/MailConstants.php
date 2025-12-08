@@ -29,4 +29,5 @@ class MailConstants {
     const EMAIL_REQUEST_PATIENT_CREATION = 24;
     const EMAIL_RADIOMICS_REPORT = 25;
     const EMAIL_JOB_FAILURE = 26;
+    const EMAIL_UPDATED_ROLE = 27;
 }

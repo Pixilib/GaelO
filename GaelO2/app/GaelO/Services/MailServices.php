@@ -94,6 +94,23 @@ class MailServices
         $this->mailInterface->send();
     }
 
+    public function sendUpdatedRoleMessage(string $userId, string $role, string $action, string $studyName): void
+    {
+        $parameters = [
+            'role' => $role,
+            'action' => $action,
+            'study' => $studyName
+        ];
+        //Send to updated user if email is validated
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withValidatedUserEmail($userId);
+        $this->mailInterface->setTo($mailListBuilder->get());
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UPDATED_ROLE);
+        $this->mailInterface->send();
+    }
+
     public function sendAdminConnectedMessage(String $email, String $remoteAddress): void
     {
         $parameters = [
@@ -158,7 +175,7 @@ class MailServices
     {
 
         $center = $this->centerRepositoryInterface->getCenterByCode($centerCode);
-        
+
         $parameters = [
             'name' => 'User',
             'study' => $studyName,

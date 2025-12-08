@@ -33,6 +33,7 @@ use App\Mail\JobFailure;
 use App\Mail\MagicLink;
 use App\Mail\RadiomicsReport;
 use App\Mail\RequestPatientCreation;
+use App\Mail\UpdatedRole;
 use App\Mail\UserCreated;
 use Illuminate\Mail\Mailable;
 
@@ -165,6 +166,9 @@ class MailerAdapter implements MailerInterface
                 break;
             case MailConstants::EMAIL_JOB_FAILURE:
                 $model = new JobFailure($this->parameters);
+                break;
+            case MailConstants::EMAIL_UPDATED_ROLE:
+                $model = new UpdatedRole($this->parameters);
                 break;
             default:
                 throw new GaelOException("Unkown Mail Type");

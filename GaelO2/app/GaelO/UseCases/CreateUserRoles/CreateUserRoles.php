@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\MailServices;
 
 class CreateUserRoles
 {
@@ -18,13 +19,15 @@ class CreateUserRoles
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailServices;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
+        $this->mailServices = $mailServices;
     }
 
     public function execute(CreateUserRolesRequest $createRoleRequest, CreateUserRolesResponse $createRoleResponse)
@@ -58,7 +61,7 @@ class CreateUserRoles
                 "new_role" => $role
             ];
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER_ROLE, $actionDetails);
-
+            $this->mailServices->sendUpdatedRoleMessage($userId, $role, 'added', $studyName);
             $createRoleResponse->statusText = "Created";
             $createRoleResponse->status = 201;
         } catch (AbstractGaelOException $e) {
