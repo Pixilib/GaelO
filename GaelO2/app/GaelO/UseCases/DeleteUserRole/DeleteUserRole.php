@@ -8,6 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\MailServices;
 use Exception;
 
 class DeleteUserRole
@@ -16,12 +17,14 @@ class DeleteUserRole
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailServices;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface  = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
+        $this->mailServices = $mailServices;
     }
 
     public function execute(DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse): void
@@ -43,7 +46,7 @@ class DeleteUserRole
             ];
 
             $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER_ROLE, $actionDetails);
-
+            $this->mailServices->sendUpdatedRoleMessage($userId, $role, 'removed', $studyName);
             $deleteUserRoleResponse->status = 200;
             $deleteUserRoleResponse->statusText = 'OK';
         } catch (AbstractGaelOException $e) {

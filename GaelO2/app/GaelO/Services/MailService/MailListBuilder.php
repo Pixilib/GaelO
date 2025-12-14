@@ -23,6 +23,15 @@ class MailListBuilder
         return $this;
     }
 
+    public function withValidatedUserEmail(int $userId): self
+    {
+        $user = $this->userRepositoryInterface->find($userId);
+        if ($user['email_verified_at'] != null) {
+            $this->emails[] = $user['email'];
+        }
+        return $this;
+    }
+
     public function withAdminsEmails(): self
     {
         $admins = $this->userRepositoryInterface->getAdministrators();

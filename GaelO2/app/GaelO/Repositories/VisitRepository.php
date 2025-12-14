@@ -413,16 +413,12 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereHas('patient', function ($query) use ($originalStudyName) {
                 $query->where('study_name', $originalStudyName);
             })
-            ->where(function ($query) use ($studyName, $userId) {
-                $query->selectRaw('count(*)')
-                    ->from('reviews')
-                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                    ->where('study_name', '=', $studyName)
+            ->whereDoesntHave('reviews', function ($query) use ($studyName, $userId) {
+                $query->where('study_name', '=', $studyName)
                     ->where('validated', true)
                     ->where('local', false)
-                    ->where('user_id', $userId)
-                    ->where('deleted_at', null);
-            }, '=', 0)->get();
+                    ->where('user_id', $userId);
+            })->get();
 
         $visits = $collection->toArray();
 
@@ -450,17 +446,12 @@ class VisitRepository implements VisitRepositoryInterface
             ->with(['patient', 'reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
-            ->where(function ($query) use ($studyName, $userId) {
-                $query->selectRaw('count(*)')
-                    ->from('reviews')
-                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                    ->where('study_name', '=', $studyName)
+            ->whereDoesntHave('reviews', function ($query) use ($studyName, $userId) {
+                $query->where('study_name', '=', $studyName)
                     ->where('validated', true)
                     ->where('local', false)
-                    ->where('user_id', $userId)
-                    ->where('deleted_at', null);
-            }, '=', 0)
-            ->get();
+                    ->where('user_id', $userId);
+            })->get();
 
         $visits = $patientVisitAvailableForReview->toArray();
         //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value

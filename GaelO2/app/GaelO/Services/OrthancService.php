@@ -420,7 +420,7 @@ class OrthancService
         $seriesObjects = $studyOrthanc->orthancSeries;
         foreach ($seriesObjects as $serie) {
             if ($serie->isSecondaryCapture()) {
-                $this->deleteFromOrthanc("series", $serie->serieOrthancID);
+                $this->deleteFromOrthanc("series", $serie->seriesOrthancID);
             }
         }
     }
