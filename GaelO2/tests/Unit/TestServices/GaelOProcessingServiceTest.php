@@ -23,7 +23,7 @@ class GaelOProcessingServiceTest extends TestCase
     }
 
     public function testGetSeg(){
-        $resultat=$this->gaeloProcessingService->getSeg("589201abe0658bbfd56a381c0cf782f1");
+        $resultat=$this->gaeloProcessingService->getSeg("af231e3ef07abee73b8ecba71d5d6423");
     }
 
     
