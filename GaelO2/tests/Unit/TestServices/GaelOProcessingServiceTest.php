@@ -18,8 +18,12 @@ class GaelOProcessingServiceTest extends TestCase
         $this->markTestSkipped();
     }
 
-    public function testGetSeg(){
+    public function testGetRtss(){
         $resultat=$this->gaeloProcessingService->getRtss("589201abe0658bbfd56a381c0cf782f1");
+    }
+
+    public function testGetSeg(){
+        $resultat=$this->gaeloProcessingService->getSeg("589201abe0658bbfd56a381c0cf782f1");
     }
 
     
