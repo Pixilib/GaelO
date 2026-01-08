@@ -29,6 +29,7 @@ RUN apt-get update -qy && \
     libmemcached-dev \
     mariadb-client \
     postgresql-client && \
+    postgresql-client-17 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pecl install pcov redis memcached imap
