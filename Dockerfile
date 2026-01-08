@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-bookworm
+FROM php:8.4-fpm-trixie
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 ENV TZ="UTC"
