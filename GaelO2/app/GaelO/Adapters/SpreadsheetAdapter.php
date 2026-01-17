@@ -70,6 +70,9 @@ class SpreadsheetAdapter implements SpreadsheetInterface
     public function writeToExcel(): string
     {
         $path = $this->createTempFile();
+        if($this->spreadsheet->getSheetCount() == 0) {
+            $this->addSheet('No Data');
+        }
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($path);
         return $path;

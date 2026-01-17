@@ -22,7 +22,6 @@ RUN apt-get update -qy && \
     sqlite3 \
     supervisor \
     zip \
-    libc-client-dev \
     libkrb5-dev \
     libssl-dev \
     libpng-dev \
@@ -31,13 +30,13 @@ RUN apt-get update -qy && \
     postgresql-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pecl install pcov redis memcached imap
+RUN pecl install pcov redis memcached
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl curl ftp
 
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 
-RUN docker-php-ext-enable redis memcached pcov imap
+RUN docker-php-ext-enable redis memcached pcov
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 

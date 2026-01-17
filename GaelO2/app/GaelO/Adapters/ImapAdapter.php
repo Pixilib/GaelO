@@ -19,12 +19,12 @@ class ImapAdapter
     {
         $this->mailbox = Imap::mailbox($mailbox);
     }
-    public function getMessages()
+    public function readInbox()
     {
         try {
             $this->mailbox->connect();
             $inbox = $this->mailbox->inbox();
-            $this->messages = $inbox->messages()->withBody()->withHeaders()->get();
+            $this->messages = $inbox->messages()->withBody()->withHeaders()->unseen()->get();
         } catch (ImapCommandException $e) {
             Log::error('IMAP Command Exception: ' . $e->getMessage());
         } catch (ImapConnectionException $e) {
@@ -37,19 +37,23 @@ class ImapAdapter
         return $this->messages->count() === 0;
     }
 
-    public function getMessage(bool $markAsSeen)
+    public function getMessages()
     {
-        foreach ($this->messages as $message) {
-            $header = $message->headers();
-            $body = $message->body();
+        for ($i = 0; $i < count($this->messages); $i++) {
+            $message = $this->messages->get($i);
+            $body = $message->text();
             $to = $message->to()[0]->email();
-            if ($markAsSeen) $message->markSeen();
             yield [
+                'index' => $i,
                 'to' => $to,
-                'header' => $header,
                 'body' => $body,
             ];
         }
+    }
+
+    public function markAsSeen(int $index)
+    {
+        $this->messages->get($index)->markSeen();
     }
 
     public function disconnect(): void
