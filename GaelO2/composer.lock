@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "115bfee810eab192e072a8a3f67ccd46",
+    "content-hash": "52849855cd558dd8936a2584451f4d7d",
     "packages": [
         {
             "name": "azure-oss/storage",
@@ -618,6 +618,71 @@
                 }
             ],
             "time": "2025-12-28T19:25:24+00:00"
+        },
+        {
+            "name": "directorytree/imapengine-laravel",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DirectoryTree/ImapEngine-Laravel.git",
+                "reference": "cb2dad5f5c5922517237336e3642a489820837d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DirectoryTree/ImapEngine-Laravel/zipball/cb2dad5f5c5922517237336e3642a489820837d5",
+                "reference": "cb2dad5f5c5922517237336e3642a489820837d5",
+                "shasum": ""
+            },
+            "require": {
+                "directorytree/imapengine": "^1.13.0",
+                "illuminate/contracts": "^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^7.10|^8.1",
+                "orchestra/testbench": "^8.22|^9.0|^10.0",
+                "pestphp/pest": "^2.0|^3.0",
+                "pestphp/pest-plugin-arch": "^2.0|^3.0",
+                "pestphp/pest-plugin-laravel": "^2.0|^3.0",
+                "spatie/laravel-ray": "^1.35"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DirectoryTree\\ImapEngine\\Laravel\\ImapServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DirectoryTree\\ImapEngine\\Laravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Bauman",
+                    "email": "steven_bauman@outlook.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package imapengine-laravel",
+            "homepage": "https://github.com/directorytree/imapengine-laravel",
+            "keywords": [
+                "Steve Bauman",
+                "imap",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/DirectoryTree/ImapEngine-Laravel/issues",
+                "source": "https://github.com/DirectoryTree/ImapEngine-Laravel/tree/v1.1.1"
+            },
+            "time": "2025-10-07T20:23:41+00:00"
         },
         {
             "name": "doctrine/inflector",
