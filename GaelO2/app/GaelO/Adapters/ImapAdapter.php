@@ -10,6 +10,7 @@ use DirectoryTree\ImapEngine\Laravel\Facades\Imap;
 use DirectoryTree\ImapEngine\Exceptions\ImapCommandException;
 use DirectoryTree\ImapEngine\Exceptions\ImapConnectionException;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ImapAdapter implements ImapInterface
 {
@@ -44,21 +45,31 @@ class ImapAdapter implements ImapInterface
             $message = $this->messages->get($i);
             $body = $message->text();
             $to = $message->to()[0]->email();
+            $date = $message->date()->toISOString();
             yield [
                 'index' => $i,
                 'to' => $to,
                 'body' => $body,
+                'date' => $date,
             ];
         }
     }
 
     public function markAsSeen(int $index)
     {
-        $this->messages->get($index)->markSeen();
+        try {
+            $this->messages->get($index)->markSeen();
+        } catch (Throwable $e) {
+            Log::error('Error marking email as seen: ' . $e->getMessage());
+        }
     }
 
     public function disconnect(): void
     {
-        $this->mailbox->disconnect();
+        try {
+            $this->mailbox->disconnect();
+        } catch (Throwable $e) {
+            Log::error('Error disconnecting from IMAP: ' . $e->getMessage());
+        }
     }
 }
