@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83238279362011" branch-rate="0" lines-covered="8611" lines-valid="10345" branches-covered="0" branches-valid="0" complexity="2788" version="0.4" timestamp="1768694848">
+<coverage line-rate="0.83239899478059" branch-rate="0" lines-covered="8612" lines-valid="10346" branches-covered="0" branches-valid="0" complexity="2788" version="0.4" timestamp="1768695116">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -31802,14 +31802,12 @@
         </class>
       </classes>
     </package>
-    <package name="Providers/AdapterProvider.php" line-rate="0.5" branch-rate="0" complexity="2">
+    <package name="Providers/AdapterProvider.php" line-rate="0.51612903225806" branch-rate="0" complexity="2">
       <classes>
-        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.5" branch-rate="0" complexity="2">
+        <class name="App\Providers\AdapterProvider" filename="Providers/AdapterProvider.php" line-rate="0.51612903225806" branch-rate="0" complexity="2">
           <methods>
             <method name="register" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="45" hits="651"/>
-                <line number="46" hits="651"/>
                 <line number="47" hits="651"/>
                 <line number="48" hits="651"/>
                 <line number="49" hits="651"/>
@@ -31819,35 +31817,36 @@
                 <line number="53" hits="651"/>
                 <line number="54" hits="651"/>
                 <line number="55" hits="651"/>
+                <line number="56" hits="651"/>
+                <line number="57" hits="651"/>
+                <line number="58" hits="651"/>
               </lines>
             </method>
             <method name="boot" signature="" line-rate="0.21052631578947" branch-rate="0" complexity="1">
               <lines>
-                <line number="66" hits="651"/>
-                <line number="67" hits="0"/>
-                <line number="68" hits="0"/>
+                <line number="68" hits="651"/>
                 <line number="69" hits="0"/>
                 <line number="70" hits="0"/>
                 <line number="71" hits="0"/>
                 <line number="72" hits="0"/>
+                <line number="73" hits="0"/>
                 <line number="74" hits="0"/>
-                <line number="75" hits="651"/>
+                <line number="76" hits="0"/>
                 <line number="77" hits="651"/>
-                <line number="78" hits="0"/>
-                <line number="79" hits="0"/>
+                <line number="79" hits="651"/>
                 <line number="80" hits="0"/>
                 <line number="81" hits="0"/>
                 <line number="82" hits="0"/>
                 <line number="83" hits="0"/>
+                <line number="84" hits="0"/>
                 <line number="85" hits="0"/>
                 <line number="87" hits="0"/>
-                <line number="88" hits="651"/>
+                <line number="89" hits="0"/>
+                <line number="90" hits="651"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="45" hits="651"/>
-            <line number="46" hits="651"/>
             <line number="47" hits="651"/>
             <line number="48" hits="651"/>
             <line number="49" hits="651"/>
@@ -31857,25 +31856,28 @@
             <line number="53" hits="651"/>
             <line number="54" hits="651"/>
             <line number="55" hits="651"/>
-            <line number="66" hits="651"/>
-            <line number="67" hits="0"/>
-            <line number="68" hits="0"/>
+            <line number="56" hits="651"/>
+            <line number="57" hits="651"/>
+            <line number="58" hits="651"/>
+            <line number="68" hits="651"/>
             <line number="69" hits="0"/>
             <line number="70" hits="0"/>
             <line number="71" hits="0"/>
             <line number="72" hits="0"/>
+            <line number="73" hits="0"/>
             <line number="74" hits="0"/>
-            <line number="75" hits="651"/>
+            <line number="76" hits="0"/>
             <line number="77" hits="651"/>
-            <line number="78" hits="0"/>
-            <line number="79" hits="0"/>
+            <line number="79" hits="651"/>
             <line number="80" hits="0"/>
             <line number="81" hits="0"/>
             <line number="82" hits="0"/>
             <line number="83" hits="0"/>
+            <line number="84" hits="0"/>
             <line number="85" hits="0"/>
             <line number="87" hits="0"/>
-            <line number="88" hits="651"/>
+            <line number="89" hits="0"/>
+            <line number="90" hits="651"/>
           </lines>
         </class>
       </classes>
