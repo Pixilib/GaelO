@@ -8,6 +8,7 @@ use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\FtpClientAdapter;
 use App\GaelO\Adapters\HttpClientAdapter;
+use App\GaelO\Adapters\ImapAdapter;
 use App\GaelO\Adapters\JobAdapter;
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Adapters\PdfAdapter;
@@ -18,6 +19,7 @@ use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\FTPClientInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Interfaces\Adapters\ImapInterface;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
@@ -53,7 +55,7 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(FTPClientInterface::class, FtpClientAdapter::class);
         $this->app->bind(ZipStreamInterface::class, ZipStreamAdapter::class);
         $this->app->bind(SpreadsheetInterface::class, SpreadsheetAdapter::class);
-        
+        $this->app->bind(ImapInterface::class, ImapAdapter::class);
     }
 
     /**

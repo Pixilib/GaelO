@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\ImapInterface;
 use DirectoryTree\ImapEngine\Collections\MessageCollection;
 use DirectoryTree\ImapEngine\Mailbox;
 
@@ -10,7 +11,7 @@ use DirectoryTree\ImapEngine\Exceptions\ImapCommandException;
 use DirectoryTree\ImapEngine\Exceptions\ImapConnectionException;
 use Illuminate\Support\Facades\Log;
 
-class ImapAdapter
+class ImapAdapter implements ImapInterface
 {
     private Mailbox $mailbox;
     private MessageCollection $messages;
@@ -19,7 +20,7 @@ class ImapAdapter
     {
         $this->mailbox = Imap::mailbox($mailbox);
     }
-    public function readInbox()
+    public function readInbox(): void
     {
         try {
             $this->mailbox->connect();
