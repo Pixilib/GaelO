@@ -5,7 +5,7 @@ on:
     branches:
       - GaelO2
       - GaelO2-dev
-      - laravel12
+      - imap-lib
     tags:
       - '*'
 
