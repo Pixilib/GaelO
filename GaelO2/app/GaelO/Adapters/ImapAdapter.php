@@ -64,6 +64,15 @@ class ImapAdapter implements ImapInterface
         }
     }
 
+    public function deleteEmail(int $index)
+    {
+        try {
+            $this->messages->get($index)->delete();
+        } catch (Throwable $e) {
+            Log::error('Error deleting email: ' . $e->getMessage());
+        }
+    }
+
     public function disconnect(): void
     {
         try {
