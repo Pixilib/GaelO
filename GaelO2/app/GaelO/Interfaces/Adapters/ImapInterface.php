@@ -8,6 +8,7 @@ interface ImapInterface
     public function readInbox(): void;
     public function isEmpty(): bool;
     public function getMessages();
-    public function markAsSeen(int $index);
+    public function markAsSeen(int $index): void;
+    public function deleteEmail(int $index): void;
     public function disconnect(): void;
 }

@@ -55,7 +55,7 @@ class ImapAdapter implements ImapInterface
         }
     }
 
-    public function markAsSeen(int $index)
+    public function markAsSeen(int $index): void
     {
         try {
             $this->messages->get($index)->markSeen();
@@ -64,7 +64,7 @@ class ImapAdapter implements ImapInterface
         }
     }
 
-    public function deleteEmail(int $index)
+    public function deleteEmail(int $index): void
     {
         try {
             $this->messages->get($index)->delete();
