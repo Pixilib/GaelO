@@ -44,12 +44,14 @@ class ImapAdapter implements ImapInterface
         for ($i = 0; $i < count($this->messages); $i++) {
             $message = $this->messages->get($i);
             $body = $message->text();
+            $html = $message->html();
             $to = $message->to()[0]->email();
             $date = $message->date()->toISOString();
             yield [
                 'index' => $i,
                 'to' => $to,
                 'body' => $body,
+                'html' => $html,
                 'date' => $date,
             ];
         }
