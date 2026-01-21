@@ -44,23 +44,34 @@ class ImapAdapter implements ImapInterface
         for ($i = 0; $i < count($this->messages); $i++) {
             $message = $this->messages->get($i);
             $body = $message->text();
+            $html = $message->html();
             $to = $message->to()[0]->email();
             $date = $message->date()->toISOString();
             yield [
                 'index' => $i,
                 'to' => $to,
                 'body' => $body,
+                'html' => $html,
                 'date' => $date,
             ];
         }
     }
 
-    public function markAsSeen(int $index)
+    public function markAsSeen(int $index): void
     {
         try {
             $this->messages->get($index)->markSeen();
         } catch (Throwable $e) {
             Log::error('Error marking email as seen: ' . $e->getMessage());
+        }
+    }
+
+    public function deleteEmail(int $index): void
+    {
+        try {
+            $this->messages->get($index)->delete();
+        } catch (Throwable $e) {
+            Log::error('Error deleting email: ' . $e->getMessage());
         }
     }
 

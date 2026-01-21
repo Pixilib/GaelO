@@ -26,4 +26,14 @@ class ImapAdapterTest extends TestCase
             dd($message);
         }
     }
+
+    public function testDelete(): void
+    {
+        $this->imapAdapter->connect();
+        $this->imapAdapter->readInbox();
+        $messages = $this->imapAdapter->getMessages();
+        foreach ($messages as $message) {
+            $this->imapAdapter->deleteEmail($message['index']);
+        }
+    }
 }
