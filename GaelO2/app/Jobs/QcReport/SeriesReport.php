@@ -145,7 +145,8 @@ class SeriesReport
                 $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
             } else {
                 $isPet = $this->modality == 'PT';
-                $payload = $isPet ? ['min' => 0, 'max' => 5, 'orientation' => 'LPI'] : ['orientation' => 'LPI'];
+                $isCT = $this->modality == 'CT';
+                $payload = $isPet ? ['min' => 0, 'max' => 5, 'orientation' => 'LPI'] : ($isCT ? ['orientation' => 'LPI', 'min' => -1024, 'max' => +1024] : ['orientation' => 'LPI']);
                 $orthancService->sendDicomToProcessing($this->seriesOrthancId, $gaelOProcessingService);
                 $processingSeriesId = $gaelOProcessingService->createSeriesFromOrthanc($this->seriesOrthancId, $isPet, $isPet);
                 switch ($imageType) {
