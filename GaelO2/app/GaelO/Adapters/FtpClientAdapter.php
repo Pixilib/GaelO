@@ -54,7 +54,7 @@ class FtpClientAdapter implements FTPClientInterface
         }
     }
 
-    public function getFileContent(string $fullPath, ?int $maxAgeSeconds): string
+    public function getFileContent(string $fullPath, ?int $maxAgeSeconds = null): string
     {
         if (!$this->filesystem->has($fullPath)) {
             throw new GaelOException('FTP File Not Found');
