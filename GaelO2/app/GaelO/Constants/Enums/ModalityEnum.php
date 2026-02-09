@@ -18,4 +18,5 @@ enum ModalityEnum :string
     case SEG = 'SEG';
     case SM = 'SM';
     case US = 'US';
+    case DOC = 'DOC';
 }
