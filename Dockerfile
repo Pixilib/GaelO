@@ -22,6 +22,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 EXPOSE 80
 WORKDIR /gaelo
 
+RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+
 RUN apt-get update -qy && \
     apt-get install -y \
     git \
