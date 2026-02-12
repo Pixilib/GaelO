@@ -15,14 +15,12 @@ RUN mkdir /stone
 RUN unzip wasm-binaries.zip -d /stone
 RUN rm /stone/wasm-binaries/StoneWebViewer/configuration.json
 
-FROM php:7.4.19-apache
+FROM php:7.4.33-apache
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 EXPOSE 80
 WORKDIR /gaelo
-
-RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
 
 RUN apt-get update -qy && \
     apt-get install -y \
