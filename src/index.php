@@ -19,8 +19,9 @@
  * @package     GaelO
  * @author      Salim Kanoun <Salim.Kanoun@gmail.com>
  */
-define('GAELO_VERSION', '1.11.17');
+define('GAELO_VERSION', '1.11.18');
 header('content-type: text/html; charset=utf-8');
 header("X-Robots-Tag: noindex, nofollow");
 require_once('vendor/autoload.php');
+
 require 'router.php';
