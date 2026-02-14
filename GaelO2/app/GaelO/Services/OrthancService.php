@@ -284,10 +284,17 @@ class OrthancService
             $date = TagAnon::KEEP;
             $body = TagAnon::KEEP;
             $RTStruct = TagAnon::KEEP;
+            $encapsulatedDoc = TagAnon::CLEAR;
+        } else if ($profile === AnonProfileEnum::DEFAULT_DOC->value) {
+            $date = TagAnon::KEEP;
+            $body = TagAnon::KEEP;
+            $RTStruct = TagAnon::KEEP;
+            $encapsulatedDoc = TagAnon::KEEP;
         } else if ($profile === AnonProfileEnum::FULL->value) {
             $date = TagAnon::CLEAR;
             $body = TagAnon::CLEAR;
             $RTStruct = TagAnon::CLEAR;
+            $encapsulatedDoc = TagAnon::CLEAR;
         }
 
         //List tags releted to Date
@@ -381,6 +388,9 @@ class OrthancService
         $tagsObjects[] = new TagAnon("0009,103B", TagAnon::KEEP); //GE
         $tagsObjects[] = new TagAnon("0009,100D", TagAnon::KEEP); //GE
 
+        //Treat Encapsulated documents as defined by profile
+        $tagsObjects[] = new TagAnon("0042,0011", $encapsulatedDoc);
+
         $jsonArrayAnon = [];
         $jsonArrayAnon['KeepPrivateTags'] = false;
         $jsonArrayAnon['Force'] = true;
@@ -399,7 +409,7 @@ class OrthancService
         if ($transfertSyntaxUID) {
             $jsonArrayAnon['Transcode'] = $transfertSyntaxUID;
         }
-        
+
         if ($lossyQuality) {
             $jsonArrayAnon['LossyQuality'] = $lossyQuality;
         }

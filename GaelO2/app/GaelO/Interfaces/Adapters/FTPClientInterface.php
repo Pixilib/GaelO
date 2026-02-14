@@ -15,7 +15,7 @@ interface FTPClientInterface
     /**
      * Get storage path in the project
      */
-    public function getFileContent(string $fullPath, ?int $maxAge) : string;
+    public function getFileContent(string $fullPath, ?int $maxAge = null) : string;
 
     /**
      * Write file to a folder in destination in FTP

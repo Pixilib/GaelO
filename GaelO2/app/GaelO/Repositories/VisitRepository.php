@@ -541,7 +541,7 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereHas('visitType', function ($query) use ($studyName) {
                 $query->whereHas('visitGroup', function ($query) use ($studyName) {
                     $query->where('study_name', $studyName);
-                    $query->whereIn('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RTSTRUCT', 'SM']);
+                    $query->whereIn('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RTSTRUCT', 'SM', 'DOC']);
                 });
             })
             ->where('status_done', VisitStatusDoneEnum::DONE->value)
