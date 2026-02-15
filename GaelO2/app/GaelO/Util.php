@@ -118,10 +118,10 @@ class Util
 
     public static function isBase64Encoded($data): bool
     {
-        if (preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $data)) {
-            return true;
-        } else {
+        if (base64_decode($data) === false) {
             return false;
+        } else {
+            return true;
         }
     }
 
