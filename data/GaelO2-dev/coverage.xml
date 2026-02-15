@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83244809270884" branch-rate="0" lines-covered="8620" lines-valid="10355" branches-covered="0" branches-valid="0" complexity="2790" version="0.4" timestamp="1771113238">
+<coverage line-rate="0.83244809270884" branch-rate="0" lines-covered="8620" lines-valid="10355" branches-covered="0" branches-valid="0" complexity="2790" version="0.4" timestamp="1771173517">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -26464,8 +26464,8 @@
             <method name="isBase64Encoded" signature="$data" line-rate="0.66666666666667" branch-rate="0" complexity="2">
               <lines>
                 <line number="121" hits="7"/>
-                <line number="122" hits="7"/>
-                <line number="124" hits="0"/>
+                <line number="122" hits="0"/>
+                <line number="124" hits="7"/>
               </lines>
             </method>
             <method name="getUploadTemporaryFolder" signature="" line-rate="0" branch-rate="0" complexity="1">
@@ -26552,8 +26552,8 @@
             <line number="113" hits="0"/>
             <line number="116" hits="0"/>
             <line number="121" hits="7"/>
-            <line number="122" hits="7"/>
-            <line number="124" hits="0"/>
+            <line number="122" hits="0"/>
+            <line number="124" hits="7"/>
             <line number="134" hits="0"/>
             <line number="135" hits="0"/>
             <line number="136" hits="0"/>
