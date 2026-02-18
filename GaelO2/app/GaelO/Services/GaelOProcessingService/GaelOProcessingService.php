@@ -140,7 +140,7 @@ class GaelOProcessingService
         $payload = [
             'maskId' => $maskId,
             'seriesId' => $seriesId,
-            'ouput3D' => $output3D
+            'output3D' => $output3D
         ];
 
         $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-fragmentation", $payload);
