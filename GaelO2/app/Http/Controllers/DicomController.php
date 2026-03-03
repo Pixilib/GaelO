@@ -157,7 +157,7 @@ class DicomController extends Controller
         $getNiftiFileSupervisorRequest->currentUserId = $currentUser['id'];
         $getNiftiFileSupervisorRequest->studyName = $queryParam['studyName'];
         $getNiftiFileSupervisorRequest->seriesInstanceUID = $seriesInstanceUID;
-        $getNiftiFileSupervisorRequest->compress = array_key_exists('compress', $queryParam);
+        $getNiftiFileSupervisorRequest->compress = $request->boolean('compress', false);
         $getNiftiFileSupervisor->execute($getNiftiFileSupervisorRequest, $getNiftiFileSupervisorResponse);
 
         if ($getNiftiFileSupervisorResponse->status === 200) {

@@ -99,14 +99,14 @@ class StudyController extends Controller
     public function getStudies(Request $request, GetStudies $getStudies, GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse, GetStudiesWithDetails $getStudiesWithDetails, GetStudiesWithDetailsRequest $getStudiesWithDetailsRequest, GetStudiesWithDetailsResponse $getStudiesWithDetailsResponse)
     {
         $currentUser = Auth::user();
-        $queryParam = $request->query();
-        if (array_key_exists('expand', $queryParam)) {
+        $expand = $request->boolean('expand', false);
+        if ($expand) {
             $getStudiesWithDetailsRequest->currentUserId = $currentUser['id'];
             $getStudiesWithDetails->execute($getStudiesWithDetailsRequest, $getStudiesWithDetailsResponse);
             return $this->getJsonResponse($getStudiesWithDetailsResponse->body, $getStudiesWithDetailsResponse->status, $getStudiesWithDetailsResponse->statusText);
         } else {
             $getStudiesRequest->currentUserId = $currentUser['id'];
-            $getStudiesRequest->withTrashed = key_exists('withTrashed', $queryParam);
+            $getStudiesRequest->withTrashed = $request->boolean('withTrashed', false);
             $getStudies->execute($getStudiesRequest, $getStudiesResponse);
             return $this->getJsonResponse($getStudiesResponse->body, $getStudiesResponse->status, $getStudiesResponse->statusText);
         }
@@ -315,11 +315,10 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
-        $queryParam = $request->query();
         $getDicomsStudiesFromStudyRequest->currentUserId = $currentUser['id'];
         $getDicomsStudiesFromStudyRequest->studyName = $studyName;
-        $getDicomsStudiesFromStudyRequest->withTrashedStudies = key_exists('withTrashedStudies', $queryParam);
-        $getDicomsStudiesFromStudyRequest->withTrashedSeries = key_exists('withTrashedSeries', $queryParam);
+        $getDicomsStudiesFromStudyRequest->withTrashedStudies = $request->boolean('withTrashedStudies', false);
+        $getDicomsStudiesFromStudyRequest->withTrashedSeries = $request->boolean('withTrashedSeries', false);
 
         $getDicomsStudiesFromStudy->execute($getDicomsStudiesFromStudyRequest, $getDicomsStudiesFromStudyResponse);
 
@@ -373,11 +372,10 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
-        $queryParam = $request->query();
 
         $getStudyStatisticsRequest->currentUserId = $currentUser['id'];
         $getStudyStatisticsRequest->studyName = $studyName;
-        $getStudyStatisticsRequest->withTrashed =  array_key_exists('withTrashed', $queryParam);
+        $getStudyStatisticsRequest->withTrashed =  $request->boolean('withTrashed', false);
         $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
     }
