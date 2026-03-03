@@ -108,6 +108,10 @@ class StudyRepository implements StudyRepositoryInterface
             },
         ])->where('name', $name);
 
+        if ($withTrashed) {
+            $query->withTrashed();
+        }
+
         $counts = $query->sole()->toArray();
 
         $dicomStudies = $this->studyModel->findOrFail($name)->dicomStudies();
