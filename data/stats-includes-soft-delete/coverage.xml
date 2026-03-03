@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83293234529882" branch-rate="0" lines-covered="8655" lines-valid="10391" branches-covered="0" branches-valid="0" complexity="2811" version="0.4" timestamp="1772574900">
+<coverage line-rate="0.83298056571099" branch-rate="0" lines-covered="8658" lines-valid="10394" branches-covered="0" branches-valid="0" complexity="2812" version="0.4" timestamp="1772575365">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -4084,9 +4084,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Repositories/StudyRepository.php" line-rate="1" branch-rate="0" complexity="22">
+    <package name="GaelO/Repositories/StudyRepository.php" line-rate="1" branch-rate="0" complexity="23">
       <classes>
-        <class name="App\GaelO\Repositories\StudyRepository" filename="GaelO/Repositories/StudyRepository.php" line-rate="1" branch-rate="0" complexity="22">
+        <class name="App\GaelO\Repositories\StudyRepository" filename="GaelO/Repositories/StudyRepository.php" line-rate="1" branch-rate="0" complexity="23">
           <methods>
             <method name="__construct" signature="App\Models\Study $study" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -4162,7 +4162,7 @@
                 <line number="87" hits="2"/>
               </lines>
             </method>
-            <method name="getStudyStatistics" signature="string $name, bool $withTrashed" line-rate="1" branch-rate="0" complexity="6">
+            <method name="getStudyStatistics" signature="string $name, bool $withTrashed" line-rate="1" branch-rate="0" complexity="7">
               <lines>
                 <line number="92" hits="3"/>
                 <line number="93" hits="3"/>
@@ -4183,11 +4183,14 @@
                 <line number="112" hits="1"/>
                 <line number="115" hits="3"/>
                 <line number="117" hits="3"/>
-                <line number="118" hits="3"/>
-                <line number="119" hits="1"/>
+                <line number="118" hits="1"/>
+                <line number="119" hits="2"/>
                 <line number="121" hits="3"/>
                 <line number="122" hits="3"/>
-                <line number="123" hits="3"/>
+                <line number="123" hits="1"/>
+                <line number="125" hits="3"/>
+                <line number="126" hits="3"/>
+                <line number="127" hits="3"/>
               </lines>
             </method>
           </methods>
@@ -4241,11 +4244,14 @@
             <line number="112" hits="1"/>
             <line number="115" hits="3"/>
             <line number="117" hits="3"/>
-            <line number="118" hits="3"/>
-            <line number="119" hits="1"/>
+            <line number="118" hits="1"/>
+            <line number="119" hits="2"/>
             <line number="121" hits="3"/>
             <line number="122" hits="3"/>
-            <line number="123" hits="3"/>
+            <line number="123" hits="1"/>
+            <line number="125" hits="3"/>
+            <line number="126" hits="3"/>
+            <line number="127" hits="3"/>
           </lines>
         </class>
       </classes>
