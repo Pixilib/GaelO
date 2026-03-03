@@ -177,6 +177,18 @@ class StudyTest extends TestCase
         $answer->assertStatus(200);
     }
 
+    public function testGetStudyStatisticsWithTrashed()
+    {
+        $dicomStudy = DicomStudy::factory()
+            ->create();
+        $dicomStudy->delete();
+        AuthorizationTools::actAsAdmin(true);
+        $answer = $this->json('GET', '/api/studies/' . $dicomStudy->visit->patient->study_name . '/statistics?withTrashed=true');
+        $body = $answer->json();
+        $this->assertEquals(1, $body['dicomStudiesCount']);
+        $answer->assertStatus(200);
+    }
+
     public function testGetStudyStatisticsShouldFailNotAdmin()
     {
         $dicomStudy = DicomStudy::factory()
