@@ -122,7 +122,7 @@ class StudyRepositoryTest extends TestCase
         $studyName = $study->name;
 
         $study = Study::findOrFail($studyName);
-        $statistics = $this->studyRepository->getStudyStatistics($study->name);
+        $statistics = $this->studyRepository->getStudyStatistics($study->name, false);
 
         $this->assertEquals($statistics['patients_count'], 30);
         $this->assertEquals($statistics['dicom_studies_count'], 1);
