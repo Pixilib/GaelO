@@ -87,11 +87,35 @@ class StudyRepository implements StudyRepositoryInterface
         $this->studyModel->withTrashed()->findOrFail($name)->restore();
     }
 
-    public function getStudyStatistics(string $name): array
+    public function getStudyStatistics(string $name, bool $withTrashed): array
     {
-        $counts = $this->studyModel::withCount(['patients', 'visits', 'dicomStudies', 'dicomSeries'])->where('name', $name)->sole()->toArray();
-        $counts['dicom_instances_count'] = $this->studyModel->findOrFail($name)->dicomStudies()->sum('number_of_instances');
-        $counts['dicom_disk_size'] = $this->studyModel->findOrFail($name)->dicomStudies()->sum('disk_size');
+        $query = $this->studyModel::withCount([
+            'patients',
+            'visits' => function ($query) use ($withTrashed) {
+                if ($withTrashed) {
+                    $query->withTrashed();
+                }
+            },
+            'dicomStudies' => function ($query) use ($withTrashed) {
+                if ($withTrashed) {
+                    $query->withTrashed();
+                }
+            },
+            'dicomSeries' => function ($query) use ($withTrashed) {
+                if ($withTrashed) {
+                    $query->withTrashed();
+                }
+            },
+        ])->where('name', $name);
+
+        $counts = $query->sole()->toArray();
+
+        $dicomStudies = $this->studyModel->findOrFail($name)->dicomStudies();
+        if ($withTrashed) {
+            $dicomStudies = $dicomStudies->withTrashed();
+        }
+        $counts['dicom_instances_count'] = $dicomStudies->sum('number_of_instances');
+        $counts['dicom_disk_size'] = $dicomStudies->sum('disk_size');
         return $counts;
     }
 }

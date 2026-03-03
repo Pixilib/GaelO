@@ -369,13 +369,15 @@ class StudyController extends Controller
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
     }
 
-    public function getStudyStatistics(GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName)
+    public function getStudyStatistics(Request $request, GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName)
     {
 
         $currentUser = Auth::user();
+        $queryParam = $request->query();
 
         $getStudyStatisticsRequest->currentUserId = $currentUser['id'];
         $getStudyStatisticsRequest->studyName = $studyName;
+        $getStudyStatisticsRequest->withTrashed =  array_key_exists('withTrashed', $queryParam);
         $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
     }

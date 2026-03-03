@@ -6,4 +6,5 @@ class GetStudyStatisticsRequest
 {
     public int $currentUserId;
     public string $studyName;
+    public bool $withTrashed = false;
 }
