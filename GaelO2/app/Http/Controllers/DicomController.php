@@ -153,11 +153,12 @@ class DicomController extends Controller
 
         $currentUser = Auth::user();
         $queryParam = $request->query();
+        $isPresentAndEmpty = $request->exists('compress') && $request->get('compress') === '';
 
         $getNiftiFileSupervisorRequest->currentUserId = $currentUser['id'];
         $getNiftiFileSupervisorRequest->studyName = $queryParam['studyName'];
         $getNiftiFileSupervisorRequest->seriesInstanceUID = $seriesInstanceUID;
-        $getNiftiFileSupervisorRequest->compress = $request->boolean('compress', false);
+        $getNiftiFileSupervisorRequest->compress = $isPresentAndEmpty || $request->boolean('compress', false);
         $getNiftiFileSupervisor->execute($getNiftiFileSupervisorRequest, $getNiftiFileSupervisorResponse);
 
         if ($getNiftiFileSupervisorResponse->status === 200) {

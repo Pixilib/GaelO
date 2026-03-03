@@ -80,6 +80,8 @@ use App\GaelO\UseCases\SendMail\SendMailResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 class StudyController extends Controller
 {
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse)
@@ -99,14 +101,18 @@ class StudyController extends Controller
     public function getStudies(Request $request, GetStudies $getStudies, GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse, GetStudiesWithDetails $getStudiesWithDetails, GetStudiesWithDetailsRequest $getStudiesWithDetailsRequest, GetStudiesWithDetailsResponse $getStudiesWithDetailsResponse)
     {
         $currentUser = Auth::user();
+        $isPresentAndEmptyWithTrashed = $request->exists('withTrashed') && $request->get('withTrashed') === '';
+
         $expand = $request->boolean('expand', false);
-        if ($expand) {
+        $isPresentAndEmptyExpand = $request->exists('expand') && $request->get('expand') === '';
+
+        if ($expand || $isPresentAndEmptyExpand) {
             $getStudiesWithDetailsRequest->currentUserId = $currentUser['id'];
             $getStudiesWithDetails->execute($getStudiesWithDetailsRequest, $getStudiesWithDetailsResponse);
             return $this->getJsonResponse($getStudiesWithDetailsResponse->body, $getStudiesWithDetailsResponse->status, $getStudiesWithDetailsResponse->statusText);
         } else {
             $getStudiesRequest->currentUserId = $currentUser['id'];
-            $getStudiesRequest->withTrashed = $request->boolean('withTrashed', false);
+            $getStudiesRequest->withTrashed = $isPresentAndEmptyWithTrashed || $request->boolean('withTrashed', false);
             $getStudies->execute($getStudiesRequest, $getStudiesResponse);
             return $this->getJsonResponse($getStudiesResponse->body, $getStudiesResponse->status, $getStudiesResponse->statusText);
         }
@@ -250,7 +256,9 @@ class StudyController extends Controller
         $exportStudyFiles->execute($exportStudyFilesRequest, $exportStudyFilesResponse);
 
         if ($exportStudyFilesResponse->status === 200) {
-            return response()->stream(function () use ($exportStudyFiles): void {$exportStudyFiles->readExport();});
+            return response()->stream(function () use ($exportStudyFiles): void {
+                $exportStudyFiles->readExport();
+            });
         } else {
             return response()->noContent()
                 ->setStatusCode($exportStudyFilesResponse->status, $exportStudyFilesResponse->statusText);
@@ -315,10 +323,13 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
+        $isPresentAndEmptyWithTrashedStudies = $request->exists('withTrashedStudies') && $request->get('withTrashedStudies') === '';
+        $isPresentAndEmptyWithTrashedSeries = $request->exists('withTrashedSeries') && $request->get('withTrashedSeries') === '';
+
         $getDicomsStudiesFromStudyRequest->currentUserId = $currentUser['id'];
         $getDicomsStudiesFromStudyRequest->studyName = $studyName;
-        $getDicomsStudiesFromStudyRequest->withTrashedStudies = $request->boolean('withTrashedStudies', false);
-        $getDicomsStudiesFromStudyRequest->withTrashedSeries = $request->boolean('withTrashedSeries', false);
+        $getDicomsStudiesFromStudyRequest->withTrashedStudies = $isPresentAndEmptyWithTrashedStudies || $request->boolean('withTrashedStudies', false);
+        $getDicomsStudiesFromStudyRequest->withTrashedSeries = $isPresentAndEmptyWithTrashedSeries || $request->boolean('withTrashedSeries', false);
 
         $getDicomsStudiesFromStudy->execute($getDicomsStudiesFromStudyRequest, $getDicomsStudiesFromStudyResponse);
 
@@ -372,10 +383,11 @@ class StudyController extends Controller
     {
 
         $currentUser = Auth::user();
+        $isPresentAndEmptyWithTrashed = $request->exists('withTrashed') && $request->get('withTrashed') === '';
 
         $getStudyStatisticsRequest->currentUserId = $currentUser['id'];
         $getStudyStatisticsRequest->studyName = $studyName;
-        $getStudyStatisticsRequest->withTrashed =  $request->boolean('withTrashed', false);
+        $getStudyStatisticsRequest->withTrashed =  $isPresentAndEmptyWithTrashed || $request->boolean('withTrashed', false);
         $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
     }

@@ -185,7 +185,7 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $answer = $this->json('GET', '/api/studies/' . $dicomStudy->visit->patient->study_name . '/statistics?withTrashed=true');
         $body = $answer->json();
-        $this->assertEquals(1, $body['dicom_studies_count']);
+        $this->assertEquals(1, $body['dicomStudiesCount']);
         $answer->assertStatus(200);
     }
 
