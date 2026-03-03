@@ -80,7 +80,6 @@ use App\GaelO\UseCases\SendMail\SendMailResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class StudyController extends Controller
 {
