@@ -11,15 +11,16 @@ use Exception;
 
 class TmtvProcessingService
 {
-    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private OrthancService $orthancService;
-    private GaelOProcessingService $gaelOProcessingService;
-    private string $ptOrthancSeriesId;
-    private string $ctOrthancSeriesId;
-    private string $ptSeriesUid;
-    private string $ctSeriesUid;
-    private ?string $version = null;
-    private array $createdFiles = [];
+    protected string $modelName = 'pt_seg_attentionunet_fdg';
+    protected DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    protected OrthancService $orthancService;
+    protected GaelOProcessingService $gaelOProcessingService;
+    protected string $ptOrthancSeriesId;
+    protected string $ctOrthancSeriesId;
+    protected string $ptSeriesUid;
+    protected string $ctSeriesUid;
+    protected ?string $version = null;
+    protected array $createdFiles = [];
 
 
     public function __construct(
@@ -57,7 +58,7 @@ class TmtvProcessingService
 
         if ($this->version) $inferencePayload['version'] = $this->version;
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('pt_seg_attentionunet_fdg', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInference($this->modelName, $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
