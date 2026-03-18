@@ -48,6 +48,7 @@ class AuthController extends Controller
             }
 
             // Regular Login
+            $user = User::where('email', strtolower($request->email))->sole();
             $tokenResult = $user->createToken('GaelO');
 
             // Detect if admin and 2FA not set
