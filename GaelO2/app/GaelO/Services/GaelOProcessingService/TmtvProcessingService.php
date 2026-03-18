@@ -21,8 +21,8 @@ class TmtvProcessingService
     protected string $ctSeriesUid;
     protected ?string $version = null;
     protected array $createdFiles = [];
-    protected string $idPT;
-    protected string $idCT;
+    protected ?string $idPT = null;
+    protected ?string $idCT = null;
 
 
     public function __construct(
@@ -109,7 +109,7 @@ class TmtvProcessingService
             'version' => 1
         ];
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_anatomy_ct', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_anatomy_attentionunet_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
