@@ -40,17 +40,17 @@ class MaskProcessingService
         $this->petSeriesOrthancId = $petSeriesOrthancId;
     }
 
-    public function getMaskAs(ProcessingMaskEnum $type, ?string $orientation = null) : string
+    public function getMaskAs(ProcessingMaskEnum $type, ?string $orientation = null, ?string $seriesDescription = null, ?string $modelName = null, ?string $ctAnatomyMaskId = null, ?string $ctRegionalMaskId = null) : string
     {
         if ($type === ProcessingMaskEnum::NIFTI) {
             $exportFile = $this->gaelOProcessingService->getMaskDicomOrientation($this->maskId, $orientation, true);
         } else if ($type === ProcessingMaskEnum::RTSS) {
-            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->petSeriesOrthancId, $this->maskId);
+            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->petSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getRtss($rtssId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("rtss", $rtssId);
         } else if ($type === ProcessingMaskEnum::SEG) {
-            $segId = $this->gaelOProcessingService->createSegFromMask($this->petSeriesOrthancId, $this->maskId);
+            $segId = $this->gaelOProcessingService->createSegFromMask($this->petSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getSeg($segId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("seg", $segId);

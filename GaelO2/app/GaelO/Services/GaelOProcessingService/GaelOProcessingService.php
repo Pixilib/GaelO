@@ -86,12 +86,28 @@ class GaelOProcessingService
         return $downloadedFilePath;
     }
 
-    public function createRtssFromMask(string $orthancSeriesId, string $maskId): string
+    public function createRtssFromMask(string $orthancSeriesId, string $maskId, ?string $seriesDescription = null, ?string $modelName = null, ?string $ctAnatomyMaskId = null, ?string $ctRegionalMaskId = null): string
     {
         $payload = [
             'maskId' => $maskId,
             'orthancSeriesId' => $orthancSeriesId
         ];
+
+        if ($seriesDescription !== null) {
+            $payload['seriesDescription'] = $seriesDescription;
+        }
+
+        if ($modelName !== null) {
+            $payload['modelName'] = $modelName;
+        }
+
+        if ($ctAnatomyMaskId !== null) {
+            $payload['ctAnatomyMaskId'] = $ctAnatomyMaskId;
+        }
+
+        if ($ctRegionalMaskId !== null) {
+            $payload['ctRegionalMaskId'] = $ctRegionalMaskId;
+        }
 
         $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-to-rtss", $payload);
         return $request->getBody();
@@ -105,12 +121,28 @@ class GaelOProcessingService
         return $downloadedFilePath;
     }
 
-    public function createSegFromMask(string $orthancSeriesId, string $maskId): string
+    public function createSegFromMask(string $orthancSeriesId, string $maskId, ?string $seriesDescription = null, ?string $modelName = null, ?string $ctAnatomyMaskId = null, ?string $ctRegionalMaskId = null): string
     {
         $payload = [
             'maskId' => $maskId,
             'orthancSeriesId' => $orthancSeriesId
         ];
+
+        if ($seriesDescription !== null) {
+            $payload['seriesDescription'] = $seriesDescription;
+        }
+
+        if ($modelName !== null) {
+            $payload['modelName'] = $modelName;
+        }
+
+        if ($ctAnatomyMaskId !== null) {
+            $payload['ctAnatomyMaskId'] = $ctAnatomyMaskId;
+        }
+
+        if ($ctRegionalMaskId !== null) {
+            $payload['ctRegionalMaskId'] = $ctRegionalMaskId;
+        }
 
         $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-to-seg", $payload);
         return $request->getBody();
