@@ -16,6 +16,7 @@
         "directorytree/imapengine-laravel": "^1.1",
         "giggsey/libphonenumber-for-php": "^9.0",
         "guzzlehttp/guzzle": "^7.9",
+        "laravel/fortify": "^1.36",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",

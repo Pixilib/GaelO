@@ -26,6 +26,8 @@ class UserEntity
 
     public ?array $roles;
 
+    public ?string $twoFactorConfirmedAt;
+    
     public static function fillFromDBReponseArray(array $array): UserEntity
     {
         $userEntity  = new UserEntity();
@@ -44,6 +46,7 @@ class UserEntity
         $userEntity->emailVerifiedAt = $array['email_verified_at'];
         $userEntity->lastConnection = $array['last_connection'];
         $userEntity->onboardingVersion = $array['onboarding_version'];
+        $userEntity->twoFactorConfirmedAt = $array['two_factor_confirmed_at'] ?? null;
         return $userEntity;
     }
 

@@ -8,4 +8,6 @@ class LoginResponse
     public ?bool $onboarded = null;
     public int $status;
     public string $statusText;
+    public bool $use2FA;
+    public int $userId;
 }

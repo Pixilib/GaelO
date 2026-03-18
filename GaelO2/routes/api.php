@@ -257,3 +257,13 @@ Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest 
 
 //Magic link route
 Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
+
+
+//Route 2FA
+Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge']);
+
+//Route initialization 2FA
+Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
+    Route::get('user/two-factor-setup', [AuthController::class, 'getSetup2FA']);
+    Route::post('user/two-factor-setup/confirm', [AuthController::class, 'confirmSetup2FA']);
+});

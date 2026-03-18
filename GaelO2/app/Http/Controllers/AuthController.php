@@ -12,10 +12,14 @@ use App\GaelO\UseCases\Login\Login;
 use App\GaelO\UseCases\Login\LoginRequest;
 use App\GaelO\UseCases\Login\LoginResponse;
 use App\GaelO\Util;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Routing\UrlGenerator;
+use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
 class AuthController extends Controller
 {
@@ -29,15 +33,33 @@ class AuthController extends Controller
         $login->execute($loginRequest, $loginResponse);
 
         if ($loginResponse->status === 200) {
+            $userId = $loginResponse->userId;
 
-            $user = User::where('email', strtolower($request->email))->sole();
+            if ($loginResponse->use2FA) {
+                // Temporary Opaque Token. available for 5 minutes
+                $challengeToken = Str::uuid()->toString();
+                Cache::put('2fa_challenge_' . $challengeToken, $userId, now()->addMinutes(5));
 
+                return response()->json([
+                    'onboarded' => $loginResponse->onboarded,
+                    'twoFA' => true,
+                    'challenge_token' => $challengeToken
+                ], 200);
+            }
+
+            // Regular Login
             $tokenResult = $user->createToken('GaelO');
+
+            // Detect if admin and 2FA not set
+            $isAdminWithout2FA = $user->administrator
+                && (empty($user->two_factor_secret) || empty($user->two_factor_confirmed_at));
+
             return response()->json([
                 'id' => $user->id,
                 'onboarded' => $loginResponse->onboarded,
                 'access_token' => $tokenResult->plainTextToken,
-                'token_type' => 'Bearer'
+                'token_type' => 'Bearer',
+                'needs2FA' => $isAdminWithout2FA
             ], 200);
         } else {
             return $this->getJsonResponse($loginResponse->body, $loginResponse->status, $loginResponse->statusText);
@@ -48,6 +70,122 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json();
+    }
+
+    public function twoFactorChallenge(
+        Request $request,
+        TwoFactorAuthenticationProvider $provider
+    ): JsonResponse {
+
+        $challengeToken = $request->input('challenge_token');
+
+        if (!$challengeToken) {
+            return response()->json(['message' => 'Session expirée.'], 422);
+        }
+
+        // pull = get + delete in one operaion (single use)
+        $userId = Cache::pull('2fa_challenge_' . $challengeToken);
+
+        if (!$userId) {
+            return response()->json(['message' => 'Session expirée ou déjà utilisée.'], 422);
+        }
+
+        $user = User::findOrFail($userId);
+
+        $code = $request->input('code');
+        $recoveryCode = $request->input('recovery_code');
+
+        $valid = false;
+
+        if ($recoveryCode) {
+            $codes = json_decode(decrypt($user->two_factor_recovery_codes), true);
+            $index = array_search($recoveryCode, $codes);
+
+            if ($index !== false) {
+                array_splice($codes, $index, 1);
+                $user->forceFill([
+                    'two_factor_recovery_codes' => encrypt(json_encode($codes))
+                ])->save();
+                $valid = true;
+            }
+
+        } elseif ($code) {
+            $valid = $provider->verify(
+                decrypt($user->two_factor_secret),
+                $code
+            );
+        }
+
+        if (!$valid) {
+            return response()->json([
+                'errors' => ['code' => ['Code invalide.']]
+            ], 422);
+        }
+
+        $tokenResult = $user->createToken('GaelO');
+
+        return response()->json([
+            'id' => $user->id,
+            'access_token' => $tokenResult->plainTextToken,
+            'token_type' => 'Bearer'
+        ], 200);
+    }
+
+    /**
+     * Generate 2FA secret + QR code SVG for the authenticated user.
+     * Route protected by auth:sanctum — the Bearer token from login
+     * is sent explicitly by the front before being stored in Redux.
+     * Must be in the auth:sanctum group but NOT in the onboarded group
+     * (admin may not be onboarded yet when setting up 2FA).
+     */
+    public function getSetup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
+    {
+        $user = $request->user();
+
+        // Generate secret if not already set
+        if (empty($user->two_factor_secret)) {
+            $user->forceFill([
+                'two_factor_secret' => encrypt($provider->generateSecretKey()),
+                'two_factor_recovery_codes' => encrypt(json_encode(
+                    collect(range(1, 8))->map(fn() => Str::random(10) . '-' . Str::random(10))->all()
+                ))
+            ])->save();
+        }
+
+        $appName    = urlencode(config('app.name'));
+        $email      = urlencode($user->email);
+        $secret     = decrypt($user->two_factor_secret);
+        $otpauthUrl = "otpauth://totp/{$appName}:{$email}?secret={$secret}&issuer={$appName}";
+
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(192),
+            new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+        );
+        $svg = (new \BaconQrCode\Writer($renderer))->writeString($otpauthUrl);
+
+        return response()->json(['svg' => $svg]);
+    }
+
+    /**
+     * Confirm 2FA setup by verifying the TOTP code for the authenticated user.
+     */
+    public function confirmSetup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
+    {
+        $user = $request->user();
+
+        if (empty($user->two_factor_secret)) {
+            return response()->json(['message' => '2FA non initialisée.'], 422);
+        }
+
+        $valid = $provider->verify(decrypt($user->two_factor_secret), $request->input('code'));
+
+        if (!$valid) {
+            return response()->json(['errors' => ['code' => ['Code invalide.']]], 422);
+        }
+
+        $user->forceFill(['two_factor_confirmed_at' => now()])->save();
+
+        return response()->json(['message' => '2FA activée.']);
     }
 
     public function getMagicLink(Request $request, UrlGenerator $urlGenerator)
@@ -88,5 +226,16 @@ class AuthController extends Controller
         $getSystemRequest->currentUserId = $currentUser['id'];
         $getSystem->execute($getSystemRequest, $getSystemResponse);
         return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
+    }
+
+    public function confirm(Request $request)
+    {
+        $confirmed = $request->user()->confirmTwoFactorAuth($request->code);
+
+        if (!$confirmed) {
+            return response()->json(['errors' => ['code' => ['Invalid Two Factor Authentication code.']]], 422);
+        }
+
+        return response()->json();
     }
 }

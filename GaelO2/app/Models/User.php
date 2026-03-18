@@ -13,10 +13,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
 {
-    use Notifiable, SoftDeletes, HasApiTokens, HasFactory, PasswordsCanResetPassword;
+    use Notifiable, SoftDeletes, HasApiTokens, HasFactory, PasswordsCanResetPassword, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
