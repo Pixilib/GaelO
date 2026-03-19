@@ -45,12 +45,12 @@ class MaskProcessingService
         if ($type === ProcessingMaskEnum::NIFTI) {
             $exportFile = $this->gaelOProcessingService->getMaskDicomOrientation($this->maskId, $orientation, true);
         } else if ($type === ProcessingMaskEnum::RTSS) {
-            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->petSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
+            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->dicomSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getRtss($rtssId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("rtss", $rtssId);
         } else if ($type === ProcessingMaskEnum::SEG) {
-            $segId = $this->gaelOProcessingService->createSegFromMask($this->petSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
+            $segId = $this->gaelOProcessingService->createSegFromMask($this->dicomSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getSeg($segId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("seg", $segId);
