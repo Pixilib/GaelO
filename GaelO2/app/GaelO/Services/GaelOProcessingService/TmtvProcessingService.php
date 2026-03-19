@@ -74,7 +74,7 @@ class TmtvProcessingService
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
-        $maskProcessingService->setPetId($this->idPT, $this->ptOrthancSeriesId);
+        $maskProcessingService->setSeriesId($this->idPT, $this->ptOrthancSeriesId);
         $this->addCreatedRessource('masks', $maskId);
         return $maskProcessingService;
     }
@@ -113,6 +113,7 @@ class TmtvProcessingService
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
+        $maskProcessingService->setSeriesId($this->idCT, $this->ctOrthancSeriesId);
         $this->addCreatedRessource('masks', $maskId);
         return $maskProcessingService;
     }
