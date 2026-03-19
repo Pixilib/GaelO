@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.83298056571099" branch-rate="0" lines-covered="8658" lines-valid="10394" branches-covered="0" branches-valid="0" complexity="2812" version="0.4" timestamp="1773694244">
+<coverage line-rate="0.83170028818444" branch-rate="0" lines-covered="8658" lines-valid="10410" branches-covered="0" branches-valid="0" complexity="2820" version="0.4" timestamp="1773880907">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -7286,9 +7286,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/GaelOProcessingService/GaelOProcessingService.php" line-rate="0" branch-rate="0" complexity="19">
+    <package name="GaelO/Services/GaelOProcessingService/GaelOProcessingService.php" line-rate="0" branch-rate="0" complexity="27">
       <classes>
-        <class name="App\GaelO\Services\GaelOProcessingService\GaelOProcessingService" filename="GaelO/Services/GaelOProcessingService/GaelOProcessingService.php" line-rate="0" branch-rate="0" complexity="19">
+        <class name="App\GaelO\Services\GaelOProcessingService\GaelOProcessingService" filename="GaelO/Services/GaelOProcessingService/GaelOProcessingService.php" line-rate="0" branch-rate="0" complexity="27">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\HttpClientInterface $httpClientInterface, App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface" line-rate="0" branch-rate="0" complexity="1">
               <lines>
@@ -7353,7 +7353,7 @@
                 <line number="86" hits="0"/>
               </lines>
             </method>
-            <method name="createRtssFromMask" signature="string $orthancSeriesId, string $maskId" line-rate="0" branch-rate="0" complexity="1">
+            <method name="createRtssFromMask" signature="string $orthancSeriesId, string $maskId, ?string $seriesDescription, ?string $modelName, ?string $ctAnatomyMaskId, ?string $ctRegionalMaskId" line-rate="0" branch-rate="0" complexity="5">
               <lines>
                 <line number="91" hits="0"/>
                 <line number="92" hits="0"/>
@@ -7361,81 +7361,97 @@
                 <line number="94" hits="0"/>
                 <line number="96" hits="0"/>
                 <line number="97" hits="0"/>
+                <line number="100" hits="0"/>
+                <line number="101" hits="0"/>
+                <line number="104" hits="0"/>
+                <line number="105" hits="0"/>
+                <line number="108" hits="0"/>
+                <line number="109" hits="0"/>
+                <line number="112" hits="0"/>
+                <line number="113" hits="0"/>
               </lines>
             </method>
             <method name="getRtss" signature="string $rtssId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="102" hits="0"/>
-                <line number="104" hits="0"/>
-                <line number="105" hits="0"/>
+                <line number="118" hits="0"/>
+                <line number="120" hits="0"/>
+                <line number="121" hits="0"/>
               </lines>
             </method>
-            <method name="createSegFromMask" signature="string $orthancSeriesId, string $maskId" line-rate="0" branch-rate="0" complexity="1">
+            <method name="createSegFromMask" signature="string $orthancSeriesId, string $maskId, ?string $seriesDescription, ?string $modelName, ?string $ctAnatomyMaskId, ?string $ctRegionalMaskId" line-rate="0" branch-rate="0" complexity="5">
               <lines>
-                <line number="110" hits="0"/>
-                <line number="111" hits="0"/>
-                <line number="112" hits="0"/>
-                <line number="113" hits="0"/>
-                <line number="115" hits="0"/>
-                <line number="116" hits="0"/>
+                <line number="126" hits="0"/>
+                <line number="127" hits="0"/>
+                <line number="128" hits="0"/>
+                <line number="129" hits="0"/>
+                <line number="131" hits="0"/>
+                <line number="132" hits="0"/>
+                <line number="135" hits="0"/>
+                <line number="136" hits="0"/>
+                <line number="139" hits="0"/>
+                <line number="140" hits="0"/>
+                <line number="143" hits="0"/>
+                <line number="144" hits="0"/>
+                <line number="147" hits="0"/>
+                <line number="148" hits="0"/>
               </lines>
             </method>
             <method name="getSeg" signature="string $segId" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="121" hits="0"/>
-                <line number="123" hits="0"/>
-                <line number="124" hits="0"/>
+                <line number="153" hits="0"/>
+                <line number="155" hits="0"/>
+                <line number="156" hits="0"/>
               </lines>
             </method>
             <method name="thresholdMask" signature="string $maskId, string $seriesId, string|float $threshold" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="129" hits="0"/>
-                <line number="130" hits="0"/>
-                <line number="131" hits="0"/>
-                <line number="132" hits="0"/>
-                <line number="133" hits="0"/>
-                <line number="134" hits="0"/>
-                <line number="135" hits="0"/>
-              </lines>
-            </method>
-            <method name="fragmentMask" signature="string $seriesId, string $maskId, bool $output3D" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="140" hits="0"/>
-                <line number="141" hits="0"/>
-                <line number="142" hits="0"/>
-                <line number="143" hits="0"/>
-                <line number="144" hits="0"/>
-                <line number="146" hits="0"/>
-                <line number="147" hits="0"/>
-              </lines>
-            </method>
-            <method name="getMaskDicomOrientation" signature="string $maskId, string $orientation, bool $compress" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="152" hits="0"/>
-                <line number="154" hits="0"/>
-                <line number="155" hits="0"/>
-                <line number="156" hits="0"/>
-                <line number="157" hits="0"/>
-                <line number="158" hits="0"/>
-                <line number="160" hits="0"/>
                 <line number="161" hits="0"/>
-              </lines>
-            </method>
-            <method name="getStatsMask" signature="string $maskId" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
+                <line number="162" hits="0"/>
+                <line number="163" hits="0"/>
+                <line number="164" hits="0"/>
+                <line number="165" hits="0"/>
                 <line number="166" hits="0"/>
                 <line number="167" hits="0"/>
               </lines>
             </method>
-            <method name="getStatsMaskSeries" signature="string $maskId, string $seriesId" line-rate="0" branch-rate="0" complexity="1">
+            <method name="fragmentMask" signature="string $seriesId, string $maskId, bool $output3D" line-rate="0" branch-rate="0" complexity="1">
               <lines>
                 <line number="172" hits="0"/>
                 <line number="173" hits="0"/>
+                <line number="174" hits="0"/>
+                <line number="175" hits="0"/>
+                <line number="176" hits="0"/>
+                <line number="178" hits="0"/>
+                <line number="179" hits="0"/>
+              </lines>
+            </method>
+            <method name="getMaskDicomOrientation" signature="string $maskId, string $orientation, bool $compress" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="184" hits="0"/>
+                <line number="186" hits="0"/>
+                <line number="187" hits="0"/>
+                <line number="188" hits="0"/>
+                <line number="189" hits="0"/>
+                <line number="190" hits="0"/>
+                <line number="192" hits="0"/>
+                <line number="193" hits="0"/>
+              </lines>
+            </method>
+            <method name="getStatsMask" signature="string $maskId" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="198" hits="0"/>
+                <line number="199" hits="0"/>
+              </lines>
+            </method>
+            <method name="getStatsMaskSeries" signature="string $maskId, string $seriesId" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="204" hits="0"/>
+                <line number="205" hits="0"/>
               </lines>
             </method>
             <method name="deleteRessource" signature="string $type, string $id" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="178" hits="0"/>
+                <line number="210" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -7473,45 +7489,61 @@
             <line number="94" hits="0"/>
             <line number="96" hits="0"/>
             <line number="97" hits="0"/>
-            <line number="102" hits="0"/>
+            <line number="100" hits="0"/>
+            <line number="101" hits="0"/>
             <line number="104" hits="0"/>
             <line number="105" hits="0"/>
-            <line number="110" hits="0"/>
-            <line number="111" hits="0"/>
+            <line number="108" hits="0"/>
+            <line number="109" hits="0"/>
             <line number="112" hits="0"/>
             <line number="113" hits="0"/>
-            <line number="115" hits="0"/>
-            <line number="116" hits="0"/>
+            <line number="118" hits="0"/>
+            <line number="120" hits="0"/>
             <line number="121" hits="0"/>
-            <line number="123" hits="0"/>
-            <line number="124" hits="0"/>
+            <line number="126" hits="0"/>
+            <line number="127" hits="0"/>
+            <line number="128" hits="0"/>
             <line number="129" hits="0"/>
-            <line number="130" hits="0"/>
             <line number="131" hits="0"/>
             <line number="132" hits="0"/>
-            <line number="133" hits="0"/>
-            <line number="134" hits="0"/>
             <line number="135" hits="0"/>
+            <line number="136" hits="0"/>
+            <line number="139" hits="0"/>
             <line number="140" hits="0"/>
-            <line number="141" hits="0"/>
-            <line number="142" hits="0"/>
             <line number="143" hits="0"/>
             <line number="144" hits="0"/>
-            <line number="146" hits="0"/>
             <line number="147" hits="0"/>
-            <line number="152" hits="0"/>
-            <line number="154" hits="0"/>
+            <line number="148" hits="0"/>
+            <line number="153" hits="0"/>
             <line number="155" hits="0"/>
             <line number="156" hits="0"/>
-            <line number="157" hits="0"/>
-            <line number="158" hits="0"/>
-            <line number="160" hits="0"/>
             <line number="161" hits="0"/>
+            <line number="162" hits="0"/>
+            <line number="163" hits="0"/>
+            <line number="164" hits="0"/>
+            <line number="165" hits="0"/>
             <line number="166" hits="0"/>
             <line number="167" hits="0"/>
             <line number="172" hits="0"/>
             <line number="173" hits="0"/>
+            <line number="174" hits="0"/>
+            <line number="175" hits="0"/>
+            <line number="176" hits="0"/>
             <line number="178" hits="0"/>
+            <line number="179" hits="0"/>
+            <line number="184" hits="0"/>
+            <line number="186" hits="0"/>
+            <line number="187" hits="0"/>
+            <line number="188" hits="0"/>
+            <line number="189" hits="0"/>
+            <line number="190" hits="0"/>
+            <line number="192" hits="0"/>
+            <line number="193" hits="0"/>
+            <line number="198" hits="0"/>
+            <line number="199" hits="0"/>
+            <line number="204" hits="0"/>
+            <line number="205" hits="0"/>
+            <line number="210" hits="0"/>
           </lines>
         </class>
       </classes>
