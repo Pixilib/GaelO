@@ -59,7 +59,6 @@ class Login
 
                 $loginResponse->onboarded = !(Util::isVersionHigher(FrameworkAdapter::getConfig('onboarding_version'), $user['onboarding_version']));
                 $loginResponse->use2FA = $twoFactorEnabled;
-                
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
                 $loginResponse->userId = $user['id'];

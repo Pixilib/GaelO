@@ -20,6 +20,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Routing\UrlGenerator;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
+use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 
 class AuthController extends Controller
 {
@@ -34,8 +35,9 @@ class AuthController extends Controller
 
         if ($loginResponse->status === 200) {
             $userId = $loginResponse->userId;
+            $use2FA = $loginResponse->use2FA;
 
-            if ($loginResponse->use2FA) {
+            if ($use2FA) {
                 // Temporary Opaque Token. available for 5 minutes
                 $challengeToken = Str::uuid()->toString();
                 Cache::put('2fa_challenge_' . $challengeToken, $userId, now()->addMinutes(5));
@@ -47,21 +49,27 @@ class AuthController extends Controller
                 ], 200);
             }
 
+
             // Regular Login
             $user = User::where('email', strtolower($request->email))->sole();
-            $tokenResult = $user->createToken('GaelO');
+            $isAdmin = $user->administrator;
 
-            // Detect if admin and 2FA not set
-            $isAdminWithout2FA = $user->administrator
-                && (empty($user->two_factor_secret) || empty($user->two_factor_confirmed_at));
+            if ($isAdmin && !$use2FA) {
+                return response()->json([
+                    'id' => $user->id,
+                    'needs2FA' => true
+                ]);
+            }
+
+            $tokenResult = $user->createToken('GaelO');
 
             return response()->json([
                 'id' => $user->id,
                 'onboarded' => $loginResponse->onboarded,
                 'access_token' => $tokenResult->plainTextToken,
-                'token_type' => 'Bearer',
-                'needs2FA' => $isAdminWithout2FA
+                'token_type' => 'Bearer'
             ], 200);
+
         } else {
             return $this->getJsonResponse($loginResponse->body, $loginResponse->status, $loginResponse->statusText);
         }
@@ -153,9 +161,9 @@ class AuthController extends Controller
             ])->save();
         }
 
-        $appName    = urlencode(config('app.name'));
-        $email      = urlencode($user->email);
-        $secret     = decrypt($user->two_factor_secret);
+        $appName = urlencode(config('app.name'));
+        $email = urlencode($user->email);
+        $secret = decrypt($user->two_factor_secret);
         $otpauthUrl = "otpauth://totp/{$appName}:{$email}?secret={$secret}&issuer={$appName}";
 
         $renderer = new \BaconQrCode\Renderer\ImageRenderer(
@@ -175,18 +183,41 @@ class AuthController extends Controller
         $user = $request->user();
 
         if (empty($user->two_factor_secret)) {
-            return response()->json(['message' => '2FA non initialisée.'], 422);
+            return response()->json(['message' => '2FA not initialized'], 422);
         }
 
         $valid = $provider->verify(decrypt($user->two_factor_secret), $request->input('code'));
 
         if (!$valid) {
-            return response()->json(['errors' => ['code' => ['Code invalide.']]], 422);
+            return response()->json(['errors' => ['code' => ['invalid code']]], 422);
         }
 
         $user->forceFill(['two_factor_confirmed_at' => now()])->save();
 
-        return response()->json(['message' => '2FA activée.']);
+        return response()->json(['message' => '2FA activated']);
+    }
+
+
+    public function generateRecoveryCodes2FA(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        if (empty($user->two_factor_secret) || empty($user->two_factor_confirmed_at)) {
+            return response()->json(['message' => '2FA Not activated'], 422);
+        }
+
+        // Decrypt to return the code on the front side
+        $codes = $user->recoveryCodes();
+        foreach ($codes as $code) {
+            $user->replaceRecoveryCode($code);
+        }
+
+        $updatedCodes = $user->recoveryCodes();
+        return response()->json(['recoveryCodes' => $updatedCodes]);
     }
 
     public function getMagicLink(Request $request, UrlGenerator $urlGenerator)

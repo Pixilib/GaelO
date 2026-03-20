@@ -266,4 +266,5 @@ Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge
 Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
     Route::get('user/two-factor-setup', [AuthController::class, 'getSetup2FA']);
     Route::post('user/two-factor-setup/confirm', [AuthController::class, 'confirmSetup2FA']);
+    Route::post('user/generate-recovery-codes', [AuthController::class, 'generateRecoveryCodes2FA']);
 });
