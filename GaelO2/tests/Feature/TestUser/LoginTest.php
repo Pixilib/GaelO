@@ -140,7 +140,12 @@ class LoginTest extends TestCase
         User::where('email', 'administrator@gaelo.fr')
             ->update([
                 'two_factor_secret' => encrypt('BASE32SECRETKEY'),
-                'two_factor_confirmed_at' => now()
+                'two_factor_confirmed_at' => now(),
+                'two_factor_recovery_codes' => encrypt(json_encode(
+                    collect(range(1, 8))
+                        ->map(fn() => \Illuminate\Support\Str::random(10) . '-' . \Illuminate\Support\Str::random(10))
+                        ->all()
+                ))
             ]);
 
 
