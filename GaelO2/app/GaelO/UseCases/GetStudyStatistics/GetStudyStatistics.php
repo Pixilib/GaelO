@@ -26,9 +26,16 @@ class GetStudyStatistics
         try {
             $this->checkAuthorization($getStudyStatisticsRequest->currentUserId);
 
-            $studyStatistics = $this->studyRepositoryInterface->getStudyStatistics($getStudyStatisticsRequest->studyName);
+            $studyStatistics = $this->studyRepositoryInterface->getStudyStatistics($getStudyStatisticsRequest->studyName, $getStudyStatisticsRequest->withTrashed);
 
-            $getStudyStatisticsResponse->body = $studyStatistics;
+            $getStudyStatisticsResponse->body = [
+                'patientsCount' => $studyStatistics['patients_count'],
+                'visitsCount' => $studyStatistics['visits_count'],
+                'dicomStudiesCount' => $studyStatistics['dicom_studies_count'],
+                'dicomSeriesCount' => $studyStatistics['dicom_series_count'],
+                'dicomInstancesCount' => $studyStatistics['dicom_instances_count'],
+                'dicomDiskSizeBytes' => $studyStatistics['dicom_disk_size']
+            ];
             $getStudyStatisticsResponse->status = 200;
             $getStudyStatisticsResponse->statusText = 'OK';
         } catch (AbstractGaelOException $e) {

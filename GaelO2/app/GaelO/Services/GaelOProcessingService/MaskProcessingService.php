@@ -10,8 +10,8 @@ class MaskProcessingService
 {
 
     private string $maskId;
-    private string $petId;
-    private string $petSeriesOrthancId;
+    private string $seriesImageId;
+    private string $dicomSeriesOrthancId;
     private GaelOProcessingService $gaelOProcessingService;
     private OrthancService $orthancService;
 
@@ -34,23 +34,23 @@ class MaskProcessingService
         return $this->maskId;
     }
 
-    public function setPetId(string $petId, string $petSeriesOrthancId)
+    public function setSeriesId(string $seriesImageId, string $dicomSeriesOrthancId)
     {
-        $this->petId = $petId;
-        $this->petSeriesOrthancId = $petSeriesOrthancId;
+        $this->seriesImageId = $seriesImageId;
+        $this->dicomSeriesOrthancId = $dicomSeriesOrthancId;
     }
 
-    public function getMaskAs(ProcessingMaskEnum $type, ?string $orientation = null) : string
+    public function getMaskAs(ProcessingMaskEnum $type, ?string $orientation = null, ?string $seriesDescription = null, ?string $modelName = null, ?string $ctAnatomyMaskId = null, ?string $ctRegionalMaskId = null) : string
     {
         if ($type === ProcessingMaskEnum::NIFTI) {
             $exportFile = $this->gaelOProcessingService->getMaskDicomOrientation($this->maskId, $orientation, true);
         } else if ($type === ProcessingMaskEnum::RTSS) {
-            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->petSeriesOrthancId, $this->maskId);
+            $rtssId = $this->gaelOProcessingService->createRtssFromMask($this->dicomSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getRtss($rtssId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("rtss", $rtssId);
         } else if ($type === ProcessingMaskEnum::SEG) {
-            $segId = $this->gaelOProcessingService->createSegFromMask($this->petSeriesOrthancId, $this->maskId);
+            $segId = $this->gaelOProcessingService->createSegFromMask($this->dicomSeriesOrthancId, $this->maskId, $seriesDescription, $modelName, $ctAnatomyMaskId, $ctRegionalMaskId);
             $exportFile = $this->gaelOProcessingService->getSeg($segId);
             //remove downloaded data from processing
             $this->gaelOProcessingService->deleteRessource("seg", $segId);
@@ -61,31 +61,31 @@ class MaskProcessingService
 
     public function getStatsOfMask(): array
     {
-        return $this->gaelOProcessingService->getStatsMaskSeries($this->maskId, $this->petId);
+        return $this->gaelOProcessingService->getStatsMaskSeries($this->maskId, $this->seriesImageId);
     }
 
     public function fragmentMask(): MaskProcessingService
     {
-        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->petId, $this->maskId, true);
+        $fragmentedMaskId = $this->gaelOProcessingService->fragmentMask($this->seriesImageId, $this->maskId, true);
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($fragmentedMaskId);
-        $maskProcessingService->setPetId($this->petId, $this->petSeriesOrthancId);
+        $maskProcessingService->setSeriesId($this->seriesImageId, $this->dicomSeriesOrthancId);
         return $maskProcessingService;
     }
 
     public function thresholdMaskTo41(): MaskProcessingService
     {
-        $threshold41MaskId = $this->gaelOProcessingService->thresholdMask($this->maskId, $this->petId, "41%");
+        $threshold41MaskId = $this->gaelOProcessingService->thresholdMask($this->maskId, $this->seriesImageId, "41%");
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($threshold41MaskId);
-        $maskProcessingService->setPetId($this->petId, $this->petSeriesOrthancId);
+        $maskProcessingService->setSeriesId($this->seriesImageId, $this->dicomSeriesOrthancId);
         return $maskProcessingService;
     }
 
     public function createTepMaskMip(): string
     {
         $mipFragmentedPayload = ['maskId' => $this->maskId, 'delay' => 0.3, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
-        $mipMask = $this->gaelOProcessingService->createMIPForSeries($this->petId, $mipFragmentedPayload);
+        $mipMask = $this->gaelOProcessingService->createMIPForSeries($this->seriesImageId, $mipFragmentedPayload);
         return $mipMask;
     }
 }

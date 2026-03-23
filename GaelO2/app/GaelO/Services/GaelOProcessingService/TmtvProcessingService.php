@@ -11,15 +11,18 @@ use Exception;
 
 class TmtvProcessingService
 {
-    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private OrthancService $orthancService;
-    private GaelOProcessingService $gaelOProcessingService;
-    private string $ptOrthancSeriesId;
-    private string $ctOrthancSeriesId;
-    private string $ptSeriesUid;
-    private string $ctSeriesUid;
-    private ?string $version = null;
-    private array $createdFiles = [];
+    protected string $modelName = 'pt_seg_attentionunet_fdg';
+    protected DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    protected OrthancService $orthancService;
+    protected GaelOProcessingService $gaelOProcessingService;
+    protected string $ptOrthancSeriesId;
+    protected string $ctOrthancSeriesId;
+    protected string $ptSeriesUid;
+    protected string $ctSeriesUid;
+    protected ?string $version = null;
+    protected array $createdFiles = [];
+    protected ?string $idPT = null;
+    protected ?string $idCT = null;
 
 
     public function __construct(
@@ -33,35 +36,84 @@ class TmtvProcessingService
         $this->orthancService->setOrthancServer(true);
     }
 
-    public function setVersion(string $version){
+    public function setVersion(string $version)
+    {
         $this->version = $version;
+    }
+
+    private function sendPtAndCreateSeriesToProcessing()
+    {
+        $this->orthancService->sendDicomToProcessing($this->ptOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
+        $this->idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
+        $this->addCreatedRessource('series', $this->idPT);
+    }
+
+    private function sendCtAndCreateSeriesToProcessing()
+    {
+        $this->orthancService->sendDicomToProcessing($this->ctOrthancSeriesId, $this->gaelOProcessingService);
+        $this->addCreatedRessource('dicoms', $this->ctOrthancSeriesId);
+        $this->idCT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ctOrthancSeriesId);
+        $this->addCreatedRessource('series', $this->idCT);
     }
 
     public function runInference(): MaskProcessingService
     {
 
-        $this->orthancService->sendDicomToProcessing($this->ptOrthancSeriesId, $this->gaelOProcessingService);
-        $this->addCreatedRessource('dicoms', $this->ptOrthancSeriesId);
-        $this->orthancService->sendDicomToProcessing($this->ctOrthancSeriesId, $this->gaelOProcessingService);
-        $this->addCreatedRessource('dicoms', $this->ctOrthancSeriesId);
-
-        $idPT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ptOrthancSeriesId, true, true);
-        $this->addCreatedRessource('series', $idPT);
-        $idCT = $this->gaelOProcessingService->createSeriesFromOrthanc($this->ctOrthancSeriesId);
-        $this->addCreatedRessource('series', $idCT);
+        if (!$this->idPT) $this->sendPtAndCreateSeriesToProcessing();
+        if (!$this->idCT) $this->sendCtAndCreateSeriesToProcessing();
 
         $inferencePayload = [
-            'idPT' => $idPT,
-            'idCT' => $idCT
+            'idPT' => $this->idPT,
+            'idCT' => $this->idCT
         ];
 
         if ($this->version) $inferencePayload['version'] = $this->version;
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('pt_seg_attentionunet_fdg', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInference($this->modelName, $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
-        $maskProcessingService->setPetId($idPT, $this->ptOrthancSeriesId);
+        $maskProcessingService->setSeriesId($this->idPT, $this->ptOrthancSeriesId);
+        $this->addCreatedRessource('masks', $maskId);
+        return $maskProcessingService;
+    }
+
+    public function runRegionalSegmentationCtInference()
+    {
+        if ($this->idCT == null) {
+            $this->sendCtAndCreateSeriesToProcessing();
+        }
+
+        $inferencePayload = [
+            'idCT' => $this->idCT,
+            'version' => 1
+        ];
+
+        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_regional_swinunetr_ct', $inferencePayload);
+        $maskId = $inferenceResponse['id_mask'];
+        $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
+        $maskProcessingService->setMaskId($maskId);
+        $this->addCreatedRessource('masks', $maskId);
+        return $maskProcessingService;
+    }
+
+    public function runAnatomySegmentationCtInference()
+    {
+        if ($this->idCT == null) {
+            $this->sendCtAndCreateSeriesToProcessing();
+        }
+
+        $inferencePayload = [
+            'idCT' => $this->idCT,
+            'version' => 1
+        ];
+
+        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_anatomy_attentionunet_ct', $inferencePayload);
+        $maskId = $inferenceResponse['id_mask'];
+        $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
+        $maskProcessingService->setMaskId($maskId);
+        $maskProcessingService->setSeriesId($this->idCT, $this->ctOrthancSeriesId);
         $this->addCreatedRessource('masks', $maskId);
         return $maskProcessingService;
     }

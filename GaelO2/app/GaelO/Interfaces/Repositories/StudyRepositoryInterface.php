@@ -25,7 +25,7 @@ interface StudyRepositoryInterface
 
     public function reactivateStudy(string $name): void;
 
-    public function getStudyStatistics(string $name): array;
+    public function getStudyStatistics(string $name, bool $withTrashed): array;
 
     public function isExistingStudyCode(string $code): bool;
 }
