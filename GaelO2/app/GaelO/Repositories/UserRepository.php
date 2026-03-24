@@ -35,7 +35,9 @@ class UserRepository implements UserRepositoryInterface
 
     public function find($id): array
     {
-        return $this->userModel->findOrFail($id)->toArray();
+        return $this->userModel->findOrFail($id)->makeVisible([
+            'two_factor_confirmed_at'
+        ])->toArray();
     }
 
     public function delete($id): void
@@ -143,7 +145,11 @@ class UserRepository implements UserRepositoryInterface
             $user = $this->userModel->where('email', strtolower($email))->sole();
         }
 
-        return $user->toArray();
+        return $user->makeVisible([
+            'two_factor_secret',
+            'two_factor_recovery_codes',
+            'two_factor_confirmed_at'
+        ])->toArray();
     }
 
     public function isExistingEmail(String $email): bool

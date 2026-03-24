@@ -20,7 +20,6 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Routing\UrlGenerator;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 
 class AuthController extends Controller
 {
@@ -44,7 +43,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     'onboarded' => $loginResponse->onboarded,
-                    'twoFA' => true,
+                    'needs2FA' => true,
                     'challenge_token' => $challengeToken
                 ], 200);
             }
@@ -57,7 +56,9 @@ class AuthController extends Controller
             if ($isAdmin && !$use2FA) {
                 return response()->json([
                     'id' => $user->id,
+                    //'onboarded' => $loginResponse->onboarded,
                     'needs2FA' => true
+                    
                 ]);
             }
 
@@ -89,14 +90,14 @@ class AuthController extends Controller
         $challengeToken = $request->input('challenge_token');
 
         if (!$challengeToken) {
-            return response()->json(['message' => 'Session expirée.'], 422);
+            return response()->json(['message' => 'Session expired.'], 422);
         }
 
         // pull = get + delete in one operaion (single use)
         $userId = Cache::pull('2fa_challenge_' . $challengeToken);
 
         if (!$userId) {
-            return response()->json(['message' => 'Session expirée ou déjà utilisée.'], 422);
+            return response()->json(['message' => 'Session expired or already use.'], 422);
         }
 
         $user = User::findOrFail($userId);
@@ -127,7 +128,7 @@ class AuthController extends Controller
 
         if (!$valid) {
             return response()->json([
-                'errors' => ['code' => ['Code invalide.']]
+                'errors' => ['code' => ['invalid code']]
             ], 422);
         }
 
@@ -147,7 +148,7 @@ class AuthController extends Controller
      * Must be in the auth:sanctum group but NOT in the onboarded group
      * (admin may not be onboarded yet when setting up 2FA).
      */
-    public function getSetup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
+    public function setup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
     {
         $user = $request->user();
 
@@ -260,14 +261,5 @@ class AuthController extends Controller
         return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
     }
 
-    public function confirm(Request $request)
-    {
-        $confirmed = $request->user()->confirmTwoFactorAuth($request->code);
-
-        if (!$confirmed) {
-            return response()->json(['errors' => ['code' => ['Invalid Two Factor Authentication code.']]], 422);
-        }
-
-        return response()->json();
-    }
+    
 }

@@ -260,11 +260,11 @@ Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('ma
 
 
 //Route 2FA
-Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge']);
+Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge'])->middleware('throttle:public-apis');
 
 //Route initialization 2FA
 Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
-    Route::get('user/two-factor-setup', [AuthController::class, 'getSetup2FA']);
+    Route::post('user/two-factor-setup', [AuthController::class, 'setup2FA']);
     Route::post('user/two-factor-setup/confirm', [AuthController::class, 'confirmSetup2FA']);
     Route::post('user/generate-recovery-codes', [AuthController::class, 'generateRecoveryCodes2FA']);
 });

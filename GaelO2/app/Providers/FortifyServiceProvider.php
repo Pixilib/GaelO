@@ -15,6 +15,7 @@ class FortifyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Fortify::ignoreRoutes();
         // Pas de vue pour le challenge 2FA — on retourne du JSON
         Fortify::twoFactorChallengeView(function () {
             return response()->json(['message' => 'Unauthorized'], 401);

@@ -74,7 +74,7 @@ class LoginTest extends TestCase
 
         $content = json_decode($response->content(), true);
 
-        $this->assertTrue($content['twoFA']);
+        $this->assertTrue($content['needs2FA']);
         $this->assertArrayHasKey('challenge_token', $content);
 
         $challengeToken = $content['challenge_token'];
@@ -117,7 +117,7 @@ class LoginTest extends TestCase
 
         $content = json_decode($response->content(), true);
 
-        $this->assertTrue($content['twoFA']);
+        $this->assertTrue($content['needs2FA']);
         $this->assertArrayHasKey('challenge_token', $content);
 
         $challengeToken = $content['challenge_token'];
