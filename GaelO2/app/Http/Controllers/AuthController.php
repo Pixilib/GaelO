@@ -93,11 +93,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Session expired.'], 422);
         }
 
-        // pull = get + delete in one operaion (single use)
+        // pull = get + delete in one operation (single use)
         $userId = Cache::pull('2fa_challenge_' . $challengeToken);
 
         if (!$userId) {
-            return response()->json(['message' => 'Session expired or already use.'], 422);
+            return response()->json(['message' => 'Session expired or already used.'], 422);
         }
 
         $user = User::findOrFail($userId);
