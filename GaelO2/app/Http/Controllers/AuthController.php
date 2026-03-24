@@ -50,7 +50,7 @@ class AuthController extends Controller
 
 
             // Regular Login
-            $user = User::where('email', strtolower($request->email))->sole();
+            $user = User::findOrFail($userId);
             $isAdmin = $user->administrator;
 
             if ($isAdmin && !$use2FA) {
