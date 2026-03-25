@@ -223,6 +223,15 @@ class AuthController extends Controller
             return response()->json(['message' => '2FA Not activated'], 422);
         }
 
+        $codes = [];
+        for ($i = 0; $i < 8; $i++) {
+            $codes[] = Str::random(10) . '-' . Str::random(10);
+        }
+
+        $user->forceFill([
+            'two_factor_recovery_codes' => encrypt(json_encode($codes))
+        ])->save();
+
         // Decrypt to return the code on the front side
         $codes = $user->recoveryCodes();
         foreach ($codes as $code) {
