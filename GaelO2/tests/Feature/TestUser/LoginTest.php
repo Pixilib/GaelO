@@ -46,18 +46,6 @@ class LoginTest extends TestCase
         $this->assertEquals($content['onboarded'], true);
     }
 
-    public function testLoginAdministratorShallAsk2Fa()
-    {
-        $data = [
-            'email' => 'administrator@gaelo.fr',
-            'password' => 'administrator'
-        ];
-        $response = $this->json('POST', '/api/login', $data)->assertSuccessful();
-        $content = json_decode($response->content(), true);
-        $this->assertEquals($content['needs2FA'], true);
-        $this->assertArrayNotHasKey('access_token', $content);
-    }
-
     public function testLoginAdministratorWith2FA()
     {
         //Ajout pour simuler une connexion normal
@@ -179,6 +167,90 @@ class LoginTest extends TestCase
         $this->assertArrayHasKey('recoveryCodes', $content);
         $this->assertCount(8, $content['recoveryCodes']);
 
+    }
+
+    public function testRecoveryCodeIsConsumedAfterUse()
+    {
+        $recoveryCodes = ['aaaaaaaaaa-bbbbbbbbbb', 'cccccccccc-dddddddddd'];
+ 
+        User::where('email', 'administrator@gaelo.fr')
+            ->update([
+                'two_factor_secret' => encrypt('BASE32SECRETKEY'),
+                'two_factor_confirmed_at' => now(),
+                'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes))
+            ]);
+ 
+        // Login → challenge_token
+        $response = $this->json('POST', '/api/login', [
+            'email' => 'administrator@gaelo.fr',
+            'password' => 'administrator'
+        ]);
+        $content = json_decode($response->content(), true);
+        $this->assertTrue($content['needs2FA']);
+        $challengeToken = $content['challenge_token'];
+ 
+        // Use of the first recovery code
+        $response = $this->json('POST', '/api/two-factor-challenge', [
+            'challenge_token' => $challengeToken,
+            'recovery_code' => 'aaaaaaaaaa-bbbbbbbbbb'
+        ]);
+        $response->assertStatus(200);
+        $content = json_decode($response->content(), true);
+        $this->assertArrayHasKey('access_token', $content);
+
+        $user = User::where('email', 'administrator@gaelo.fr')->first();
+        $remainingCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
+ 
+        $this->assertCount(1, $remainingCodes);
+        $this->assertNotContains('aaaaaaaaaa-bbbbbbbbbb', $remainingCodes);
+        $this->assertContains('cccccccccc-dddddddddd', $remainingCodes);
+    }
+
+    public function testSetup2FA()
+    {
+        // User initialization
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->administrator = false;
+        $adminDefaultUser->onboarding_version = Config::get('app.onboarding_version');
+        $adminDefaultUser->save();
+
+        $bearerToken = $adminDefaultUser->createToken('GaelO')->plainTextToken;
+
+        // Mock 2FA provider 
+        $this->mock(TwoFactorAuthenticationProvider::class, function ($mock) {
+            $mock->shouldReceive('generateSecretKey')->once()->andReturn('BASE32SECRETKEY');
+            $mock->shouldReceive('verify')->once()->andReturn(true);
+        });
+
+        // Initialization
+        $response = $this->json('POST', '/api/user/two-factor-setup', [], [
+            'Authorization' => 'Bearer ' . $bearerToken
+        ]);
+
+        $response->assertStatus(200);
+
+        $content = $response->json();
+        $this->assertArrayHasKey('svg', $content);
+        $this->assertNotEmpty($content['svg']);
+
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNotEmpty($user->two_factor_secret);
+        $this->assertNull($user->two_factor_confirmed_at);
+
+        // Confirmation
+        $response = $this->json('POST', '/api/user/two-factor-setup/confirm', [
+            'code' => '123456'
+        ], [
+            'Authorization' => 'Bearer ' . $bearerToken
+        ]);
+
+        $response->assertStatus(200);
+
+        $content = $response->json();
+        $this->assertEquals('2FA activated', $content['message']);
+
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNotNull($user->two_factor_confirmed_at);
     }
 
     public function testLoginShouldPassInsensitive()

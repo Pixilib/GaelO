@@ -51,16 +51,6 @@ class AuthController extends Controller
 
             // Regular Login
             $user = User::findOrFail($userId);
-            $isAdmin = $user->administrator;
-
-            if ($isAdmin && !$use2FA) {
-                return response()->json([
-                    'id' => $user->id,
-                    //'onboarded' => $loginResponse->onboarded,
-                    'needs2FA' => true
-                    
-                ]);
-            }
 
             $tokenResult = $user->createToken('GaelO');
 
@@ -93,8 +83,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Session expired.'], 422);
         }
 
-        // pull = get + delete in one operation (single use)
-        $userId = Cache::pull('2fa_challenge_' . $challengeToken);
+        $userId = Cache::get('2fa_challenge_' . $challengeToken);
 
         if (!$userId) {
             return response()->json(['message' => 'Session expired or already used.'], 422);
@@ -108,7 +97,25 @@ class AuthController extends Controller
         $valid = false;
 
         if ($recoveryCode) {
-            $codes = json_decode(decrypt($user->two_factor_recovery_codes), true);
+            if (empty($user->two_factor_recovery_codes)) {
+                return response()->json([
+                    'errors' => ['recovery_code' => ['No recovery codes available']]
+                ], 422);
+            }
+
+            try {
+                $decrypted = decrypt($user->two_factor_recovery_codes);
+                $codes = json_decode($decrypted, true);
+
+                if (!is_array($codes)) {
+                    throw new \Exception();
+                }
+
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'errors' => ['recovery_code' => ['Invalid recovery codes']]
+                ], 422);
+            }
             $index = array_search($recoveryCode, $codes);
 
             if ($index !== false) {
@@ -120,10 +127,15 @@ class AuthController extends Controller
             }
 
         } elseif ($code) {
-            $valid = $provider->verify(
-                decrypt($user->two_factor_secret),
-                $code
-            );
+            try {
+                $secret = decrypt($user->two_factor_secret);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'errors' => ['code' => ['Invalid 2FA configuration']]
+                ], 422);
+            }
+
+            $valid = $provider->verify($secret, $code);
         }
 
         if (!$valid) {
@@ -133,7 +145,7 @@ class AuthController extends Controller
         }
 
         $tokenResult = $user->createToken('GaelO');
-
+        Cache::forget('2fa_challenge_' . $challengeToken);
         return response()->json([
             'id' => $user->id,
             'access_token' => $tokenResult->plainTextToken,
