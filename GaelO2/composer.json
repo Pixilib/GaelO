@@ -17,9 +17,9 @@
         "giggsey/libphonenumber-for-php": "^9.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/fortify": "^1.36",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10",
+        "laravel/tinker": "^3.0",
         "league/flysystem-ftp": "^3.29",
         "league/flysystem-sftp-v3": "^3.0",
         "league/mime-type-detection": "^1.16",
@@ -36,7 +36,7 @@
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^11.0",
+        "phpunit/phpunit": "^12.0",
         "spatie/laravel-ignition": "^2.9"
     },
     "config": {
