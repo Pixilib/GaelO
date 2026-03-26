@@ -1,0 +1,8 @@
+{
+    "ubuntu": {
+        "300": "\/var\/www\/storage\/fonts\/ubuntu_300_c45603aff308508f7844bb0eb50312a5",
+        "normal": "\/var\/www\/storage\/fonts\/ubuntu_normal_586fc05279d08db69a17eeb5f9ccbb6d",
+        "500": "\/var\/www\/storage\/fonts\/ubuntu_500_59133bb6d75a9ff112a46f540911904c",
+        "bold": "ubuntu_bold_c41075d7a21980b166df8847c9303a6e"
+    }
+}
