@@ -26,7 +26,7 @@
         "maennchen/zipstream-php": "^3.1",
         "phpoffice/phpspreadsheet": "^5.0",
         "sentry/sentry-laravel": "^4.13",
-        "spatie/db-dumper": "^3.8",
+        "spatie/db-dumper": "^4.0",
         "staudenmeir/eloquent-has-many-deep": "^1.21"
     },
     "require-dev": {
