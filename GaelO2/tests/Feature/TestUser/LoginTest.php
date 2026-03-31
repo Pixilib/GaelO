@@ -48,13 +48,13 @@ class LoginTest extends TestCase
 
     public function testLoginAdministratorWith2FA()
     {
-        //Ajout pour simuler une connexion normal
+
         User::where('email', 'administrator@gaelo.fr')
             ->update([
                 'two_factor_secret' => encrypt('BASE32SECRETKEY'),
                 'two_factor_confirmed_at' => now()
             ]);
-        // Login doit retourner twoFA=true et challenge_token
+        // Login must return twoFA=true and challenge_token
         $response = $this->json('POST', '/api/login', [
             'email' => 'administrator@gaelo.fr',
             'password' => 'administrator'
@@ -67,16 +67,16 @@ class LoginTest extends TestCase
 
         $challengeToken = $content['challenge_token'];
 
-        // Mocker TwoFactorAuthenticationProvider
-        // pour simuler un code TOTP valide sans vrai secret
+        // Mocke TwoFactorAuthenticationProvider
+        // to simulate TOTP code validation without secret
         $this->mock(TwoFactorAuthenticationProvider::class, function ($mock) {
             $mock->shouldReceive('verify')->once()->andReturn(true);
         });
 
-        // Challenge 2FA avec le challenge_token récupéré
+        // Challenge 2FA 
         $response = $this->json('POST', '/api/two-factor-challenge', [
             'challenge_token' => $challengeToken,
-            'code' => '000000' // pas important car le provider est mocké
+            'code' => '000000' // not important because the provider is mocke
         ]);
 
         $content = json_decode($response->content(), true);
@@ -144,6 +144,7 @@ class LoginTest extends TestCase
 
         $content = json_decode($response->content(), true);
         $challengeToken = $content['challenge_token'];
+        $id = $content['id'];
 
 
         $this->mock(TwoFactorAuthenticationProvider::class, function ($mock) {
@@ -160,7 +161,7 @@ class LoginTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $bearerToken
-        ])->json('POST', '/api/user/generate-recovery-codes');
+        ])->json('POST', '/api/users/' . $id . '/recovery-codes');
 
         $content = json_decode($response->content(), true);
 
@@ -172,14 +173,14 @@ class LoginTest extends TestCase
     public function testRecoveryCodeIsConsumedAfterUse()
     {
         $recoveryCodes = ['aaaaaaaaaa-bbbbbbbbbb', 'cccccccccc-dddddddddd'];
- 
+
         User::where('email', 'administrator@gaelo.fr')
             ->update([
                 'two_factor_secret' => encrypt('BASE32SECRETKEY'),
                 'two_factor_confirmed_at' => now(),
                 'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes))
             ]);
- 
+
         // Login → challenge_token
         $response = $this->json('POST', '/api/login', [
             'email' => 'administrator@gaelo.fr',
@@ -188,7 +189,7 @@ class LoginTest extends TestCase
         $content = json_decode($response->content(), true);
         $this->assertTrue($content['needs2FA']);
         $challengeToken = $content['challenge_token'];
- 
+
         // Use of the first recovery code
         $response = $this->json('POST', '/api/two-factor-challenge', [
             'challenge_token' => $challengeToken,
@@ -200,7 +201,7 @@ class LoginTest extends TestCase
 
         $user = User::where('email', 'administrator@gaelo.fr')->first();
         $remainingCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
- 
+
         $this->assertCount(1, $remainingCodes);
         $this->assertNotContains('aaaaaaaaaa-bbbbbbbbbb', $remainingCodes);
         $this->assertContains('cccccccccc-dddddddddd', $remainingCodes);
@@ -223,7 +224,7 @@ class LoginTest extends TestCase
         });
 
         // Initialization
-        $response = $this->json('POST', '/api/user/two-factor-setup', [], [
+        $response = $this->json('POST', '/api/users/' . $adminDefaultUser->id . '/two-factor', [], [
             'Authorization' => 'Bearer ' . $bearerToken
         ]);
 
@@ -238,7 +239,7 @@ class LoginTest extends TestCase
         $this->assertNull($user->two_factor_confirmed_at);
 
         // Confirmation
-        $response = $this->json('POST', '/api/user/two-factor-setup/confirm', [
+        $response = $this->json('POST', '/api/users/' . $adminDefaultUser->id . '/two-factor/confirm', [
             'code' => '123456'
         ], [
             'Authorization' => 'Bearer ' . $bearerToken
@@ -251,6 +252,87 @@ class LoginTest extends TestCase
 
         $user = User::where('id', 1)->first()->fresh();
         $this->assertNotNull($user->two_factor_confirmed_at);
+    }
+
+    public function testDelete2FA()
+    {
+        // User initialization
+        $user = User::where('id', 1)->first();
+        $user->administrator = false;
+        $user->onboarding_version = Config::get('app.onboarding_version');
+        $user->save();
+
+        $bearerToken = $user->createToken('GaelO')->plainTextToken;
+
+        $recoveryCodes = ['aaaaaaaaaa-bbbbbbbbbb', 'cccccccccc-dddddddddd'];
+
+        User::where('email', 'administrator@gaelo.fr')
+            ->update([
+                'two_factor_secret' => encrypt('BASE32SECRETKEY'),
+                'two_factor_confirmed_at' => now(),
+                'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes))
+            ]);
+
+        // Verification before delete
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNotEmpty($user->two_factor_secret);
+        $this->assertNotNull($user->two_factor_confirmed_at);
+
+        // Delete
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $bearerToken
+        ])->json('DELETE', '/api/users/' . $user->id . '/two-factor');
+
+        $response->assertStatus(200);
+
+        $content = json_decode($response->content(), true);
+        $this->assertEquals('2FA Deleted', $content['message']);
+
+        // Final verification
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNull($user->two_factor_secret);
+        $this->assertNull($user->two_factor_recovery_codes);
+        $this->assertNull($user->two_factor_confirmed_at);
+    }
+
+    public function testAdminDelete2FA()
+    {
+        // User initialization
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->administrator = true;
+        $adminDefaultUser->onboarding_version = Config::get('app.onboarding_version');
+        $adminDefaultUser->save();
+
+        $bearerToken = $adminDefaultUser->createToken('GaelO')->plainTextToken;
+
+        $recoveryCodes = ['aaaaaaaaaa-bbbbbbbbbb', 'cccccccccc-dddddddddd'];
+
+        User::where('email', 'administrator@gaelo.fr')
+            ->update([
+                'two_factor_secret' => encrypt('BASE32SECRETKEY'),
+                'two_factor_confirmed_at' => now(),
+                'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes))
+            ]);
+
+        // Verification before delete
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNotEmpty($user->two_factor_secret);
+        $this->assertNotNull($user->two_factor_confirmed_at);
+
+        // Delete
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $bearerToken
+        ])->json('DELETE', '/api/users/' . $adminDefaultUser->id . '/two-factor');
+
+        $response->assertStatus(200);
+
+        $content = json_decode($response->content(), true);
+        $this->assertEquals('2FA Deleted', $content['message']);
+
+        //Final verification
+        $user = User::where('id', 1)->first()->fresh();
+        $this->assertNull($user->two_factor_secret);
+        $this->assertNull($user->two_factor_recovery_codes);
     }
 
     public function testLoginShouldPassInsensitive()

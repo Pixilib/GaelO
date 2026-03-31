@@ -20,6 +20,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Routing\UrlGenerator;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
+use Exception;
 
 class AuthController extends Controller
 {
@@ -36,21 +37,22 @@ class AuthController extends Controller
             $userId = $loginResponse->userId;
             $use2FA = $loginResponse->use2FA;
 
+            // Regular Login
+            $user = User::findOrFail($userId);
+
             if ($use2FA) {
                 // Temporary Opaque Token. available for 5 minutes
                 $challengeToken = Str::uuid()->toString();
                 Cache::put('2fa_challenge_' . $challengeToken, $userId, now()->addMinutes(5));
 
                 return response()->json([
+                    'id' => $user->id,
                     'onboarded' => $loginResponse->onboarded,
                     'needs2FA' => true,
                     'challenge_token' => $challengeToken
                 ], 200);
             }
 
-
-            // Regular Login
-            $user = User::findOrFail($userId);
 
             $tokenResult = $user->createToken('GaelO');
 
@@ -160,9 +162,13 @@ class AuthController extends Controller
      * Must be in the auth:sanctum group but NOT in the onboarded group
      * (admin may not be onboarded yet when setting up 2FA).
      */
-    public function setup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
+    public function setup2FA(Request $request, TwoFactorAuthenticationProvider $provider, int $userId): JsonResponse
     {
         $user = $request->user();
+
+        if($user->id !== $userId){
+            throw new Exception("Can't activate 2FA for a thrid party account");
+        }
 
         // Generate secret if not already set
         if (empty($user->two_factor_secret)) {
@@ -191,9 +197,13 @@ class AuthController extends Controller
     /**
      * Confirm 2FA setup by verifying the TOTP code for the authenticated user.
      */
-    public function confirmSetup2FA(Request $request, TwoFactorAuthenticationProvider $provider): JsonResponse
+    public function confirmSetup2FA(Request $request, TwoFactorAuthenticationProvider $provider, int $userId): JsonResponse
     {
         $user = $request->user();
+
+        if($user->id !== $userId){
+            throw new Exception("Can't activate 2FA for a thrid party account");
+        }
 
         if (empty($user->two_factor_secret)) {
             return response()->json(['message' => '2FA not initialized'], 422);
@@ -211,9 +221,13 @@ class AuthController extends Controller
     }
 
 
-    public function generateRecoveryCodes2FA(Request $request): JsonResponse
+    public function generateRecoveryCodes2FA(Request $request, int $userId): JsonResponse
     {
         $user = $request->user();
+
+        if($user->id !== $userId){
+            throw new Exception("Can't generate recovery codes for a thrid party account");
+        }
 
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
@@ -240,6 +254,26 @@ class AuthController extends Controller
 
         $updatedCodes = $user->recoveryCodes();
         return response()->json(['recoveryCodes' => $updatedCodes]);
+    }
+
+    public function delete2FA(Request $request, int $userId){
+        $authUser = $request->user();
+        $user = User::findOrFail($userId);
+
+        if (!$authUser->administrator && $authUser->id !== $userId) {
+            abort(403, "You cannot delete 2FA for another user");
+        }
+
+        // Is 2FA activated
+        if (empty($user->two_factor_secret)) {
+            return response()->json(['message' => '2FA not initialized'], 422);
+        }
+
+        $user->forceFill(['two_factor_secret' => Null])->save();
+        $user->forceFill(['two_factor_recovery_codes' => Null])->save();
+        $user->forceFill(['two_factor_confirmed_at' => Null])->save();
+
+        return response()->json(['message' => '2FA Deleted']);
     }
 
     public function getMagicLink(Request $request, UrlGenerator $urlGenerator)
