@@ -159,8 +159,6 @@ class AuthController extends Controller
      * Generate 2FA secret + QR code SVG for the authenticated user.
      * Route protected by auth:sanctum — the Bearer token from login
      * is sent explicitly by the front before being stored in Redux.
-     * Must be in the auth:sanctum group but NOT in the onboarded group
-     * (admin may not be onboarded yet when setting up 2FA).
      */
     public function setup2FA(Request $request, TwoFactorAuthenticationProvider $provider, int $userId): JsonResponse
     {
