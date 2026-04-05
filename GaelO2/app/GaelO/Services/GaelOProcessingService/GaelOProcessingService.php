@@ -57,7 +57,7 @@ class GaelOProcessingService
         $payload['async'] = true;
         $request = $this->httpClientInterface->requestJson('POST', "/models/" . $modelName . "/inference", $payload);
         $response = $request->getJsonBody();
-        $taskId = $response['taskId'];
+        $taskId = $response['task_id'];
         do {
             sleep(10);
             $taskAnswer = $this->getTask($taskId);
