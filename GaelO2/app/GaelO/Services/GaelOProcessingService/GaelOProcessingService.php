@@ -11,6 +11,7 @@ class GaelOProcessingService
 {
 
     private const PROCESSING_TASK_SUCCEEDED = 'SUCCEEDED';
+    private const PROCESSING_TASK_FAILED = 'FAILED';
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
 
@@ -63,7 +64,7 @@ class GaelOProcessingService
             Log::info("Task " . $taskId . " status: " . $taskAnswer['status']);
             $status = $taskAnswer['status'];
             $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
-        } while ($status !== self::PROCESSING_TASK_SUCCEEDED);
+        } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
         return $results;
     }
 
