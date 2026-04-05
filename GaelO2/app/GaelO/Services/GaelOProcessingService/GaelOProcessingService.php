@@ -58,12 +58,15 @@ class GaelOProcessingService
         $request = $this->httpClientInterface->requestJson('POST', "/models/" . $modelName . "/inference", $payload);
         $response = $request->getJsonBody();
         $taskId = $response['task_id'];
+        $results = null;
         do {
             sleep(10);
             $taskAnswer = $this->getTask($taskId);
             $status = $taskAnswer['status'];
+            Log::info(json_encode($taskAnswer));
             $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
         } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
+        
         return $results;
     }
 
