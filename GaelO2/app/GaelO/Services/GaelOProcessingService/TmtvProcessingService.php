@@ -70,7 +70,7 @@ class TmtvProcessingService
 
         if ($this->version) $inferencePayload['version'] = $this->version;
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference($this->modelName, $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync($this->modelName, $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
@@ -90,7 +90,7 @@ class TmtvProcessingService
             'version' => 1
         ];
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_regional_swinunetr_ct', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_regional_swinunetr_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
@@ -109,7 +109,7 @@ class TmtvProcessingService
             'version' => 1
         ];
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInference('localisation_anatomy_attentionunet_ct', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_anatomy_attentionunet_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
