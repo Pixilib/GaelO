@@ -61,7 +61,6 @@ class GaelOProcessingService
         do {
             sleep(10);
             $taskAnswer = $this->getTask($taskId);
-            Log::info("Task " . $taskId . " status: " . $taskAnswer['status']);
             $status = $taskAnswer['status'];
             $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
         } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
