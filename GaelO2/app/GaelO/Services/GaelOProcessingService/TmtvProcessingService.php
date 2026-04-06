@@ -121,6 +121,21 @@ class TmtvProcessingService
         return $maskProcessingService;
     }
 
+    public function runAbsoluteThresholdSUVSegmentation(float $threshold, float $minVolume)
+    {
+        if ($this->idPT == null) {
+            $this->sendPtAndCreateSeriesToProcessing();
+        }
+
+        $inferenceResponse = $this->gaelOProcessingService->segmentationAbsoluteValue($this->idPT, $threshold, $minVolume);
+        $maskId = $inferenceResponse['id_mask'];
+        $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
+        $maskProcessingService->setMaskId($maskId);
+        $maskProcessingService->setSeriesId($this->idPT, $this->ptOrthancSeriesId);
+        $this->addCreatedRessource('masks', $maskId);
+        return $maskProcessingService;
+    }
+
 
     public function loadPetAndCtSeriesOrthancIdsFromVisit($visitId): void
     {

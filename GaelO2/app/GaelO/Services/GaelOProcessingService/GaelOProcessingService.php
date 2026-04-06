@@ -74,6 +74,19 @@ class GaelOProcessingService
         return $results;
     }
 
+    public function segmentationAbsoluteValue(string $seriesId, float $threshold, float $minVolume)
+    {
+        $payload = [
+            'seriesId' => $seriesId,
+            'threshold' => $threshold,
+            'minVolume' => $minVolume
+        ];
+
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/segmentation-absolute-threshold", $payload);
+        $response = $request->getJsonBody();
+        return $response;
+    }
+
     /**
      * Return gif
      */
