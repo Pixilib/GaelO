@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use Illuminate\Support\Facades\Log;
@@ -63,8 +64,11 @@ class GaelOProcessingService
             sleep(10);
             $taskAnswer = $this->getTask($taskId);
             $status = $taskAnswer['status'];
+            if ($status === self::PROCESSING_TASK_FAILED) {
+                throw new GaelOException('Inference task failed : ' . $modelName . json_encode($payload));
+                break;
+            }
             $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
-            Log::info('Polling inference task : '. json_encode($results));
         } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
 
         return $results;
