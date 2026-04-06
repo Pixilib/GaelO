@@ -64,7 +64,7 @@ class GaelOProcessingService
             $taskAnswer = $this->getTask($taskId);
             $status = $taskAnswer['status'];
             $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
-            Log::info('Polling inference task',  $results );
+            Log::info('Polling inference task',  json_encode($results));
         } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
 
         return $results;
