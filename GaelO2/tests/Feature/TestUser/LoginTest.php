@@ -76,7 +76,7 @@ class LoginTest extends TestCase
         // Challenge 2FA 
         $response = $this->json('POST', '/api/two-factor-challenge/totp', [
             'challenge_token' => $challengeToken,
-            'code' => '000000' // not important because the provider is mocke
+            'code' => '000000' // not important because the provider is Mocke
         ]);
 
         $content = json_decode($response->content(), true);
@@ -217,7 +217,7 @@ class LoginTest extends TestCase
 
         $bearerToken = $adminDefaultUser->createToken('GaelO')->plainTextToken;
 
-        // Mock 2FA provider 
+        // Mocke 2FA provider 
         $this->mock(TwoFactorAuthenticationProvider::class, function ($mock) {
             $mock->shouldReceive('generateSecretKey')->once()->andReturn('BASE32SECRETKEY');
             $mock->shouldReceive('verify')->once()->andReturn(true);
