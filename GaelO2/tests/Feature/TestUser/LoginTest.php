@@ -74,7 +74,7 @@ class LoginTest extends TestCase
         });
 
         // Challenge 2FA 
-        $response = $this->json('POST', '/api/two-factor-challenge', [
+        $response = $this->json('POST', '/api/two-factor-challenge/totp', [
             'challenge_token' => $challengeToken,
             'code' => '000000' // not important because the provider is mocke
         ]);
@@ -111,7 +111,7 @@ class LoginTest extends TestCase
         $challengeToken = $content['challenge_token'];
 
 
-        $response = $this->json('POST', '/api/two-factor-challenge', [
+        $response = $this->json('POST', '/api/two-factor-challenge/recovery-code', [
             'challenge_token' => $challengeToken,
             'recovery_code' => 'aaaaaaaaaa-bbbbbbbbbb'
         ]);
@@ -151,7 +151,7 @@ class LoginTest extends TestCase
             $mock->shouldReceive('verify')->once()->andReturn(true);
         });
 
-        $response = $this->json('POST', '/api/two-factor-challenge', [
+        $response = $this->json('POST', '/api/two-factor-challenge/totp', [
             'challenge_token' => $challengeToken,
             'code' => '123456'
         ]);
@@ -191,7 +191,7 @@ class LoginTest extends TestCase
         $challengeToken = $content['challenge_token'];
 
         // Use of the first recovery code
-        $response = $this->json('POST', '/api/two-factor-challenge', [
+        $response = $this->json('POST', '/api/two-factor-challenge/recovery-code', [
             'challenge_token' => $challengeToken,
             'recovery_code' => 'aaaaaaaaaa-bbbbbbbbbb'
         ]);
