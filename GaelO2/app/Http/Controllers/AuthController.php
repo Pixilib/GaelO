@@ -94,55 +94,89 @@ class AuthController extends Controller
         $user = User::findOrFail($userId);
 
         $code = $request->input('code');
-        $recoveryCode = $request->input('recovery_code');
 
         $valid = false;
 
-        if ($recoveryCode) {
-            if (empty($user->two_factor_recovery_codes)) {
-                return response()->json([
-                    'errors' => ['recovery_code' => ['No recovery codes available']]
-                ], 422);
-            }
-
-            try {
-                $decrypted = decrypt($user->two_factor_recovery_codes);
-                $codes = json_decode($decrypted, true);
-
-                if (!is_array($codes)) {
-                    throw new \Exception();
-                }
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'errors' => ['recovery_code' => ['Invalid recovery codes']]
-                ], 422);
-            }
-            $index = array_search($recoveryCode, $codes);
-
-            if ($index !== false) {
-                array_splice($codes, $index, 1);
-                $user->forceFill([
-                    'two_factor_recovery_codes' => encrypt(json_encode($codes))
-                ])->save();
-                $valid = true;
-            }
-
-        } elseif ($code) {
-            try {
-                $secret = decrypt($user->two_factor_secret);
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'errors' => ['code' => ['Invalid 2FA configuration']]
-                ], 422);
-            }
-
-            $valid = $provider->verify($secret, $code);
+        try {
+            $secret = decrypt($user->two_factor_secret);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'errors' => ['code' => ['Invalid 2FA configuration']]
+            ], 422);
         }
+
+        $valid = $provider->verify($secret, $code);
 
         if (!$valid) {
             return response()->json([
                 'errors' => ['code' => ['invalid code']]
+            ], 422);
+        }
+
+
+        $tokenResult = $user->createToken('GaelO');
+        Cache::forget('2fa_challenge_' . $challengeToken);
+        return response()->json([
+            'id' => $user->id,
+            'access_token' => $tokenResult->plainTextToken,
+            'token_type' => 'Bearer'
+        ], 200);
+    }
+
+    public function recoveryCodeChallenge(
+        Request $request
+    ): JsonResponse {
+
+        $challengeToken = $request->input('challenge_token');
+
+        if (!$challengeToken) {
+            return response()->json(['message' => 'Session expired.'], 422);
+        }
+
+        $userId = Cache::get('2fa_challenge_' . $challengeToken);
+
+        if (!$userId) {
+            return response()->json(['message' => 'Session expired or already used.'], 422);
+        }
+
+        $user = User::findOrFail($userId);
+
+        $recoveryCode = $request->input('recovery_code');
+
+        $valid = false;
+
+        if (empty($user->two_factor_recovery_codes)) {
+            return response()->json([
+                'errors' => ['recovery_code' => ['No recovery codes available']]
+            ], 422);
+        }
+
+        try {
+            $decrypted = decrypt($user->two_factor_recovery_codes);
+            $codes = json_decode($decrypted, true);
+
+            if (!is_array($codes)) {
+                throw new \Exception();
+            }
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'errors' => ['recovery_code' => ['Invalid recovery codes']]
+            ], 422);
+        }
+        $index = array_search($recoveryCode, $codes);
+
+        if ($index !== false) {
+            array_splice($codes, $index, 1);
+            $user->forceFill([
+                'two_factor_recovery_codes' => encrypt(json_encode($codes))
+            ])->save();
+            $valid = true;
+        }
+
+        if (!$valid) {
+            return response()->json([
+                'errors' => ['recovery_code' => ['invalid code']]
             ], 422);
         }
 
@@ -164,17 +198,14 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if($user->id !== $userId){
-            throw new Exception("Can't activate 2FA for a thrid party account");
+        if ($user->id !== $userId) {
+            abort(403, "Can't activate 2FA for a third party account");
         }
 
         // Generate secret if not already set
         if (empty($user->two_factor_secret)) {
             $user->forceFill([
-                'two_factor_secret' => encrypt($provider->generateSecretKey()),
-                'two_factor_recovery_codes' => encrypt(json_encode(
-                    collect(range(1, 8))->map(fn() => Str::random(10) . '-' . Str::random(10))->all()
-                ))
+                'two_factor_secret' => encrypt($provider->generateSecretKey())
             ])->save();
         }
 
@@ -199,8 +230,8 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if($user->id !== $userId){
-            throw new Exception("Can't activate 2FA for a thrid party account");
+        if ($user->id !== $userId) {
+            abort(403, "Can't activate 2FA for a third party account");
         }
 
         if (empty($user->two_factor_secret)) {
@@ -223,8 +254,8 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if($user->id !== $userId){
-            throw new Exception("Can't generate recovery codes for a thrid party account");
+        if ($user->id !== $userId) {
+            abort(403, "Can't generate recovery codes for a thrid party account");
         }
 
         if (!$user) {
@@ -254,7 +285,8 @@ class AuthController extends Controller
         return response()->json(['recoveryCodes' => $updatedCodes]);
     }
 
-    public function delete2FA(Request $request, int $userId){
+    public function delete2FA(Request $request, int $userId)
+    {
         $authUser = $request->user();
         $user = User::findOrFail($userId);
 
@@ -267,9 +299,11 @@ class AuthController extends Controller
             return response()->json(['message' => '2FA not initialized'], 422);
         }
 
-        $user->forceFill(['two_factor_secret' => Null])->save();
-        $user->forceFill(['two_factor_recovery_codes' => Null])->save();
-        $user->forceFill(['two_factor_confirmed_at' => Null])->save();
+        $user->forceFill([
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null
+        ])->save();
 
         return response()->json(['message' => '2FA Deleted']);
     }
@@ -314,5 +348,5 @@ class AuthController extends Controller
         return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
     }
 
-    
+
 }

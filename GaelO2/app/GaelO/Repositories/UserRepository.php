@@ -145,11 +145,7 @@ class UserRepository implements UserRepositoryInterface
             $user = $this->userModel->where('email', strtolower($email))->sole();
         }
 
-        return $user->makeVisible([
-            'two_factor_secret',
-            'two_factor_recovery_codes',
-            'two_factor_confirmed_at'
-        ])->toArray();
+        return $user->toArray();
     }
 
     public function isExistingEmail(String $email): bool

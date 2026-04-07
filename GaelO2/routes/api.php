@@ -266,4 +266,7 @@ Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('ma
 
 
 //Route 2FA
-Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge'])->middleware('throttle:public-apis');
+//Route::post('/two-factor-challenge', [AuthController::class, 'twoFactorChallenge'])->middleware('throttle:public-apis');
+
+Route::post('/two-factor-challenge/totp', [AuthController::class, 'twoFactorChallenge'])->middleware('throttle:public-apis');
+Route::post('/two-factor-challenge/recovery-code', [AuthController::class, 'recoveryCodeChallenge'])->middleware('throttle:public-apis');
