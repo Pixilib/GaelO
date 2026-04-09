@@ -3,12 +3,16 @@
 namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use Illuminate\Support\Facades\Log;
 
 class GaelOProcessingService
 {
 
+    private const PROCESSING_TASK_SUCCEEDED = 'SUCCEEDED';
+    private const PROCESSING_TASK_FAILED = 'FAILED';
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
 
@@ -47,6 +51,40 @@ class GaelOProcessingService
     {
         $request = $this->httpClientInterface->requestJson('POST', "/models/" . $modelName . "/inference", $payload);
         return $request->getJsonBody();
+    }
+
+    public function executeInferenceAsync(string $modelName, array $payload)
+    {
+        $payload['async'] = true;
+        $request = $this->httpClientInterface->requestJson('POST', "/models/" . $modelName . "/inference", $payload);
+        $response = $request->getJsonBody();
+        $taskId = $response['task_id'];
+        $results = null;
+        do {
+            sleep(10);
+            $taskAnswer = $this->getTask($taskId);
+            $status = $taskAnswer['status'];
+            if ($status === self::PROCESSING_TASK_FAILED) {
+                throw new GaelOException('Inference task failed : ' . $modelName . json_encode($payload));
+                break;
+            }
+            $results = array_key_exists('results', $taskAnswer) ? $taskAnswer['results'] : null;
+        } while (!in_array($status, [self::PROCESSING_TASK_SUCCEEDED, self::PROCESSING_TASK_FAILED]));
+
+        return $results;
+    }
+
+    public function segmentationAbsoluteValue(string $seriesId, float $threshold, float $minVolume)
+    {
+        $payload = [
+            'seriesId' => $seriesId,
+            'threshold' => $threshold,
+            'minVolume' => $minVolume
+        ];
+
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/segmentation-absolute-threshold", $payload);
+        $response = $request->getJsonBody();
+        return $response;
     }
 
     /**
@@ -208,5 +246,11 @@ class GaelOProcessingService
     public function deleteRessource(string $type, string $id): void
     {
         $request = $this->httpClientInterface->requestJson('DELETE', "/" . $type . "/" . $id);
+    }
+
+    public function getTask(string $taskId)
+    {
+        $request = $this->httpClientInterface->requestJson('GET', "/tasks/" . $taskId);
+        return $request->getJsonBody();
     }
 }
