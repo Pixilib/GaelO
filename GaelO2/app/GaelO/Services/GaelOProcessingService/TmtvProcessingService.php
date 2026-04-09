@@ -8,7 +8,6 @@ use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\OrthancService;
 use App\Jobs\RadiomicsReport\GaelOProcessingFile;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class TmtvProcessingService
 {
@@ -92,7 +91,6 @@ class TmtvProcessingService
         ];
 
         $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_regional_swinunetr_ct', $inferencePayload);
-        Log::info('Inference regional response: '.json_encode($inferenceResponse));
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
@@ -112,7 +110,6 @@ class TmtvProcessingService
         ];
 
         $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_anatomy_attentionunet_ct', $inferencePayload);
-        Log::info('Inference anatomy response: '. json_encode($inferenceResponse));
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
