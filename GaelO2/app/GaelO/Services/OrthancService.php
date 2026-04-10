@@ -44,8 +44,10 @@ class OrthancService
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        if ($url) $this->httpClientInterface->setUrl($url);
-        if ($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
+        if ($url)
+            $this->httpClientInterface->setUrl($url);
+        if ($login && $password)
+            $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getOrthancRessourcesDetails(string $level, string $orthancID): array
@@ -155,32 +157,44 @@ class OrthancService
             'Resources' => $ids
         ];
 
-        return $this->httpClientInterface->requestJson('POST', '/peers/' . $peer . '/store', $data);
+        return $this->httpClientInterface->requestJson('POST', '/peers/' . $peer . '/store', $data)->getJsonBody();
     }
 
-    public function sendToPeerAsyncWithAccelerator(string $peer, array $ids, bool $gzip)
+    
+    /**
+     * sendToPeerWithAcceleratorIfAvailable
+     *
+     * @param  mixed $peer
+     * @param  mixed $idsWithLevels: ['Level' : 'Study', 'ID' : '23456-123654']
+     * @param  mixed $gzip
+     */
+    public function sendToPeerWithAcceleratorIfAvailable(string $peer, array $idsWithLevels, bool $gzip)
     {
-
-        //If Peer dosen't have accelerated transfers fall back to regular orthanc peer transfers
-        if (!$this->isPeerAccelerated($peer)) {
-            $answer = $this->sendToPeer($peer, $ids, false);
-            return $answer;
+        if ($this->isPeerAccelerated($peer)) {
+            return $this->sendToPeerAsyncWithAccelerator($peer, $idsWithLevels, $gzip);
+        } else {
+            $orthancIds = array_map(function($orthancLevelId){return $orthancLevelId['ID'];}, $idsWithLevels);
+            return $this->sendToPeer($peer, $orthancIds, false);
         }
 
-        $data = array(
+    }
+
+    /**
+     * Summary of sendToPeerAsyncWithAccelerator
+     * @param string $peer
+     * @param array $idsWithLevels : ['Level' : 'Study', 'ID' : '23456-123654']
+     * @param bool $gzip
+     */
+    public function sendToPeerAsyncWithAccelerator(string $peer, array $idsWithLevels, bool $gzip)
+    {
+        $data = [
             'Peer' => $peer,
-            'Compression' => $gzip === true ? "gzip" : "none"
-        );
+            'Resources' => $idsWithLevels,
+            'Compression' => $gzip ? 'gzip' : 'none'
+        ];
 
+        return $this->httpClientInterface->requestJson('POST', '/transfers/send', $data)->getJsonBody();
 
-        foreach ($ids as $serieID) {
-            $data['Resources'][] = array(
-                'Level' => 'Series',
-                'ID' => $serieID
-            );
-        }
-
-        return $this->httpClientInterface->requestJson('POST', '/transfers/send', $data);
     }
 
     public function importFiles(array $files, int $concurrency = 5): array
@@ -191,8 +205,6 @@ class OrthancService
         }, $psr7ResponseAdapterArray);
         return $arrayAnswer;
     }
-
-
 
     /**
      * Anonymize a study ressources according to Anon Profile
@@ -233,7 +245,6 @@ class OrthancService
      */
     public function anonymizeUsingOrthancJobs(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName, ?string $transfertSyntaxUID, ?int $lossyQuality): string
     {
-
         $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName, $transfertSyntaxUID, $lossyQuality);
         //Use async
         $jsonAnonQuery['Synchronous'] = false;
@@ -280,7 +291,7 @@ class OrthancService
 
         $tagsObjects = [];
 
-        if ($profile === AnonProfileEnum::DEFAULT->value) {
+        if ($profile === AnonProfileEnum::DEFAULT ->value) {
             $date = TagAnon::KEEP;
             $body = TagAnon::KEEP;
             $RTStruct = TagAnon::KEEP;
@@ -441,7 +452,7 @@ class OrthancService
      * @param String $jobId
      * @return mixed
      */
-    public function getJobDetails(String $jobId)
+    public function getJobDetails(string $jobId)
     {
         return $this->httpClientInterface->requestJson('GET', '/jobs/' . $jobId)->getJsonBody();
     }
@@ -509,7 +520,8 @@ class OrthancService
     public function getOrthancNiftiStream(string $seriesOrthancID, bool $compressed)
     {
         $uri = '/series/' . $seriesOrthancID . '/nifti';
-        if ($compressed) $uri = $uri . '?compress';
+        if ($compressed)
+            $uri = $uri . '?compress';
         $this->httpClientInterface->streamResponse('GET', $uri);
     }
 
@@ -550,31 +562,31 @@ class OrthancService
 
     public function getMIP(string $level, string $seriesOrthancID, int $frames = 30, int $delay = 200): string
     {
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
+        $downloadedFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mip?frames=' . $frames . '&delay=' . $delay,  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mip?frames=' . $frames . '&delay=' . $delay, $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getMosaic(string $level, string $seriesOrthancID, int $numImages = 20, int $width = 512, int $height = 512): string
     {
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
+        $downloadedFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mosaic?images=' . $numImages . '&width=' . $width . '&height=' . $height,  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mosaic?images=' . $numImages . '&width=' . $width . '&height=' . $height, $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getInstancePreview(string $instanceOrthancID): string
     {
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
+        $downloadedFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $instanceOrthancID . '/preview?returnUnsupportedImage',  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $instanceOrthancID . '/preview?returnUnsupportedImage', $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function sendDicomToProcessing(string $orthancSeriesIdPt, GaelOProcessingService $gaelOProcessingService)
     {
-        $temporaryZipDicom  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $temporaryZipDicom = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
         $this->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $gaelOProcessingService->createDicom($temporaryZipDicom);
         unlink($temporaryZipDicom);

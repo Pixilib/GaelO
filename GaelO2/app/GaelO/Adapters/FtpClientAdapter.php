@@ -72,6 +72,16 @@ class FtpClientAdapter implements FTPClientInterface
         return $content;
     }
 
+    public function writeStreamContent($stream, string $destinationPath): bool
+    {
+        try {
+            $this->filesystem->writeStream($destinationPath, $stream);
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
     public function writeFileContent(string $content, string $destinationPath): bool
     {
         try {
