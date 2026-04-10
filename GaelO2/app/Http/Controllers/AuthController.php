@@ -191,8 +191,6 @@ class AuthController extends Controller
 
     /**
      * Generate 2FA secret + QR code SVG for the authenticated user.
-     * Route protected by auth:sanctum — the Bearer token from login
-     * is sent explicitly by the front before being stored in Redux.
      */
     public function setup2FA(Request $request, TwoFactorAuthenticationProvider $provider, int $userId): JsonResponse
     {
@@ -277,12 +275,7 @@ class AuthController extends Controller
 
         // Decrypt to return the code on the front side
         $codes = $user->recoveryCodes();
-        foreach ($codes as $code) {
-            $user->replaceRecoveryCode($code);
-        }
-
-        $updatedCodes = $user->recoveryCodes();
-        return response()->json(['recoveryCodes' => $updatedCodes]);
+        return response()->json(['recoveryCodes' => $codes]);
     }
 
     public function delete2FA(Request $request, int $userId)
