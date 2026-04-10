@@ -33,9 +33,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
      *
      * @var array
      */
-    protected $hidden = [
-        'remember_token'
-    ];
+    protected $hidden = [];
 
     /**
      * The attributes that should be cast to native types.

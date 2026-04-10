@@ -35,9 +35,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function find($id): array
     {
-        return $this->userModel->findOrFail($id)->makeVisible([
-            'two_factor_confirmed_at'
-        ])->toArray();
+        return $this->userModel->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
