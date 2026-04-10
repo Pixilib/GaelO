@@ -51,11 +51,17 @@ class Login
 
             //if everything OK => Login
             if ($user['email_verified_at'] !== null && $attempts < 3) {
+
+                // Detect if 2FA is enable and is validate for this user 
+                $twoFactorEnabled = !empty($user['two_factor_secret']) && !empty($user['two_factor_confirmed_at']);
+
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
+
                 $loginResponse->onboarded = !(Util::isVersionHigher(FrameworkAdapter::getConfig('onboarding_version'), $user['onboarding_version']));
+                $loginResponse->use2FA = $twoFactorEnabled;
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
-                //should not happen
+                $loginResponse->userId = $user['id'];
             } else {
                 throw new GaelOUnauthorizedException("Unknown email/password");
             }

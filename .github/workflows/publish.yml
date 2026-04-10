@@ -5,7 +5,7 @@ on:
     branches:
       - GaelO2
       - GaelO2-dev
-      - imap-lib
+      - 2FA
     tags:
       - '*'
 

@@ -46,12 +46,18 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::delete('login', [AuthController::class, 'logout']);
 
     //User related Routes
-    Route::get('users/{id?}',  [UserController::class, 'getUser']);
+    Route::get('users/{id?}', [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
     Route::put('users/{id}', [UserController::class, 'modifyUser']);
 
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
+
+    Route::post('users/{id}/two-factor', [AuthController::class, 'setup2FA']);
+    Route::post('users/{id}/two-factor/confirm', [AuthController::class, 'confirmSetup2FA']);
+    Route::delete('users/{id}/two-factor', [AuthController::class, 'delete2FA']);
+    Route::post('users/{id}/recovery-codes', [AuthController::class, 'generateRecoveryCodes2FA']);
+
     Route::post('users/{id}/activate', [UserController::class, 'reactivateUser']);
     Route::get('users/{id}/centers', [UserController::class, 'getUserCenters']);
     Route::get('users/{id}/notifications', [UserController::class, 'getUserNotifications']);
@@ -60,7 +66,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter']);
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);
-    Route::get('users/{id}/studies',  [UserController::class, 'getStudiesFromUser']);
+    Route::get('users/{id}/studies', [UserController::class, 'getStudiesFromUser']);
     Route::get('users/{id}/roles', [UserController::class, 'getRoles']);
     Route::get('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'getUserRoleByName']);
     Route::put('users/{id}/studies/{studyName}/roles/{roleName}/validated-documentation', [UserController::class, 'modifyValidatedDocumentationForRole']);
@@ -257,3 +263,9 @@ Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest 
 
 //Magic link route
 Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
+
+
+//Route 2FA
+
+Route::post('/two-factor-challenge/totp', [AuthController::class, 'twoFactorChallenge'])->middleware('throttle:public-apis');
+Route::post('/two-factor-challenge/recovery-code', [AuthController::class, 'recoveryCodeChallenge'])->middleware('throttle:public-apis');

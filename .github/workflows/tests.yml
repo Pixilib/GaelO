@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Build checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 'Setup PHP'
         uses: shivammathur/setup-php@v2
@@ -58,7 +58,7 @@ jobs:
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
       - name: Produce the coverage report
-        uses: insightsengineering/coverage-action@v2
+        uses: insightsengineering/coverage-action@v3
         with:
           # Path to the Cobertura XML report.
           path: ./GaelO2/coverage.xml
