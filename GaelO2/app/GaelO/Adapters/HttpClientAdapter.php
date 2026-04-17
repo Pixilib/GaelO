@@ -79,12 +79,12 @@ class HttpClientAdapter implements HttpClientInterface
         $this->password = $password;
     }
 
-    public function uploadFile(string $method, string $uri, string $filename): Psr7ResponseInterface
+    public function uploadFile(string $method, string $uri, string $filename, string $contentType = 'application/zip'): Psr7ResponseInterface
     {
         $fileHandler = fopen($filename, 'rb');
         $headers = [
             'auth' => [$this->login, $this->password],
-            'content-type' => 'application/zip',
+            'content-type' => $contentType,
             'body' => $fileHandler
         ];
 

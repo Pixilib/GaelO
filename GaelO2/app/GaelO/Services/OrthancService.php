@@ -14,6 +14,7 @@ use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Services\StoreObjects\OrthancStudyImport;
 use App\GaelO\Util;
+use Exception;
 
 class OrthancService
 {
@@ -81,6 +82,23 @@ class OrthancService
         );
 
         $this->httpClientInterface->requestJson('PUT', '/peers/' . $name, $data);
+    }
+
+    public function echoPeer(string $name, string $url, string $username, string $password): bool
+    {
+        $data = array(
+            'Username' => $username,
+            'Password' => $password,
+            'Url' => $url
+        );
+
+        try {
+            $this->httpClientInterface->requestJson('GET', '/peers/' . $name . '/system', $data);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -160,7 +178,7 @@ class OrthancService
         return $this->httpClientInterface->requestJson('POST', '/peers/' . $peer . '/store', $data)->getJsonBody();
     }
 
-    
+
     /**
      * sendToPeerWithAcceleratorIfAvailable
      *
@@ -173,7 +191,9 @@ class OrthancService
         if ($this->isPeerAccelerated($peer)) {
             return $this->sendToPeerAsyncWithAccelerator($peer, $idsWithLevels, $gzip);
         } else {
-            $orthancIds = array_map(function($orthancLevelId){return $orthancLevelId['ID'];}, $idsWithLevels);
+            $orthancIds = array_map(function ($orthancLevelId) {
+                return $orthancLevelId['ID'];
+            }, $idsWithLevels);
             return $this->sendToPeer($peer, $orthancIds, false);
         }
 
@@ -261,7 +281,8 @@ class OrthancService
 
         if ($job['State'] === "Failure") {
             throw new GaelOException("Error While Anonymizing");
-        };
+        }
+        ;
 
         $anonymizedID = $job['Content']['ID'];
 
@@ -590,5 +611,12 @@ class OrthancService
         $this->getZipStreamToFile([$orthancSeriesIdPt], $temporaryZipDicom);
         $gaelOProcessingService->createDicom($temporaryZipDicom);
         unlink($temporaryZipDicom);
+    }
+
+    public function getInstance(string $orthancInstanceId){
+        $downloadedFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $orthancInstanceId, $downloadedFilePath, []);
+        return $downloadedFilePath;
     }
 }

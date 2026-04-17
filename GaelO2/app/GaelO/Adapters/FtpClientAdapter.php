@@ -25,12 +25,11 @@ class FtpClientAdapter implements FTPClientInterface
                     // Connection options
                     FtpConnectionOptions::fromArray([
                         'host' => $host, // required
-                        'root' => '/', // required
                         'username' => $username, // required
                         'password' => $password, // required
                         'port' => $port,
                         'ssl' => $isSSL,
-                        'timeout' => 30,
+                        'timeout' => 30
                     ])
                 )
             );
@@ -38,17 +37,14 @@ class FtpClientAdapter implements FTPClientInterface
 
             $this->filesystem = new Filesystem(
                 new SftpAdapter(
-                    new SftpConnectionProvider(
-                        $host,
-                        $username,
-                        $password,
-                        null,
-                        null,
-                        $port,
-                        false,
-                        30
-                    ),
-                    '/'
+                    SftpConnectionProvider::fromArray([
+                        'host' => $host,
+                        'username' => $username,
+                        'password' => $password,
+                        'port' => $port,
+                        'timeout' => 30,
+                    ]),
+                    'upload'
                 )
             );
         }

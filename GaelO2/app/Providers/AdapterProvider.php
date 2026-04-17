@@ -11,9 +11,11 @@ use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\ImapAdapter;
 use App\GaelO\Adapters\JobAdapter;
 use App\GaelO\Adapters\MimeAdapter;
+use App\GaelO\Adapters\ObjectStorageAdapter;
 use App\GaelO\Adapters\PdfAdapter;
 use App\GaelO\Adapters\PhoneNumberAdapter;
 use App\GaelO\Adapters\SpreadsheetAdapter;
+use App\GaelO\Adapters\WebdavClientAdapter;
 use App\GaelO\Adapters\ZipStreamAdapter;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -25,6 +27,8 @@ use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Adapters\PdfInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
+use App\GaelO\Interfaces\Adapters\WebdavClientInterface;
+use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
 use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
 use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use AzureOss\Storage\Blob\BlobServiceClient;
@@ -56,6 +60,8 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(ZipStreamInterface::class, ZipStreamAdapter::class);
         $this->app->bind(SpreadsheetInterface::class, SpreadsheetAdapter::class);
         $this->app->bind(ImapInterface::class, ImapAdapter::class);
+        $this->app->bind(WebdavClientInterface::class, WebdavClientAdapter::class);
+        $this->app->bind(ObjectStorageInterface::class, ObjectStorageAdapter::class);
     }
 
     /**
