@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelONotFoundException;
 use Illuminate\Contracts\Cache\Store;
 use League\Flysystem\Filesystem;
 use Throwable;
+use Exception;
 
 /**
  * File Cache using Azure blob storage, this cache adapter does not implement auto delete of files which should be 
@@ -98,6 +99,11 @@ class AzureCacheAdapter implements Store
             $this->fileSystem->delete($file->path());
         }
         return true;
+    }
+
+    public function touch($key, $seconds)
+    {
+        throw new Exception('Touch not possible for Azure storage cache');
     }
 
     public function getPrefix()

@@ -25,7 +25,7 @@ return [
     | or any other location as required by the application or its packages.
     */
 
-    'version' => '2.14.2',
+    'version' => '2.15.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -216,7 +216,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\EmailServiceProvider::class,
         App\Providers\RepositoryProvider::class,
-        App\Providers\AdapterProvider::class
+        App\Providers\AdapterProvider::class,
+        App\Providers\FortifyServiceProvider::class
     ],
 
     /*

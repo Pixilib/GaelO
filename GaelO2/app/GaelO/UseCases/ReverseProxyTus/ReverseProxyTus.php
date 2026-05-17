@@ -30,8 +30,13 @@ class ReverseProxyTus
         $gaelOHost = $parsedUrl['host'];
         $gaelOPort = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : null;
 
-        $headers['X-Forwarded-Proto'] = $gaelOProtocol;
-        $headers['X-Forwarded-Host'] = $gaelOPort ? $gaelOHost . ':' . $gaelOPort : $gaelOHost;
+        if ($gaelOPort) {
+            $forwardedRule = 'by=localhost;for=localhost;host=' . $gaelOHost . ':' . $gaelOPort . ';proto=' . $gaelOProtocol;
+        } else {
+            $forwardedRule = 'by=localhost;for=localhost;host=' . $gaelOHost . ';proto=' . $gaelOProtocol;
+        }
+
+        $headers['Forwarded'] = $forwardedRule;
 
         //Make query of TUS
         $this->httpClientInterface->setUrl($this->frameworkInterface::getConfig(SettingsConstants::TUS_URL));

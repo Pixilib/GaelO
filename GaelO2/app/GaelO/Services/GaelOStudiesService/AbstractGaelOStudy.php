@@ -121,9 +121,7 @@ abstract class AbstractGaelOStudy
         }
 
         if (!$qcNeeded && $reviewNeeded) {
-            $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
-            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
-            $this->mailServices->sendReviewReadyMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
+            $this->sendReviewReadyMessage($studyName, $visitId, $patientId, $patientCode, $visitType);
         }
     }
 
@@ -164,10 +162,15 @@ abstract class AbstractGaelOStudy
         );
 
         if ($qcStatus === QualityControlStateEnum::ACCEPTED->value && $reviewNeeded) {
-            $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
-            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
-            $this->mailServices->sendReviewReadyMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
+            $this->sendReviewReadyMessage($studyName, $visitId, $patientId, $patientCode, $visitType);
         }
+    }
+
+    protected function sendReviewReadyMessage($studyName, $visitId, $patientId, $patientCode, $visitType)
+    {
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+        $this->mailServices->sendReviewReadyMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
     }
 
     protected function onCorrectiveAction(CorrectiveActionEvent $correctiveActionEvent)
