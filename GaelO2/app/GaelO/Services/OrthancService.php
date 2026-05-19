@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
+use App\GaelO\Services\StoreObjects\OrthancSeries;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Services\StoreObjects\OrthancStudyImport;
@@ -613,10 +614,25 @@ class OrthancService
         unlink($temporaryZipDicom);
     }
 
-    public function getInstance(string $orthancInstanceId){
+    public function getInstance(string $instanceOrthancId)
+    {
         $downloadedFilePath = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $orthancInstanceId, $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $instanceOrthancId . '/file', $downloadedFilePath, []);
         return $downloadedFilePath;
     }
+
+    public function getInstancesOfSeries(string $seriesOrthancId)
+    {
+
+        $orthancSeries = new OrthancSeries($this);
+        $orthancSeries->setSeriesOrthancID($seriesOrthancId);
+        $orthancSeries->retrieveSeriesData();
+        foreach ($orthancSeries->seriesInstances as $orthancInstanceId) {
+            yield $this->getInstance($orthancInstanceId);
+        }
+
+    }
+
+
 }

@@ -14,8 +14,9 @@ interface HttpClientInterface
     public function setBasicAuthentication(string $login, string $password): void;
 
     public function rawRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface;
+    public function requestStream(string $method, string $uri, $stream, string $contentType): \App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 
-    public function uploadFile(string $method, string $uri, string $filename) : Psr7ResponseInterface;
+    public function uploadFile(string $method, string $uri, string $filename, string $contentType = 'application/zip') : Psr7ResponseInterface;
     /**
      * Return array of PSR7 response adapter of multiple request, used to sent multiple files to an endpoint
      */
@@ -35,6 +36,8 @@ interface HttpClientInterface
      * Return Http respond as ressource
      */
     public function getResponseAsStream(string $method, string $uri, array $body = []);
+
+    public function requestMultipartRelated(string $method, string $uri, string $filePath, string $contentType);
 
     /**
      * Store response in destination file

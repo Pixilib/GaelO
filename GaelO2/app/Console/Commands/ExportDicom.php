@@ -13,6 +13,7 @@ use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
 use App\GaelO\Services\StoreObjects\OrthancSeries;
 use Exception;
 use Generator;
+use GuzzleHttp\Pool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -79,6 +80,7 @@ class ExportDicom extends Command
         $this->webdavClientInterface = $webdavClientInterface;
         $this->objectStorage = $objectStorage;
         $this->orthancService->setOrthancServer(true);
+        $this->dicomWebService = $dicomWebService;
 
         $destinatorName = $this->ask('Destinator Name : (ex: sanofi)');
         $this->studyName = $this->ask('Study to export :');
@@ -143,15 +145,23 @@ class ExportDicom extends Command
                     connectionString: $connectionString
                 );
                 break;
-            case "dicom-web":
+            case Destinations::DICOMWEB->value:
+                $dicomAddress = $this->ask('Dicom URL base : (ex: http://orthancdestination:8042/dicom-web) ');
+                $dicomUsername = $this->ask('Dicom Username: ');
+                $dicomPassword = $this->secret('Dicom Password: ');
+                $dicomToken = $this->secret('Dicom Token') ?: "";
+                $dicomHeader = $this->ask('Dicom Header : ') ?: [""];
+                $this->dicomWebService->setDicomWebServer($dicomAddress, $dicomUsername, $dicomPassword, $dicomToken, $dicomHeader);
+                break;
 
         }
 
 
-        $studies = iterator_to_array($this->getDicomStudiesToSend(), false);
-        Log::info('Number of Studies to send : ' . sizeof($studies));
+        $studies = $this->getDicomStudiesToSend();
 
         foreach ($studies as $study) {
+            $progress = $study['currentVisitNumber'] / $study['totalVisits'];
+            Log::info('Progress : ' . round($progress * 100));
             $studyOrthancId = $study['studies']['orthanc_id'];
             $patientCode = $study['visit']['patient']['code'];
             $visitType = $study['visit']['visit_type']['name'];
@@ -215,7 +225,9 @@ class ExportDicom extends Command
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                     Log::info("Object-storage upload " . ($success ? 'succeeded' : 'failed') . " for {$fileName}");
                     break;
-                case "dicom-web":
+                case Destinations::DICOMWEB->value:
+
+                    $this->sendStudyToDicomWeb($studyOrthancId);
                     break;
             }
 
@@ -259,10 +271,12 @@ class ExportDicom extends Command
     private function getDicomStudiesToSend(): Generator
     {
         $visits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, false, true, null);
-        foreach ($visits as $visit) {
+        $totalVisits = sizeof($visits);
+        for ($i = 0; $i < $totalVisits; $i++) {
+            $visit = $visits[$i];
             $dicomStudies = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visit['id'], $this->withDeletedStudies, $this->withDeletedSeries);
             foreach ($dicomStudies as $dicomStudy) {
-                yield ['visit' => $visit, 'studies' => $dicomStudy];
+                yield ['visit' => $visit, 'studies' => $dicomStudy, 'totalVisits' => $totalVisits, 'currentVisitNumber' => $i];
             }
         }
     }
@@ -293,17 +307,12 @@ class ExportDicom extends Command
         }
     }
 
-    private function sendSeriesToDicomWeb()
+    private function sendStudyToDicomWeb(string $studyOrthancId)
     {
-        $orthancSeries = new OrthancSeries($this->orthancService);
-        $orthancSeries->retrieveSeriesData();
-        $orthancInstanceIds = $orthancSeries->seriesInstances;
-        foreach ($orthancInstanceIds as $orthancInstanceId) {
-            $dicomFile = $this->orthancService->getInstance($orthancInstanceId);
-            $this->dicomWebService->storeDicom($dicomFile);
-            //Instancier client HTTP pour parler avec la destination
-            unlink($dicomFile);
-
+        $studyDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $studyOrthancId);
+        foreach ($studyDetails['Series'] as $seriesOrthancId) {
+            $instances = $this->orthancService->getInstancesOfSeries($seriesOrthancId);
+            $this->dicomWebService->sendInstancesConcrrentlyToDicomWeb($instances);
         }
     }
 

@@ -19,11 +19,11 @@ use Psr\Http\Message\ResponseInterface;
 class HttpClientAdapter implements HttpClientInterface
 {
 
-    private string $login = '';
-    private string $password = '';
-    private string $address;
-    private string $authorizationToken = '';
-    private Client $client;
+    protected string $login = '';
+    protected string $password = '';
+    protected string $address;
+    protected string $authorizationToken = '';
+    protected Client $client;
 
     public function __construct()
     {
@@ -82,13 +82,15 @@ class HttpClientAdapter implements HttpClientInterface
     public function uploadFile(string $method, string $uri, string $filename, string $contentType = 'application/zip'): Psr7ResponseInterface
     {
         $fileHandler = fopen($filename, 'rb');
-        $headers = [
+        $options = [
             'auth' => [$this->login, $this->password],
-            'content-type' => $contentType,
+            'headers' => [
+                'Content-Type' => $contentType,
+            ],
             'body' => $fileHandler
         ];
 
-        $response = $this->client->request($method, $this->address . $uri, $headers);
+        $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
     }
 
@@ -101,7 +103,7 @@ class HttpClientAdapter implements HttpClientInterface
                 $body = fopen($file, 'r');
                 $headers = [
                     'Authorization' => "Basic " . base64_encode($this->login . ':' . $this->password),
-                    'headers'  => ['Content-Type' => 'application/dicom', 'Accept' => 'application/json', 'Transfer-Encoding' => 'chunked'],
+                    'headers' => ['Content-Type' => 'application/dicom', 'Accept' => 'application/json', 'Transfer-Encoding' => 'chunked'],
                 ];
 
                 yield new Request($method, $this->address . $uri, $headers, $body);
@@ -193,6 +195,52 @@ class HttpClientAdapter implements HttpClientInterface
         ]);
         return new Psr7ResponseAdapter($response);
     }
+
+    public function requestMultipartRelated(string $method, string $uri, string $filePath, string $contentType): Psr7ResponseInterface
+    {
+        $options = [
+            'body' => \GuzzleHttp\Psr7\Utils::streamFor(fopen($filePath, 'rb')),
+            'headers' => [
+                'Content-Type' => $contentType,
+                // Content-Length retiré : Guzzle le calcule depuis le stream
+            ],
+        ];
+
+        if ($this->login !== '' && $this->password !== '') {
+            $options['auth'] = [$this->login, $this->password];
+        }
+
+        if ($this->authorizationToken != null) {
+            $options['headers']['Authorization'] = 'Bearer ' . $this->authorizationToken;
+        }
+
+        $response = $this->client->request($method, $this->address . $uri, $options);
+        return new Psr7ResponseAdapter($response);
+    }
+
+    public function requestStream(string $method, string $uri, $stream, string $contentType): Psr7ResponseInterface
+{
+    $options = [
+        'body' => $stream,
+        'headers' => [
+            'Content-Type' => $contentType,
+            'Accept'       => 'application/dicom+json',
+        ],
+    ];
+
+    if ($this->login !== '' && $this->password !== '') {
+        $options['auth'] = [$this->login, $this->password];
+    }
+
+    if ($this->authorizationToken != null) {
+        $options['headers']['Authorization'] = 'Bearer ' . $this->authorizationToken;
+    }
+
+    $response = $this->client->request($method, $this->address . $uri, $options);
+    
+    // On retourne ton wrapper maison au lieu de la réponse Guzzle brute
+    return new Psr7ResponseAdapter($response);
+}
 
     public function rawRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface
     {
