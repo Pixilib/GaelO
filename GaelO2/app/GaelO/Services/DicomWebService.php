@@ -36,14 +36,16 @@ class DicomWebService extends HttpClientAdapter
     public function getStoreDicomRequest(string $filename)
     {
         $fileHandler = fopen($filename, 'rb');
-        $boundary = 'DICOMBoundary' . uniqid();
+        $boundary = "0f3cf5c0-70e0-41ef-baef-c6f9f65ec3e1";
         $options = [
             'auth' => [$this->login, $this->password],
+            'headers' => [
+            ],
             'multipart' => [
                 [
                     'name' => 'dicom',
                     'headers' => [
-                        'Content-Type' => "application/dicom; boundary=".$boundary,
+                        'Content-Type' => "application/dicom; boundary=" . $boundary,
                         'Transfer-Encoding' => 'encoding',
                     ],
                     'contents' => $fileHandler
