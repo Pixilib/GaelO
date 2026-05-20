@@ -4,6 +4,10 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\Psr7ResponseAdapter;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\StoreObjects\OrthancSeries;
+use App\GaelO\Services\StoreObjects\OrthancStudy;
+use Generator;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
@@ -14,86 +18,106 @@ use Illuminate\Support\Facades\Log;
 
 class DicomWebService extends HttpClientAdapter
 {
-    private array $headers;
+    private array $headers = [];
 
-    public function setDicomWebServer(string $url, string $login, string $password, string $token, array $headers): void
+    /**
+     * Construit un objet Request Guzzle conforme STOW-RS (DICOM PS3.18 §10.5.1)
+     * sans l'exécuter — destiné à être yielded dans un Pool.
+     */
+    public function getStoreDicomRequest(string $filename): Request
     {
-        $this->setUrl($url);
-        if ($login && $password)
-            $this->setBasicAuthentication($login, $password);
-        if ($token)
-            $this->setAuthorizationToken($token);
-        if ($headers)
-            $this->headers = $headers;
-    }
+        $boundary = '0f3cf5c0-70e0-41ef-baef-c6f9f65ec3e1';
 
-    public function storeDicom(string $dicomPath)
-    {
+        $fileContents = fopen($filename, 'rb');
 
-        $this->uploadFile('POST', '/studies', $dicomPath, "application/dicom");
-    }
+        $body = "--{$boundary}\r\n"
+            . "Content-Type: application/dicom\r\n"
+            . "\r\n";
 
-    public function getStoreDicomRequest(string $filename)
-    {
-        $fileHandler = fopen($filename, 'rb');
-        $boundary = "0f3cf5c0-70e0-41ef-baef-c6f9f65ec3e1";
-        $options = [
-            'auth' => [$this->login, $this->password],
-            'headers' => [
-            ],
-            'multipart' => [
-                [
-                    'name' => 'dicom',
-                    'headers' => [
-                        'Content-Type' => "application/dicom; boundary=" . $boundary,
-                        'Transfer-Encoding' => 'encoding',
-                    ],
-                    'contents' => $fileHandler
-                ]
-            ]
+        $bodyStream = Utils::streamFor($body);
+        $fileStream = Utils::streamFor($fileContents);
+        $closing = Utils::streamFor("\r\n--{$boundary}--\r\n");
+
+        $multipartStream = new \GuzzleHttp\Psr7\AppendStream([
+            $bodyStream,
+            $fileStream,
+            $closing,
+        ]);
+
+        $headers = [
+            'Content-Type' => "multipart/related; type=\"application/dicom\"; boundary={$boundary}",
         ];
 
-        $response = $this->client->request('POST', $this->address . '/studies', $options);
-        Log::info($response->getStatusCode());
-        return null;
+        if ($this->login !== '' && $this->password !== '') {
+            $headers['Authorization'] = 'Basic ' . base64_encode($this->login . ':' . $this->password);
+        }
+
+        if ($this->authorizationToken !== '') {
+            $headers['Authorization'] = 'Bearer ' . $this->authorizationToken;
+        }
+
+        return new Request('POST', $this->address . '/studies', $headers, $multipartStream);
     }
 
-    public function sendInstancesConcrrentlyToDicomWeb($instances, int $concurrency = 5)
-    {
 
-        $requestsGenerator = function ($instances) {
-            foreach ($instances as $instance) {
-                yield $this->getStoreDicomRequest($instance);
-            };
+    public function sendStudyInstancesConcurrentlyToDicomWeb(OrthancService $orthancservice, string $orthancstudyId, int $concurrency): array
+    {
+        $responseArray = [];
+        $hasError = false;
+
+        $instanceIds = $orthancservice->getOrthancInstancesOfRessource('studies', $orthancstudyId);
+        $instanceDetails = [];
+
+        for ($i = 0; $i < sizeof($instanceIds); $i++) {
+            $instanceDetails[] = [
+                'index' => $i,
+                'instanceId' => $instanceIds[$i]['ID'],
+                'path' => null
+            ];
+        }
+
+        $requestsGenerator = function (&$instanceDetails) use ($orthancservice) {
+            foreach ($instanceDetails as &$instanceDetail) {
+                $orthancInstanceId = $instanceDetail['instanceId'];
+                $instancePath = $orthancservice->getInstance($orthancInstanceId);
+                $instanceDetail['path'] = $instancePath;
+                yield $this->getStoreDicomRequest($instancePath);
+            }
         };
 
-        $pool = new Pool($this->client, $requestsGenerator($instances), [
-            'concurency' => $concurrency,
-            'fulfilled' => function (Response $response, $index) use (&$responseArray, &$instances) {
-                unlink($instances[$index]);
+        $pool = new Pool($this->client, $requestsGenerator($instanceDetails), [
+            'concurrency' => $concurrency,
+            'fulfilled' => function (Response $response, int $index) use (&$responseArray, $instanceDetails) {
+                $instanceDetail = array_find($instanceDetails, function ($instanceDetail) use ($index) {
+                    return $instanceDetail['index'] === $index;
+                });
+                if (!$instanceDetail)
+                    throw new GaelOException("Original Orthanc sent file not found");
+                if (file_exists($instanceDetail['path'])) {
+                    unlink($instanceDetail['path']);
+                }
                 $responseArray[$index] = new Psr7ResponseAdapter($response);
             },
-            'rejected' => function (RequestException|ConnectException $exception, $index) use (&$instances) {
-                unlink($instances[$index]);
-                $reason = "Error sending dicom to orthanc";
-
-                if ($exception instanceof RequestException && $exception->hasResponse()) {
-                    $reason = $exception->getResponse()->getStatusCode();
-                    Log::error($exception->getResponse()->getBody()->getContents());
-                } else {
-                    $reason = $exception->getMessage();
+            'rejected' => function (RequestException|ConnectException $exception, int $index) use ($instanceDetails, &$hasError) {
+                $instanceDetail = array_find($instanceDetails, function ($instanceDetail) use ($index) {
+                    return $instanceDetail['index'] === $index;
+                });
+                if (!$instanceDetail)
+                    throw new GaelOException("Original Orthanc sent file not found");
+                if (file_exists($instanceDetail['path'])) {
+                    unlink($instanceDetail['path']);
                 }
-                // this is delivered each failed request
-                Log::error('DICOM Import Failed in Orthanc Temporary: ' . $reason . ' index: ' . $index);
+                Log::error($exception);
+                $hasError = true;
             },
         ]);
-        // Initiate the transfers and create a promise
-        $promise = $pool->promise();
 
-        // Force the pool of requests to complete.
-        $promise->wait();
-        //Remove empty places of the response array (in case of failed request)
-        $responseArray = array_filter($responseArray);
-        return $responseArray;
+        $pool->promise()->wait();
+
+        if ($hasError) {
+            throw new GaelOException("Error while sending to DICOMWeb Service");
+        }
+
+        return array_filter($responseArray);
     }
 }

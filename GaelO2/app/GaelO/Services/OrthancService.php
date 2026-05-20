@@ -57,6 +57,11 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID)->getJsonBody();
     }
 
+    public function getOrthancInstancesOfRessource(string $level, string $orthancID): array
+    {
+        return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/instances')->getJsonBody();
+    }
+
     public function getOrthancRessourcesStatistics(string $level, string $orthancID): array
     {
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics')->getJsonBody();

@@ -10,10 +10,8 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\DicomWebService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
-use App\GaelO\Services\StoreObjects\OrthancSeries;
 use Exception;
 use Generator;
-use GuzzleHttp\Pool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -147,11 +145,14 @@ class ExportDicom extends Command
                 break;
             case Destinations::DICOMWEB->value:
                 $dicomAddress = $this->ask('Dicom URL base : (ex: http://orthancdestination:8042/dicom-web) ');
-                $dicomUsername = $this->ask('Dicom Username: ');
-                $dicomPassword = $this->secret('Dicom Password: ');
-                $dicomToken = $this->secret('Dicom Token') ?: "";
-                $dicomHeader = $this->ask('Dicom Header : ') ?: [""];
-                $this->dicomWebService->setDicomWebServer($dicomAddress, $dicomUsername, $dicomPassword, $dicomToken, $dicomHeader);
+                $dicomWebUsername = $this->ask('Dicom Username: ');
+                $dicomWebPassword = $this->secret('Dicom Password: ');
+                $dicomWebToken = $this->secret('Dicom Token') ?: "";
+                $this->dicomWebService->setUrl($dicomAddress);
+                if ($dicomWebUsername || $dicomWebPassword)
+                    $this->dicomWebService->setBasicAuthentication($dicomWebUsername, $dicomWebPassword);
+                if ($dicomWebToken)
+                    $this->dicomWebService->setAuthorizationToken($dicomWebToken);
                 break;
 
         }
@@ -167,12 +168,10 @@ class ExportDicom extends Command
             $visitType = $study['visit']['visit_type']['name'];
             $visitName = $study['visit']['visit_type']['visit_group']['study_name'];
 
-            Log::info('ici');
-
             $fileName = $studyOrthancId . '.zip';
 
             $this->index[$studyOrthancId] = [
-                'filename' => $fileName,
+                'orthancStudyId' => $studyOrthancId,
                 'patientCode' => $patientCode,
                 'visitType' => $visitType,
                 'visitName' => $visitName,
@@ -180,8 +179,8 @@ class ExportDicom extends Command
             ];
 
             switch ($destinationType) {
-                case "orthanc-peer":
-                    $jobData = $this->orthancService->sendToPeerAsyncWithAccelerator(
+                case Destinations::ORTHANCPEER->value:
+                    $jobData = $this->orthancService->sendToPeerWithAcceleratorIfAvailable(
                         $destinatorName,
                         [
                             [
@@ -194,7 +193,7 @@ class ExportDicom extends Command
                     $this->waitForJobFinished($jobData['ID']);
                     $this->updateStudyStatus($studyOrthancId, 'success');
                     break;
-                case "webdav":
+                case Destinations::WEBDAV->value:
                     $filePath = $this->getZipToSend([$studyOrthancId]);
                     $stream = fopen($filePath, 'rb');
                     $success = $this->webdavClientInterface->writeStreamContent($stream, $fileName);
@@ -202,8 +201,8 @@ class ExportDicom extends Command
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : "failure");
                     Log::info("webDav upload succeeded for {$fileName}");
                     break;
-                case "ftp":
-                case "sftp":
+                case Destinations::FTP->value:
+                case Destinations::SFTP->value:
                     $filePath = $this->getZipToSend([$studyOrthancId]);
                     $stream = fopen($filePath, 'rb');
                     $success = $this->ftpClientInterface->writeStreamContent($stream, $fileName);
@@ -214,8 +213,8 @@ class ExportDicom extends Command
                     $this->updateStudyStatus($studyOrthancId, 'success');
                     Log::info("FTP upload succeeded for {$fileName}");
                     break;
-                case 's3':
-                case 'azure-storage':
+                case Destinations::S3->value:
+                case Destinations::AZURESTORAGE->value:
                     // Writes the zip archive directly to S3 / Azure via Flysystem,
                     // without routing through Orthanc's REST API.
                     $filePath = $this->getZipToSend([$studyOrthancId]);
@@ -223,18 +222,16 @@ class ExportDicom extends Command
                     $success = $this->objectStorage->writeStreamContent($stream, $fileName);
                     unlink($filePath);
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
-                    Log::info("Object-storage upload " . ($success ? 'succeeded' : 'failed') . " for {$fileName}");
                     break;
                 case Destinations::DICOMWEB->value:
-
-                    $this->sendStudyToDicomWeb($studyOrthancId);
+                    $success = $this->sendStudyToDicomWeb($studyOrthancId);
+                    $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                     break;
             }
 
             if ($destinationType === Destinations::ORTHANCPEER) {
                 $this->orthancService->deletePeer($destinatorName);
             }
-
 
         }
 
@@ -245,6 +242,13 @@ class ExportDicom extends Command
     private function updateStudyStatus($studyOrthancId, $status)
     {
         $this->index[$studyOrthancId]['status'] = $status;
+        $this->table([
+            'orthancStudyId',
+            'patientCode',
+            'visitType',
+            'visitName',
+            'status'
+        ], $this->index);
     }
 
     private function getZipToSend(array $studiesIds)
@@ -281,24 +285,6 @@ class ExportDicom extends Command
         }
     }
 
-    private function getSeriesOrthancIdToSend(): array
-    {
-        $orthancIds = [];
-        $visits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, false, true, null);
-        foreach ($visits as $visit) {
-            $dicoms = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visit['id'], $this->withDeletedStudies, $this->withDeletedSeries);
-            foreach ($dicoms as $dicomStudy) {
-                $series = $dicomStudy['dicom_series'];
-                foreach ($series as $serie) {
-                    $orthancIds[] = $serie['orthanc_id'];
-
-                }
-            }
-        }
-        return $orthancIds;
-    }
-
-
     private function initOrthancPeerClient(string $name, string $url, string $username, string $password)
     {
         $this->orthancService->addPeer($name, $url, $username, $password);
@@ -307,22 +293,16 @@ class ExportDicom extends Command
         }
     }
 
-    private function sendStudyToDicomWeb(string $studyOrthancId)
+    private function sendStudyToDicomWeb(string $studyOrthancId): bool
     {
-        $studyDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $studyOrthancId);
-        foreach ($studyDetails['Series'] as $seriesOrthancId) {
-            $instances = $this->orthancService->getInstancesOfSeries($seriesOrthancId);
-            $this->dicomWebService->sendInstancesConcrrentlyToDicomWeb($instances);
+        try {
+            $this->dicomWebService->sendStudyInstancesConcurrentlyToDicomWeb($this->orthancService, $studyOrthancId, 5);
+        } catch (Exception $e) {
+            Log::error($e);
+            return false;
         }
-    }
 
-    private function initSftpClient()
-    {
-
-    }
-
-    private function initFtpClient()
-    {
+        return true;
 
     }
 
