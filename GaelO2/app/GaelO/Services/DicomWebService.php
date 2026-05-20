@@ -5,9 +5,6 @@ namespace App\GaelO\Services;
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\Psr7ResponseAdapter;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\StoreObjects\OrthancSeries;
-use App\GaelO\Services\StoreObjects\OrthancStudy;
-use Generator;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
@@ -18,12 +15,6 @@ use Illuminate\Support\Facades\Log;
 
 class DicomWebService extends HttpClientAdapter
 {
-    private array $headers = [];
-
-    /**
-     * Construit un objet Request Guzzle conforme STOW-RS (DICOM PS3.18 §10.5.1)
-     * sans l'exécuter — destiné à être yielded dans un Pool.
-     */
     public function getStoreDicomRequest(string $filename): Request
     {
         $boundary = '0f3cf5c0-70e0-41ef-baef-c6f9f65ec3e1';
@@ -60,12 +51,12 @@ class DicomWebService extends HttpClientAdapter
     }
 
 
-    public function sendStudyInstancesConcurrentlyToDicomWeb(OrthancService $orthancservice, string $orthancstudyId, int $concurrency): array
+    public function sendStudyInstancesConcurrentlyToDicomWeb(OrthancService $orthancservice, array $seriesOrthancID, int $concurrency): array
     {
         $responseArray = [];
         $hasError = false;
 
-        $instanceIds = $orthancservice->getOrthancInstancesOfRessource('studies', $orthancstudyId);
+        $instanceIds = $orthancservice->describeResources('instances', $seriesOrthancID);
         $instanceDetails = [];
 
         for ($i = 0; $i < sizeof($instanceIds); $i++) {

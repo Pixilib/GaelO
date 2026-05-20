@@ -62,6 +62,16 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/instances')->getJsonBody();
     }
 
+    public function describeResources(string $level, array $orthancIDs): array
+    {
+        $payload = [
+            'Resources' => $orthancIDs,
+            'Level' => $level,
+            'Metadata' => false
+        ];
+        return $this->httpClientInterface->requestJson('POST', '/tools/bulk-content', $payload)->getJsonBody();
+    }
+
     public function getOrthancRessourcesStatistics(string $level, string $orthancID): array
     {
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics')->getJsonBody();
@@ -526,7 +536,6 @@ class OrthancService
 
     /**
      * fill ressource with dicom zip containing the Orthanc ID ressources dicoms
-     * @param array $uidList
      */
     public function getZipStreamToFile(array $orthancIDs, $ressource, ?string $transfertSyntaxUID = null)
     {
