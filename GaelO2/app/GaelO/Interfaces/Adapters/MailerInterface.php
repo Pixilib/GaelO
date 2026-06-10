@@ -9,5 +9,6 @@ Interface MailerInterface {
     public function setParameters(array $parameters);
     public function setBody(int $body);
     public function send();
+    public function setAttachements(array $filePaths);
 
 }

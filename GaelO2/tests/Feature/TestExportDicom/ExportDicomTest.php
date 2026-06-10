@@ -5,11 +5,13 @@ namespace Tests\Feature\TestExportDicom;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FTPClientInterface;
 use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
+use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use App\GaelO\Interfaces\Adapters\WebdavClientInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\DicomWebService;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
@@ -27,6 +29,8 @@ class ExportDicomTest extends TestCase
     private MockInterface $webdavClientMock;
     private MockInterface $objectStorageMock;
     private MockInterface $dicomWebServiceMock;
+    private MockInterface $spreadsheetMock;
+    private MockInterface $mailServicesMock;
 
     private array $fakeVisits;
     private array $fakeDicomStudies;
@@ -76,11 +80,23 @@ class ExportDicomTest extends TestCase
             ->zeroOrMoreTimes()
             ->andReturn([])
             ->byDefault();
+        $this->orthancServiceMock
+            ->shouldReceive('getInstancesOfSeries')
+            ->zeroOrMoreTimes()
+            ->andReturn([]);
 
         $this->ftpClientMock       = $this->mock(FTPClientInterface::class);
         $this->webdavClientMock    = $this->mock(WebdavClientInterface::class);
         $this->objectStorageMock   = $this->mock(ObjectStorageInterface::class);
         $this->dicomWebServiceMock = $this->mock(DicomWebService::class);
+
+        $this->spreadsheetMock = $this->mock(SpreadsheetInterface::class);
+        $this->spreadsheetMock->shouldReceive('addSheet')->zeroOrMoreTimes();
+        $this->spreadsheetMock->shouldReceive('fillData')->zeroOrMoreTimes();
+        $this->spreadsheetMock->shouldReceive('writeToCsv')->zeroOrMoreTimes()->andReturn('fake_report.csv');
+
+        $this->mailServicesMock = $this->mock(MailServices::class);
+        $this->mailServicesMock->shouldReceive('sendExportCommandReport')->zeroOrMoreTimes();
 
         $this->trackerSpy = $this->spy(TrackerRepository::class);
         app()->instance(TrackerRepository::class, $this->trackerSpy);
@@ -133,6 +149,9 @@ class ExportDicomTest extends TestCase
             ->andReturn(['ID' => 'job-001']);
         $this->orthancServiceMock->shouldReceive('getJobDetails')
             ->with('job-001')->andReturn(['State' => 'Success']);
+
+        $this->orthancServiceMock->shouldReceive('deletePeer')
+            ->once()->with('test-peer');
 
         $cmd = $this->artisan('gaelo:export-dicom');
         $this->expectCommonQuestions($cmd, 'orthanc-peer')
@@ -221,7 +240,7 @@ class ExportDicomTest extends TestCase
             ->expectsQuestion('FTP Password: ', 'ftppass');
     }
 
-    // SFTP — same switch 2 branch as FTP, only sftp=true differs in switch 1
+    // SFTP
     public function testExportWithSFTP(): void
     {
         $this->mockOrthancZip();
@@ -265,7 +284,7 @@ class ExportDicomTest extends TestCase
     // DICOM-WEB
     public function testExportWithDICOMWEB(): void
     {
-        // switch 1 — basic auth, no token
+        // switch 1
         $this->dicomWebServiceMock->shouldReceive('setUrl')
             ->once()->with('http://dicomweb:8042/dicom-web');
         $this->dicomWebServiceMock->shouldReceive('setBasicAuthentication')
@@ -293,7 +312,7 @@ class ExportDicomTest extends TestCase
 
     public function testExportWithDICOMWEBTokenOnly(): void
     {
-        // switch 1 — token only, no basic auth
+        // switch 1
         $this->dicomWebServiceMock->shouldReceive('setUrl')->once();
         $this->dicomWebServiceMock->shouldNotReceive('setBasicAuthentication');
         $this->dicomWebServiceMock->shouldReceive('setAuthorizationToken')
@@ -317,7 +336,6 @@ class ExportDicomTest extends TestCase
     {
         $this->dicomWebServiceMock->shouldReceive('setUrl')->once();
         $this->dicomWebServiceMock->shouldReceive('setBasicAuthentication')->once();
-        // exception caught internally by sendSeriesToDicomWeb → status failure, exit 0
         $this->dicomWebServiceMock->shouldReceive('sendStudyInstancesConcurrentlyToDicomWeb')
             ->once()->andThrow(new \Exception('DicomWeb unreachable'));
 
@@ -373,7 +391,7 @@ class ExportDicomTest extends TestCase
             ->assertExitCode(0);
     }
 
-    // AZURE STORAGE — same switch 2 branch as S3
+    // AZURE STORAGE
     public function testExportWithAZURESTORAGE(): void
     {
         $this->mockOrthancZip();
@@ -436,7 +454,6 @@ class ExportDicomTest extends TestCase
     {
         $this->mockOrthancZip();
         $this->webdavClientMock->shouldReceive('setWebdavServer')->once();
-        // no throw unlike FTP, just failure status
         $this->webdavClientMock->shouldReceive('writeStreamContent')->once()->andReturn(false);
 
         $cmd = $this->artisan('gaelo:export-dicom');
@@ -452,11 +469,9 @@ class ExportDicomTest extends TestCase
     {
         $this->mockOrthancZip();
         
-        // mock WebDAV success
         $this->webdavClientMock->shouldReceive('setWebdavServer')->once();
         $this->webdavClientMock->shouldReceive('writeStreamContent')->once()->andReturn(true);
 
-        // mock final stats for table
         $this->orthancServiceMock->shouldReceive('describeResources')
             ->with('Instances', \Mockery::any())->andReturn([1, 2, 3]);
         $this->orthancServiceMock->shouldReceive('describeResources')
@@ -473,21 +488,20 @@ class ExportDicomTest extends TestCase
             ->expectsQuestion('Webdav Username: ', 'wduser')
             ->expectsQuestion('Webdav Password: ', 'wdpass');
 
-        // assert study status table
         $cmd->expectsTable(
-            ['orthancStudyId', 'patientCode', 'visitType', 'visitName', 'status'],
+            ['orthancStudyId', 'patientCode', 'visitType', 'visitName', 'checksum_sha256', 'status'],
             [
-                [
+                'study-orthanc-uid-001' => [
                     'orthancStudyId' => 'study-orthanc-uid-001',
                     'patientCode'    => 'PAT001',
                     'visitType'      => 'Baseline',
                     'visitName'      => 'STUDY_A',
+                    'checksum_sha256'=> hash('sha256', 'fake-zip-content'),
                     'status'         => 'success',
                 ]
             ]
         );
 
-        // assert final stats table
         $cmd->expectsTable(
             ["instanceCount", "seriesCount", "studyCount", "patientCount"],
             [
@@ -500,7 +514,6 @@ class ExportDicomTest extends TestCase
             ]
         );
 
-        // assert progress bar advance
         $cmd->expectsOutputToContain('1/1');
 
         $cmd->assertExitCode(0);

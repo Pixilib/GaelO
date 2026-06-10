@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FTPClientInterface;
+use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use App\GaelO\Interfaces\Adapters\WebdavClientInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\DicomWebService;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
 use Exception;
@@ -32,7 +34,7 @@ class ExportDicom extends Command
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private OrthancService $orthancService;
-    private FtpClientInterface $ftpClientInterface;
+    private FTPClientInterface $ftpClientInterface;
     private WebdavClientInterface $webdavClientInterface;
     private ObjectStorageInterface $objectStorage;
 
@@ -42,7 +44,8 @@ class ExportDicom extends Command
 
     private string $studyName;
 
-    private array $index;
+    private array $index = [];
+    private array $dicomIndex = [];
     /**
      * The name and signature of the console command.
      *
@@ -69,7 +72,9 @@ class ExportDicom extends Command
         FTPClientInterface $ftpclientInterface,
         WebdavClientInterface $webdavClientInterface,
         ObjectStorageInterface $objectStorage,
-        DicomWebService $dicomWebService
+        DicomWebService $dicomWebService,
+        MailServices $mailServices,
+        SpreadsheetInterface $spreadsheetInterface
     ) {
         $this->orthancService = $orthancService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -186,11 +191,21 @@ class ExportDicom extends Command
                 'patientCode' => $patientCode,
                 'visitType' => $visitType,
                 'visitName' => $visitName,
+                'checksum_sha256' => null,
                 'status' => 'sending'
             ];
 
             switch ($destinationType) {
                 case Destinations::ORTHANCPEER->value:
+
+                    $this->buildDicomProtocolIndex(
+                        $studyOrthancId,
+                        $patientCode,
+                        $visitType,
+                        $visitName,
+                        $orthancSeriesIds
+                    );
+
                     $idWithLevels = array_map(function ($seriesOrthancId) {
                         return [
                             'Level' => 'Series',
@@ -207,6 +222,8 @@ class ExportDicom extends Command
                     break;
                 case Destinations::WEBDAV->value:
                     $filePath = $this->getZipToSend($orthancSeriesIds);
+                    $checksum = hash_file('sha256', $filePath);
+                    $this->index[$studyOrthancId]['checksum_sha256'] = $checksum;
                     $stream = fopen($filePath, 'rb');
                     $success = $this->webdavClientInterface->writeStreamContent($stream, $fileName);
                     unlink($filePath);
@@ -216,6 +233,8 @@ class ExportDicom extends Command
                 case Destinations::FTP->value:
                 case Destinations::SFTP->value:
                     $filePath = $this->getZipToSend($orthancSeriesIds);
+                    $checksum = hash_file('sha256', $filePath);
+                    $this->index[$studyOrthancId]['checksum_sha256'] = $checksum;
                     $stream = fopen($filePath, 'rb');
                     $success = $this->ftpClientInterface->writeStreamContent($stream, $fileName);
                     unlink($filePath);
@@ -227,30 +246,63 @@ class ExportDicom extends Command
                     break;
                 case Destinations::S3->value:
                 case Destinations::AZURESTORAGE->value:
-                    // Writes the zip archive directly to S3 / Azure via Flysystem,
-                    // without routing through Orthanc's REST API.
                     $filePath = $this->getZipToSend($orthancSeriesIds);
+                    $checksum = hash_file('sha256', $filePath);
+                    $this->index[$studyOrthancId]['checksum_sha256'] = $checksum;
                     $stream = fopen($filePath, 'rb');
                     $success = $this->objectStorage->writeStreamContent($stream, $fileName);
                     unlink($filePath);
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                     break;
                 case Destinations::DICOMWEB->value:
+
+                    $this->buildDicomProtocolIndex(
+                        $studyOrthancId,
+                        $patientCode,
+                        $visitType,
+                        $visitName,
+                        $orthancSeriesIds
+                    );
+
                     $success = $this->sendSeriesToDicomWeb($orthancSeriesIds);
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                     break;
-            }
-
-            if ($destinationType === Destinations::ORTHANCPEER) {
-                $this->orthancService->deletePeer($destinatorName);
             }
             $this->newLine();
             $progressBar->advance();
             $this->newLine();
         }
 
+        if ($destinationType === Destinations::ORTHANCPEER->value) {
+                $this->orthancService->deletePeer($destinatorName);
+            }
+
         $stats = $this->getExportStats($fullSeriesOrthancIds);
         $this->table(["instanceCount", "seriesCount", "studyCount", "patientCount"], [$stats]);
+        
+        $spreadsheetInterface->addSheet('Export Details');
+        $spreadsheetInterface->fillData(
+            'Export Details',
+            $destinationType === Destinations::DICOMWEB->value || $destinationType === Destinations::ORTHANCPEER->value
+                ? $this->dicomIndex
+                : array_values($this->index)
+        );
+
+        $spreadsheetInterface->addSheet('Export Stats');
+        $spreadsheetInterface->fillData('Export Stats', [$stats]);
+
+        $detailsCsvReport = $spreadsheetInterface->writeToCsv('Export Details');
+        $statsCsvReport = $spreadsheetInterface->writeToCsv('Export Stats');
+
+        $mailServices->sendExportCommandReport(
+            $this->studyName,
+            "Export Terminated",
+            "The export of $this->studyName to $destinationType destination has been successful",
+            [
+                $detailsCsvReport,
+                $statsCsvReport
+            ]
+        );
 
         return 0;
     }
@@ -283,6 +335,7 @@ class ExportDicom extends Command
             'patientCode',
             'visitType',
             'visitName',
+            'checksum_sha256',
             'status'
         ], $this->index);
     }
@@ -293,7 +346,6 @@ class ExportDicom extends Command
         $this->orthancService->getZipStreamToFile($seriesOrthancIds, $tempFileLocation);
         return $tempFileLocation;
     }
-
 
     private function waitForJobFinished(string $jobId)
     {
@@ -342,5 +394,30 @@ class ExportDicom extends Command
 
     }
 
-}
+    private function buildDicomProtocolIndex(
+        string $studyOrthancId,
+        string $patientCode,
+        string $visitType,
+        string $visitName,
+        array $seriesOrthancIds
+    ) {
+        foreach ($seriesOrthancIds as $seriesOrthancId) {
+            foreach ($this->orthancService->getInstancesOfSeries($seriesOrthancId) as $instanceFile) {
+                $instanceId = pathinfo($instanceFile, PATHINFO_FILENAME);
 
+                $this->dicomIndex[] = [
+                    'orthancStudyId' => $studyOrthancId,
+                    'patientCode' => $patientCode,
+                    'visitType' => $visitType,
+                    'visitName' => $visitName,
+                    'dicomInstanceId' => $instanceId,
+                    'checksum_sha256' => hash_file('sha256', $instanceFile),
+                    'status' => 'sending'
+                ];
+
+                unlink($instanceFile);
+            }
+        }
+    }
+
+}
