@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.81424682395644" branch-rate="0" lines-covered="8973" lines-valid="11020" branches-covered="0" branches-valid="0" complexity="2934" version="0.4" timestamp="1781095457">
+<coverage line-rate="0.81422996642164" branch-rate="0" lines-covered="8972" lines-valid="11019" branches-covered="0" branches-valid="0" complexity="2934" version="0.4" timestamp="1781181986">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1695,8 +1695,8 @@
             </method>
             <method name="getStoredFiles" signature="$directory" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="35" hits="3"/>
-                <line number="36" hits="3"/>
+                <line number="35" hits="1"/>
+                <line number="36" hits="1"/>
               </lines>
             </method>
             <method name="storeFile" signature="string $path, $contents" line-rate="1" branch-rate="0" complexity="1">
@@ -1773,8 +1773,8 @@
           <lines>
             <line number="22" hits="89"/>
             <line number="27" hits="623"/>
-            <line number="35" hits="3"/>
-            <line number="36" hits="3"/>
+            <line number="35" hits="1"/>
+            <line number="36" hits="1"/>
             <line number="41" hits="5"/>
             <line number="46" hits="2"/>
             <line number="51" hits="0"/>
@@ -28743,29 +28743,28 @@
                 <line number="86" hits="3"/>
                 <line number="87" hits="3"/>
                 <line number="88" hits="2"/>
-                <line number="89" hits="2"/>
+                <line number="90" hits="1"/>
                 <line number="91" hits="1"/>
-                <line number="92" hits="1"/>
               </lines>
             </method>
             <method name="modifyDocumentation" signature="Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse, int $documentationId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="97" hits="4"/>
                 <line number="98" hits="4"/>
-                <line number="99" hits="4"/>
+                <line number="100" hits="4"/>
                 <line number="101" hits="4"/>
                 <line number="102" hits="4"/>
                 <line number="103" hits="4"/>
-                <line number="104" hits="4"/>
-                <line number="106" hits="4"/>
+                <line number="105" hits="4"/>
               </lines>
             </method>
             <method name="reactivateDocumentation" signature="ReactivateDocumentation $reactivateDocumentation, ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse, int $documentationId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="109" hits="2"/>
                 <line number="110" hits="2"/>
                 <line number="111" hits="2"/>
-                <line number="112" hits="2"/>
-                <line number="114" hits="2"/>
-                <line number="116" hits="2"/>
+                <line number="113" hits="2"/>
+                <line number="115" hits="2"/>
               </lines>
             </method>
           </methods>
@@ -28803,21 +28802,20 @@
             <line number="86" hits="3"/>
             <line number="87" hits="3"/>
             <line number="88" hits="2"/>
-            <line number="89" hits="2"/>
+            <line number="90" hits="1"/>
             <line number="91" hits="1"/>
-            <line number="92" hits="1"/>
+            <line number="97" hits="4"/>
             <line number="98" hits="4"/>
-            <line number="99" hits="4"/>
+            <line number="100" hits="4"/>
             <line number="101" hits="4"/>
             <line number="102" hits="4"/>
             <line number="103" hits="4"/>
-            <line number="104" hits="4"/>
-            <line number="106" hits="4"/>
+            <line number="105" hits="4"/>
+            <line number="109" hits="2"/>
             <line number="110" hits="2"/>
             <line number="111" hits="2"/>
-            <line number="112" hits="2"/>
-            <line number="114" hits="2"/>
-            <line number="116" hits="2"/>
+            <line number="113" hits="2"/>
+            <line number="115" hits="2"/>
           </lines>
         </class>
       </classes>
