@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.81422996642164" branch-rate="0" lines-covered="8972" lines-valid="11019" branches-covered="0" branches-valid="0" complexity="2934" version="0.4" timestamp="1781181986">
+<coverage line-rate="0.81408220669631" branch-rate="0" lines-covered="8972" lines-valid="11021" branches-covered="0" branches-valid="0" complexity="2936" version="0.4" timestamp="1781182519">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1017,13 +1017,13 @@
         </class>
       </classes>
     </package>
-    <package name="Console/Commands/ExportStudyData.php" line-rate="0" branch-rate="0" complexity="32">
+    <package name="Console/Commands/ExportStudyData.php" line-rate="0" branch-rate="0" complexity="34">
       <classes>
         <class name="App\Console\Commands\ExportDataDestinations" filename="Console/Commands/ExportStudyData.php" line-rate="0" branch-rate="0" complexity="0">
           <methods/>
           <lines/>
         </class>
-        <class name="App\Console\Commands\ExportStudyData" filename="Console/Commands/ExportStudyData.php" line-rate="0" branch-rate="0" complexity="32">
+        <class name="App\Console\Commands\ExportStudyData" filename="Console/Commands/ExportStudyData.php" line-rate="0" branch-rate="0" complexity="34">
           <methods>
             <method name="handle" signature="ExportStudyService $exportStudyService, FTPClientInterface $ftpClientInterface, WebdavClientInterface $webdavClientInterface, ObjectStorageInterface $objectStorage, MailServices $mailServices" line-rate="0" branch-rate="0" complexity="11">
               <lines>
@@ -1094,7 +1094,7 @@
                 <line number="121" hits="0"/>
               </lines>
             </method>
-            <method name="transferDataTables" signature="string $destinationType" line-rate="0" branch-rate="0" complexity="3">
+            <method name="transferDataTables" signature="string $destinationType" line-rate="0" branch-rate="0" complexity="4">
               <lines>
                 <line number="126" hits="0"/>
                 <line number="129" hits="0"/>
@@ -1103,80 +1103,69 @@
                 <line number="135" hits="0"/>
                 <line number="137" hits="0"/>
                 <line number="138" hits="0"/>
-                <line number="139" hits="0"/>
-                <line number="140" hits="0"/>
-                <line number="142" hits="0"/>
+                <line number="141" hits="0"/>
                 <line number="143" hits="0"/>
                 <line number="144" hits="0"/>
-                <line number="145" hits="0"/>
+                <line number="148" hits="0"/>
+                <line number="149" hits="0"/>
+                <line number="150" hits="0"/>
+                <line number="151" hits="0"/>
               </lines>
             </method>
-            <method name="transferAssociatedFiles" signature="string $destinationType" line-rate="0" branch-rate="0" complexity="3">
+            <method name="transferAssociatedFiles" signature="string $destinationType" line-rate="0" branch-rate="0" complexity="4">
               <lines>
-                <line number="151" hits="0"/>
-                <line number="154" hits="0"/>
-                <line number="155" hits="0"/>
                 <line number="157" hits="0"/>
-                <line number="158" hits="0"/>
-                <line number="159" hits="0"/>
                 <line number="160" hits="0"/>
                 <line number="161" hits="0"/>
                 <line number="163" hits="0"/>
                 <line number="164" hits="0"/>
-                <line number="165" hits="0"/>
-                <line number="166" hits="0"/>
+                <line number="167" hits="0"/>
+                <line number="169" hits="0"/>
+                <line number="170" hits="0"/>
+                <line number="173" hits="0"/>
+                <line number="176" hits="0"/>
+                <line number="177" hits="0"/>
+                <line number="178" hits="0"/>
+                <line number="179" hits="0"/>
               </lines>
             </method>
             <method name="getAssociatedFilesZipPath" signature="" line-rate="0" branch-rate="0" complexity="7">
               <lines>
-                <line number="172" hits="0"/>
-                <line number="173" hits="0"/>
-                <line number="175" hits="0"/>
-                <line number="176" hits="0"/>
-                <line number="177" hits="0"/>
-                <line number="181" hits="0"/>
-                <line number="183" hits="0"/>
-                <line number="184" hits="0"/>
+                <line number="185" hits="0"/>
                 <line number="186" hits="0"/>
-                <line number="187" hits="0"/>
                 <line number="188" hits="0"/>
                 <line number="189" hits="0"/>
                 <line number="190" hits="0"/>
-                <line number="191" hits="0"/>
-                <line number="192" hits="0"/>
-                <line number="195" hits="0"/>
+                <line number="194" hits="0"/>
                 <line number="196" hits="0"/>
                 <line number="197" hits="0"/>
-                <line number="198" hits="0"/>
+                <line number="199" hits="0"/>
                 <line number="200" hits="0"/>
                 <line number="201" hits="0"/>
+                <line number="202" hits="0"/>
+                <line number="203" hits="0"/>
+                <line number="204" hits="0"/>
                 <line number="205" hits="0"/>
-              </lines>
-            </method>
-            <method name="validateZip" signature="string $filePath" line-rate="0" branch-rate="0" complexity="2">
-              <lines>
+                <line number="208" hits="0"/>
+                <line number="209" hits="0"/>
                 <line number="210" hits="0"/>
                 <line number="211" hits="0"/>
                 <line number="213" hits="0"/>
                 <line number="214" hits="0"/>
-                <line number="217" hits="0"/>
+                <line number="218" hits="0"/>
+              </lines>
+            </method>
+            <method name="validateZip" signature="string $filePath" line-rate="0" branch-rate="0" complexity="2">
+              <lines>
+                <line number="223" hits="0"/>
+                <line number="224" hits="0"/>
+                <line number="226" hits="0"/>
+                <line number="227" hits="0"/>
+                <line number="230" hits="0"/>
               </lines>
             </method>
             <method name="writeToDestination" signature="string $destinationType, $stream, string $fileName" line-rate="0" branch-rate="0" complexity="5">
               <lines>
-                <line number="222" hits="0"/>
-                <line number="223" hits="0"/>
-                <line number="224" hits="0"/>
-                <line number="225" hits="0"/>
-                <line number="226" hits="0"/>
-                <line number="227" hits="0"/>
-                <line number="228" hits="0"/>
-                <line number="229" hits="0"/>
-              </lines>
-            </method>
-            <method name="updateIndex" signature="string $export, string $fileName, string $checksum, string $status" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="234" hits="0"/>
                 <line number="235" hits="0"/>
                 <line number="236" hits="0"/>
                 <line number="237" hits="0"/>
@@ -1185,7 +1174,20 @@
                 <line number="240" hits="0"/>
                 <line number="241" hits="0"/>
                 <line number="242" hits="0"/>
-                <line number="243" hits="0"/>
+              </lines>
+            </method>
+            <method name="updateIndex" signature="string $export, string $fileName, string $checksum, string $status" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="247" hits="0"/>
+                <line number="248" hits="0"/>
+                <line number="249" hits="0"/>
+                <line number="250" hits="0"/>
+                <line number="251" hits="0"/>
+                <line number="252" hits="0"/>
+                <line number="253" hits="0"/>
+                <line number="254" hits="0"/>
+                <line number="255" hits="0"/>
+                <line number="256" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -1262,60 +1264,53 @@
             <line number="135" hits="0"/>
             <line number="137" hits="0"/>
             <line number="138" hits="0"/>
-            <line number="139" hits="0"/>
-            <line number="140" hits="0"/>
-            <line number="142" hits="0"/>
+            <line number="141" hits="0"/>
             <line number="143" hits="0"/>
             <line number="144" hits="0"/>
-            <line number="145" hits="0"/>
+            <line number="148" hits="0"/>
+            <line number="149" hits="0"/>
+            <line number="150" hits="0"/>
             <line number="151" hits="0"/>
-            <line number="154" hits="0"/>
-            <line number="155" hits="0"/>
             <line number="157" hits="0"/>
-            <line number="158" hits="0"/>
-            <line number="159" hits="0"/>
             <line number="160" hits="0"/>
             <line number="161" hits="0"/>
             <line number="163" hits="0"/>
             <line number="164" hits="0"/>
-            <line number="165" hits="0"/>
-            <line number="166" hits="0"/>
-            <line number="172" hits="0"/>
+            <line number="167" hits="0"/>
+            <line number="169" hits="0"/>
+            <line number="170" hits="0"/>
             <line number="173" hits="0"/>
-            <line number="175" hits="0"/>
             <line number="176" hits="0"/>
             <line number="177" hits="0"/>
-            <line number="181" hits="0"/>
-            <line number="183" hits="0"/>
-            <line number="184" hits="0"/>
+            <line number="178" hits="0"/>
+            <line number="179" hits="0"/>
+            <line number="185" hits="0"/>
             <line number="186" hits="0"/>
-            <line number="187" hits="0"/>
             <line number="188" hits="0"/>
             <line number="189" hits="0"/>
             <line number="190" hits="0"/>
-            <line number="191" hits="0"/>
-            <line number="192" hits="0"/>
-            <line number="195" hits="0"/>
+            <line number="194" hits="0"/>
             <line number="196" hits="0"/>
             <line number="197" hits="0"/>
-            <line number="198" hits="0"/>
+            <line number="199" hits="0"/>
             <line number="200" hits="0"/>
             <line number="201" hits="0"/>
+            <line number="202" hits="0"/>
+            <line number="203" hits="0"/>
+            <line number="204" hits="0"/>
             <line number="205" hits="0"/>
+            <line number="208" hits="0"/>
+            <line number="209" hits="0"/>
             <line number="210" hits="0"/>
             <line number="211" hits="0"/>
             <line number="213" hits="0"/>
             <line number="214" hits="0"/>
-            <line number="217" hits="0"/>
-            <line number="222" hits="0"/>
+            <line number="218" hits="0"/>
             <line number="223" hits="0"/>
             <line number="224" hits="0"/>
-            <line number="225" hits="0"/>
             <line number="226" hits="0"/>
             <line number="227" hits="0"/>
-            <line number="228" hits="0"/>
-            <line number="229" hits="0"/>
-            <line number="234" hits="0"/>
+            <line number="230" hits="0"/>
             <line number="235" hits="0"/>
             <line number="236" hits="0"/>
             <line number="237" hits="0"/>
@@ -1324,7 +1319,16 @@
             <line number="240" hits="0"/>
             <line number="241" hits="0"/>
             <line number="242" hits="0"/>
-            <line number="243" hits="0"/>
+            <line number="247" hits="0"/>
+            <line number="248" hits="0"/>
+            <line number="249" hits="0"/>
+            <line number="250" hits="0"/>
+            <line number="251" hits="0"/>
+            <line number="252" hits="0"/>
+            <line number="253" hits="0"/>
+            <line number="254" hits="0"/>
+            <line number="255" hits="0"/>
+            <line number="256" hits="0"/>
           </lines>
         </class>
       </classes>
