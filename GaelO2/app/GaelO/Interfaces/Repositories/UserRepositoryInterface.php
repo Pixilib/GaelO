@@ -95,6 +95,5 @@ interface UserRepositoryInterface
     public function markUserNotificationsRead(int $userId, array $notificationsIds): void;
 
     public function deleteUserNotifications(int $userId, array $notificationsIds): void;
-    public function filterNonVerifiedEmailsUsers($query);
     public function filterDisableEmailNotification($query);
 }
