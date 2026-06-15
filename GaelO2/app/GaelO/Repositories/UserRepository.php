@@ -55,6 +55,7 @@ class UserRepository implements UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
+        bool $disablEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -68,6 +69,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
+        $user->disablEMailNotification = $disablEMailNotification;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -86,6 +88,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
+        bool $disablEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -101,6 +104,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
+        $user->disablEMailNotification = $disablEMailNotification;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -167,11 +171,14 @@ class UserRepository implements UserRepositoryInterface
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, ?bool $filter = false): array
     {
 
-        $investigators = $this->userModel
+            $query = $this->userModel
             ->with('affiliatedCenters')
+            ->when($filter, function ($query) {
+                $query->whereNotNull('email_verified_at');
+            })
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
                     $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
@@ -186,22 +193,31 @@ class UserRepository implements UserRepositoryInterface
                 $query->whereHas('affiliatedCenters', function ($query) use ($centerCode) {
                     $query->where('center_code', '=', $centerCode);
                 })
-                    ->orWhere('users.center_code', '=', $centerCode);
-            })
-            ->get();
+                ->orWhere('users.center_code', '=', $centerCode);
+            });
+
+        $this->filterDisableEmailNotification($query);
+
+        $investigators = $query->get();
 
         return empty($investigators) ? [] : $investigators->toArray();
     }
 
-    public function getUsersByRolesInStudy(string $study, string $role): array
+    public function getUsersByRolesInStudy(string $study, string $role, ?bool $filter = false): array
     {
 
-        $users = $this->userModel
-            ->whereHas('roles', function ($query) use ($study, $role) {
-                $query->where('name', '=', $role)
-                    ->where('study_name', '=', $study);
-            })
-            ->get();
+        $query = $this->userModel
+        ->when($filter, function ($query) {
+            $query->whereNotNull('email_verified_at');
+        })
+        ->whereHas('roles', function ($query) use ($study, $role) {
+            $query->where('name', '=', $role)
+                ->where('study_name', '=', $study);
+        });
+
+        $this->filterDisableEmailNotification($query);
+
+        $users = $query->get();
 
         return empty($users) ? [] : $users->toArray();
     }
@@ -390,5 +406,14 @@ class UserRepository implements UserRepositoryInterface
     public function deleteUserNotifications(int $userId, array $notificationsIds): void
     {
         $this->userModel->findOrFail($userId)->notifications()->whereIn('id', $notificationsIds)->delete();
+    }
+
+   
+    public function filterDisableEmailNotification($query): void
+    {
+        $query->where(function ($query) {
+            $query->where('disable_email_notification', false)
+                ->orWhereNull('disable_email_notification');
+        });
     }
 }

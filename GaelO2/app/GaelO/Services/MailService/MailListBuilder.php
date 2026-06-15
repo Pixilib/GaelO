@@ -53,7 +53,7 @@ class MailListBuilder
 
     public function withUsersEmailsByRolesInStudy(string $studyName, string $role): self
     {
-        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role);
+        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role, true); 
         //Filter user with a verified email (password have been set)
         $emails = $this->filterNonVerifiedEmailsUsers($users);
         $this->emails = [...$emails, ...$this->emails];
@@ -62,7 +62,7 @@ class MailListBuilder
 
     public function withInvestigatorOfCenterInStudy(String $studyName, String $center, ?String $job = null): self
     {
-        $users = $this->userRepositoryInterface->getInvestigatorsOfStudyFromCenter($studyName, $center, $job);
+        $users = $this->userRepositoryInterface->getInvestigatorsOfStudyFromCenter($studyName, $center, $job, true); 
         $emails = $this->filterNonVerifiedEmailsUsers($users);
         $this->emails = [...$emails, ...$this->emails];
         return $this;
