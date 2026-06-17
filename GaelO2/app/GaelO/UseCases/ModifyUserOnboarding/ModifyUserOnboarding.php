@@ -44,6 +44,7 @@ class ModifyUserOnboarding
                 $user['lastname'],
                 $user['firstname'],
                 $user['email'],
+                $user['disable_email_notification'],
                 $user['phone'],
                 $user['administrator'],
                 $user['center_code'],

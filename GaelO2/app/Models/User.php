@@ -25,7 +25,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'firstname', 'lastname', 'email', 'password', 'phone', 'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'
+        'firstname', 'lastname', 'email', 'disable_email_notification', 'password', 'phone', 'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'
     ];
 
     /**
@@ -46,6 +46,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
             'lastname' => 'string',
             'firstname' => 'string',
             'email' => 'string',
+            'disable_email_notification' => 'boolean',
             'password' => 'string',
             'phone' => 'string',
             'creation_date' => 'datetime',

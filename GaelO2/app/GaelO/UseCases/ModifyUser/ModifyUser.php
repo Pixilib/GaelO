@@ -62,6 +62,7 @@ class ModifyUser
                 $modifyUserRequest->lastname,
                 $modifyUserRequest->firstname,
                 $modifyUserRequest->email,
+                $modifyUserRequest->disablEMailNotification,
                 $modifyUserRequest->phone,
                 $modifyUserRequest->administrator,
                 $modifyUserRequest->centerCode,

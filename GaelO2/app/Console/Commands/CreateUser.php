@@ -48,6 +48,7 @@ class CreateUser extends Command
         $user->firstname = $firstname;
         $user->phone = $phone;
         $user->email = $email;
+        $user->disable_email_notification = false;
         $user->creation_date = now();
         $user->password = Hash::make($password);
         $user->center_code = $mainCenter;

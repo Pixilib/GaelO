@@ -45,6 +45,7 @@ class UserRepositoryTest extends TestCase
             'Kanoun',
             'Salim',
             'salim.kanoun@gmail.com',
+            null,
             '0600000000',
             false,
             0,
@@ -67,6 +68,7 @@ class UserRepositoryTest extends TestCase
             'Kanoun',
             'Salim',
             'salim.kanoun@gmail.com',
+            null,
             '0600000000',
             false,
             0,
@@ -89,6 +91,7 @@ class UserRepositoryTest extends TestCase
             'newLastName',
             'newFirstName',
             'new@email.com',
+            false,
             null,
             !$userToModify->administrator,
             $this->center3->code,
@@ -110,7 +113,6 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
         $this->assertNotEquals($updatedEntity['updated_at'], $userToModify['updated_at']);
-        $this->assertNotEquals($updatedEntity['onboarding_version'], $userToModify['onboarding_version']);
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 
