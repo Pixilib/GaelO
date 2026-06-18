@@ -570,7 +570,7 @@ class MailServices
             'study' => $studyName,
             'subject' => $subject,
             'content' => $content,
-            'canReply' => true
+            'canReply' => true,
         ];
 
         $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
@@ -579,6 +579,25 @@ class MailServices
         $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
+        $this->mailInterface->send();
+    }
+
+        public function sendExportCommandReport(string $studyName, string $subject, string $content, ?array $attachements = [])
+    {
+
+        $parameters = [
+            'study' => $studyName,
+            'subject' => $subject,
+            'content' => $content,
+            'canReply' => true,
+        ];
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withAdminsEmails();
+        $this->mailInterface->setTo($mailListBuilder->get());
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER_SYNC);
+        $this->mailInterface->setAttachements($attachements);
         $this->mailInterface->send();
     }
 

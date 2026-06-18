@@ -21,4 +21,7 @@ interface FTPClientInterface
      * Write file to a folder in destination in FTP
      */
     public function writeFileContent(string $content, string $destination) : bool;
+
+    /* Write from stream input */
+     public function writeStreamContent($stream, string $destinationPath): bool;
 }
