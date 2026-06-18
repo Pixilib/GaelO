@@ -56,7 +56,7 @@ class ModifyUserIdentification
                 $modifyUserIdentificationRequest->lastname,
                 $modifyUserIdentificationRequest->firstname,
                 $modifyUserIdentificationRequest->email,
-                $user['disable_email_notification'],
+                $modifyUserIdentificationRequest->disable_email_notification,
                 $modifyUserIdentificationRequest->phone,
                 $user['administrator'],
                 $user['center_code'],
