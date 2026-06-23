@@ -96,7 +96,7 @@ class ExportStudy extends Command
 
         $availableDestinations = array_column(CombinedDestinations::cases(), 'value');
 
-        // Retrait des protocoles exclusifs à Dicom si on exporte aussi des fichiers Zip classiques
+        // If normal zip don't includ dicom protocol
         if ($exportData || $exportFiles) {
             $availableDestinations = array_diff($availableDestinations, [
                 CombinedDestinations::ORTHANCPEER->value,
@@ -106,7 +106,7 @@ class ExportStudy extends Command
 
         $destinationType = $this->choice('Destination Type', array_values($availableDestinations));
 
-        // Configuration de la destination
+        // destination configuration
         switch ($destinationType) {
             case CombinedDestinations::ORTHANCPEER->value:
                 $this->destinatorName = $this->ask('Orthanc Destinator Name: (ex: sanofi)');
@@ -197,7 +197,7 @@ class ExportStudy extends Command
             $attachments = array_merge($attachments, $dicomAttachments);
         }
 
-        // Envoi du rapport global
+        //Send Report
         $mailServices->sendExportCommandReport(
             $this->studyName,
             'Export Terminated',
@@ -208,9 +208,7 @@ class ExportStudy extends Command
         return 0;
     }
 
-    // ==============================================================================
     // DATA TABLES & ASSOCIATED FILES METHODS
-    // ==============================================================================
 
     private function transferDataTables(string $destinationType): void
     {
@@ -323,10 +321,7 @@ class ExportStudy extends Command
         $this->table(['export', 'fileName', 'checksum_sha256', 'status'], array_values($this->fileIndex));
     }
 
-    // ==============================================================================
     // DICOM EXPORT METHODS
-    // ==============================================================================
-
     private function transferDicoms(string $destinationType, SpreadsheetInterface $spreadsheetInterface): array
     {
         $studies = $this->getDicomStudiesToSend();
