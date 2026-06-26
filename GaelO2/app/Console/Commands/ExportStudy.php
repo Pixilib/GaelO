@@ -79,7 +79,6 @@ class ExportStudy extends Command
 
         $this->studyName = $this->ask('Study to export:');
 
-        // Système de choix OUI / NON
         $exportData  = $this->confirm('Export data tables (forms, visits, reviews)?', true);
         $exportFiles = $this->confirm('Export associated files?', true);
         $exportDicom = $this->confirm('Export DICOMs?', true);
@@ -369,7 +368,6 @@ class ExportStudy extends Command
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                     break;
 
-                // Mutualisé pour les transferts fichiers via Flux
                 case CombinedDestinations::WEBDAV->value:
                 case CombinedDestinations::FTP->value:
                 case CombinedDestinations::SFTP->value:
