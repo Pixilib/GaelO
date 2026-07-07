@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.78857794543381" branch-rate="0" lines-covered="8989" lines-valid="11399" branches-covered="0" branches-valid="0" complexity="3028" version="0.4" timestamp="1783426658">
+<coverage line-rate="0.78861503376897" branch-rate="0" lines-covered="8991" lines-valid="11401" branches-covered="0" branches-valid="0" complexity="3028" version="0.4" timestamp="1783434730">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -4345,7 +4345,6 @@
           <methods>
             <method name="fillFromDBReponseArray" signature="array $array" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="33" hits="5"/>
                 <line number="34" hits="5"/>
                 <line number="35" hits="5"/>
                 <line number="36" hits="5"/>
@@ -4363,12 +4362,12 @@
                 <line number="48" hits="5"/>
                 <line number="49" hits="5"/>
                 <line number="50" hits="5"/>
+                <line number="51" hits="5"/>
+                <line number="52" hits="5"/>
               </lines>
             </method>
             <method name="fillMinimalFromDBReponseArray" signature="array $array, bool $withOnboarding" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="55" hits="5"/>
-                <line number="56" hits="5"/>
                 <line number="57" hits="5"/>
                 <line number="58" hits="5"/>
                 <line number="59" hits="5"/>
@@ -4376,36 +4375,38 @@
                 <line number="61" hits="5"/>
                 <line number="62" hits="5"/>
                 <line number="63" hits="5"/>
+                <line number="64" hits="5"/>
+                <line number="65" hits="5"/>
+                <line number="66" hits="5"/>
               </lines>
             </method>
             <method name="fillOnlyUserIdentification" signature="array $user" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="68" hits="5"/>
-                <line number="69" hits="5"/>
-                <line number="70" hits="5"/>
                 <line number="71" hits="5"/>
                 <line number="72" hits="5"/>
                 <line number="73" hits="5"/>
+                <line number="74" hits="5"/>
+                <line number="75" hits="5"/>
+                <line number="76" hits="5"/>
               </lines>
             </method>
             <method name="addRoles" signature="array $roles" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="78" hits="2"/>
+                <line number="81" hits="2"/>
               </lines>
             </method>
             <method name="setMainCenter" signature="CenterEntity $mainCenter" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="83" hits="4"/>
+                <line number="86" hits="4"/>
               </lines>
             </method>
             <method name="setAffiliatedCenters" signature="array $affiliatedCenters" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="88" hits="1"/>
+                <line number="91" hits="1"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="33" hits="5"/>
             <line number="34" hits="5"/>
             <line number="35" hits="5"/>
             <line number="36" hits="5"/>
@@ -4423,8 +4424,8 @@
             <line number="48" hits="5"/>
             <line number="49" hits="5"/>
             <line number="50" hits="5"/>
-            <line number="55" hits="5"/>
-            <line number="56" hits="5"/>
+            <line number="51" hits="5"/>
+            <line number="52" hits="5"/>
             <line number="57" hits="5"/>
             <line number="58" hits="5"/>
             <line number="59" hits="5"/>
@@ -4432,15 +4433,18 @@
             <line number="61" hits="5"/>
             <line number="62" hits="5"/>
             <line number="63" hits="5"/>
-            <line number="68" hits="5"/>
-            <line number="69" hits="5"/>
-            <line number="70" hits="5"/>
+            <line number="64" hits="5"/>
+            <line number="65" hits="5"/>
+            <line number="66" hits="5"/>
             <line number="71" hits="5"/>
             <line number="72" hits="5"/>
             <line number="73" hits="5"/>
-            <line number="78" hits="2"/>
-            <line number="83" hits="4"/>
-            <line number="88" hits="1"/>
+            <line number="74" hits="5"/>
+            <line number="75" hits="5"/>
+            <line number="76" hits="5"/>
+            <line number="81" hits="2"/>
+            <line number="86" hits="4"/>
+            <line number="91" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -6151,7 +6155,7 @@
                 <line number="51" hits="3"/>
               </lines>
             </method>
-            <method name="createUser" signature="string $lastname, string $firstname, string $email, ?bool $disablEMailNotification, ?string $phone, bool $administrator, int $centerCode, string $job, ?string $orthancAdress, ?string $orthancLogin, ?string $orthancPassword" line-rate="1" branch-rate="0" complexity="1">
+            <method name="createUser" signature="string $lastname, string $firstname, string $email, ?bool $disableEMailNotification, ?string $phone, bool $administrator, int $centerCode, string $job, ?string $orthancAdress, ?string $orthancLogin, ?string $orthancPassword" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="68" hits="8"/>
                 <line number="69" hits="8"/>
@@ -6171,7 +6175,7 @@
                 <line number="83" hits="7"/>
               </lines>
             </method>
-            <method name="updateUser" signature="int $id, ?string $lastname, ?string $firstname, string $email, ?bool $disablEMailNotification, ?string $phone, bool $administrator, int $centerCode, string $job, ?string $orthancAdress, ?string $orthancLogin, ?string $orthancPassword, ?string $onboardingVersion, bool $resetEmailVerification" line-rate="1" branch-rate="0" complexity="2">
+            <method name="updateUser" signature="int $id, ?string $lastname, ?string $firstname, string $email, ?bool $disableEMailNotification, ?string $phone, bool $administrator, int $centerCode, string $job, ?string $orthancAdress, ?string $orthancLogin, ?string $orthancPassword, ?string $onboardingVersion, bool $resetEmailVerification" line-rate="1" branch-rate="0" complexity="2">
               <lines>
                 <line number="103" hits="6"/>
                 <line number="104" hits="6"/>
