@@ -55,7 +55,7 @@ class UserRepository implements UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
-        ?bool $disablEMailNotification,
+        ?bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -69,7 +69,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
-        $user->disable_email_notification = $disablEMailNotification;
+        $user->disable_email_notification = $disableEMailNotification;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -88,7 +88,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
-        ?bool $disablEMailNotification,
+        ?bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -104,7 +104,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
-        $user->disable_email_notification = $disablEMailNotification;
+        $user->disable_email_notification = $disableEMailNotification;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
