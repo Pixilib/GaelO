@@ -95,17 +95,28 @@ class ExportStudy extends Command
 
         $availableDestinations = array_column(CombinedDestinations::cases(), 'value');
 
-        // If normal zip don't includ dicom protocol
         if ($exportData || $exportFiles) {
             $availableDestinations = array_diff($availableDestinations, [
                 CombinedDestinations::ORTHANCPEER->value,
                 CombinedDestinations::DICOMWEB->value
             ]);
+
+            $spreadsheetInterface->addSheet('Files Details');
+            $spreadsheetInterface->fillData('Files Details', array_values($this->fileIndex));
+            
+            $csvTemp = $spreadsheetInterface->writeToCsv('Files Details');
+            $csvFinal = dirname($csvTemp) . '/details_fichiers_' . $this->studyName . '.csv';
+            rename($csvTemp, $csvFinal);
+            $attachments[] = $csvFinal;
+
+            $excelTemp = $spreadsheetInterface->writeToExcel();
+            $excelFinal = dirname($excelTemp) . '/details_fichiers_' . $this->studyName . '.xlsx';
+            rename($excelTemp, $excelFinal);
+            $attachments[] = $excelFinal;
         }
 
         $destinationType = $this->choice('Destination Type', array_values($availableDestinations));
 
-        // destination configuration
         switch ($destinationType) {
             case CombinedDestinations::ORTHANCPEER->value:
                 $this->destinatorName = $this->ask('Orthanc Destinator Name: (ex: sanofi)');
@@ -171,13 +182,11 @@ class ExportStudy extends Command
 
         $attachments = [];
 
-        // 1. Export Data
         if ($exportData) {
             $this->info("Exporting Data Tables...");
             $this->transferDataTables($destinationType);
         }
 
-        // 2. Export Files
         if ($exportFiles) {
             $this->info("Exporting Associated Files...");
             $this->transferAssociatedFiles($destinationType);
@@ -189,14 +198,51 @@ class ExportStudy extends Command
             $attachments[] = $spreadsheetInterface->writeToCsv('Files Details');
         }
 
-        // 3. Export DICOM
         if ($exportDicom) {
             $this->info("Exporting DICOMs...");
             $dicomAttachments = $this->transferDicoms($destinationType, $spreadsheetInterface);
             $attachments = array_merge($attachments, $dicomAttachments);
         }
+        $completed = [];
 
-        //Send Report
+        foreach ($this->fileIndex as $key => $fileData) {
+            if ($fileData['status'] === 'success' && !empty($fileData['checksum_sha256'])) {
+                $completed[$key] = [
+                    'checksum' => $fileData['checksum_sha256'],
+                    'instances_count' => '1',
+                    'info' => [
+                        'server_filename' => $fileData['fileName'],
+                        'export_type' => $fileData['export'],
+                    ]
+                ];
+            }
+        }
+
+        foreach ($this->dicomStudyIndex as $studyOrthancId => $studyData) {
+            if ($studyData['status'] === 'success' && !empty($studyData['checksum_sha256'])) {
+                $completed[$studyOrthancId] = [
+                    'checksum' => $studyData['checksum_sha256'],
+                    'instances_count' => 'unknown', 
+                    'info' => [
+                        'server_filename' => $studyOrthancId . '.zip',
+                        'export_type' => 'dicom',
+                    ]
+                ];
+            }
+        }
+
+        $jsonExportData = [
+            'completed' => $completed
+        ];
+
+        $jsonFinalPath = (ini_get('upload_tmp_dir') ?: sys_get_temp_dir()) . '/transfer_progress_' . $this->studyName . '.json';
+        file_put_contents(
+            $jsonFinalPath, 
+            json_encode($jsonExportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+
+        $attachments[] = $jsonFinalPath;
+
         $mailServices->sendExportCommandReport(
             $this->studyName,
             'Export Terminated',
@@ -206,8 +252,6 @@ class ExportStudy extends Command
 
         return 0;
     }
-
-    // DATA TABLES & ASSOCIATED FILES METHODS
 
     private function transferDataTables(string $destinationType): void
     {
@@ -320,7 +364,6 @@ class ExportStudy extends Command
         $this->table(['export', 'fileName', 'checksum_sha256', 'status'], array_values($this->fileIndex));
     }
 
-    // DICOM EXPORT METHODS
     private function transferDicoms(string $destinationType, SpreadsheetInterface $spreadsheetInterface): array
     {
         $studies = $this->getDicomStudiesToSend();
@@ -417,9 +460,22 @@ class ExportStudy extends Command
         $spreadsheetInterface->addSheet('Export Stats');
         $spreadsheetInterface->fillData('Export Stats', [$stats]);
 
+        $detailsCsvTemp = $spreadsheetInterface->writeToCsv('Export Details');
+        $detailsCsvFinal = dirname($detailsCsvTemp) . '/details_export_dicom_' . $this->studyName . '.csv';
+        rename($detailsCsvTemp, $detailsCsvFinal);
+
+        $statsCsvTemp = $spreadsheetInterface->writeToCsv('Export Stats');
+        $statsCsvFinal = dirname($statsCsvTemp) . '/stats_export_dicom_' . $this->studyName . '.csv';
+        rename($statsCsvTemp, $statsCsvFinal);
+
+        $excelTemp = $spreadsheetInterface->writeToExcel();
+        $excelFinal = dirname($excelTemp) . '/rapport_export_global_' . $this->studyName . '.xlsx';
+        rename($excelTemp, $excelFinal);
+
         return [
-            $spreadsheetInterface->writeToCsv('Export Details'),
-            $spreadsheetInterface->writeToCsv('Export Stats')
+            $detailsCsvFinal,
+            $statsCsvFinal,
+            $excelFinal
         ];
     }
 
@@ -542,7 +598,6 @@ class ExportStudy extends Command
         }
     }
 
-    // SHARED UTILITIES
     private function writeToDestination(string $destinationType, $stream, string $fileName): bool
     {
         return match ($destinationType) {
