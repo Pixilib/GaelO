@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('disable_email_notification')
-                ->after('email')
-                ->nullable();
+                ->default(false)
+                ->after('email');
         });
     }
 

@@ -55,7 +55,7 @@ class UserRepository implements UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
-        ?bool $disableEMailNotification,
+        bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -88,7 +88,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
-        ?bool $disableEMailNotification,
+        bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -171,14 +171,12 @@ class UserRepository implements UserRepositoryInterface
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, ?bool $filter = false): array
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $onlyWithEmailActivated = false): array
     {
 
             $query = $this->userModel
             ->with('affiliatedCenters')
-            ->when($filter, function ($query) {
-                $query->whereNotNull('email_verified_at');
-            })
+            ->where('disable_email_notification', false)
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
                     $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
@@ -196,26 +194,23 @@ class UserRepository implements UserRepositoryInterface
                 ->orWhere('users.center_code', '=', $centerCode);
             });
 
-        $this->filterDisableEmailNotification($query);
-
         $investigators = $query->get();
 
         return empty($investigators) ? [] : $investigators->toArray();
     }
 
-    public function getUsersByRolesInStudy(string $study, string $role, ?bool $filter = false): array
+    public function getUsersByRolesInStudy(string $study, string $role, bool $onlyWithEmailActivated = false): array
     {
 
         $query = $this->userModel
-        ->when($filter, function ($query) {
+        ->when($onlyWithEmailActivated, function ($query) {
             $query->whereNotNull('email_verified_at');
         })
+        ->where('disable_email_notification', false)
         ->whereHas('roles', function ($query) use ($study, $role) {
             $query->where('name', '=', $role)
                 ->where('study_name', '=', $study);
         });
-
-        $this->filterDisableEmailNotification($query);
 
         $users = $query->get();
 

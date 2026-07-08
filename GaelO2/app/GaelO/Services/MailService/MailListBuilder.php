@@ -53,7 +53,7 @@ class MailListBuilder
 
     public function withUsersEmailsByRolesInStudy(string $studyName, string $role): self
     {
-        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role, filter:true); 
+        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role, onlyWithEmailActivated:true); 
         //Filter user with a verified email (password have been set)
         //$emails = $this->filterNonVerifiedEmailsUsers($users);
         $users = array_column($users, 'email');

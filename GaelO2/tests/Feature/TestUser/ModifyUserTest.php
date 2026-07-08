@@ -32,7 +32,6 @@ class ModifyUserTest extends TestCase
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
-            'disable_email_notification' => null,
             'phone' => '+33685969895',
             'administrator' => true,
             'centerCode' => $center->code,

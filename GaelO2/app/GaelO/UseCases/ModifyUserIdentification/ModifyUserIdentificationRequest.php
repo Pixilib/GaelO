@@ -10,5 +10,5 @@ class ModifyUserIdentificationRequest
     public ?string $firstname = null;
     public ?string $phone = null;
     public string $email;
-    public ?bool $disable_email_notification = null;
+    public bool $disable_email_notification = false;
 }

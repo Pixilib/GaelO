@@ -17,7 +17,7 @@ interface UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
-        ?bool $disableEMailNotification,
+        bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -32,7 +32,7 @@ interface UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
-        ?bool $disableEMailNotification,
+        bool $disableEMailNotification,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -58,9 +58,9 @@ interface UserRepositoryInterface
 
     public function getAdministrators(): array;
 
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, ?bool $filter): array;
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $onlyWithEmailActivated): array;
 
-    public function getUsersByRolesInStudy(string $study, string $role, ?bool $filter): array;
+    public function getUsersByRolesInStudy(string $study, string $role, bool $onlyWithEmailActivated = false): array;
 
     public function getStudiesOfUser(int $userId): array;
 
@@ -95,5 +95,4 @@ interface UserRepositoryInterface
     public function markUserNotificationsRead(int $userId, array $notificationsIds): void;
 
     public function deleteUserNotifications(int $userId, array $notificationsIds): void;
-    public function filterDisableEmailNotification($query);
 }
