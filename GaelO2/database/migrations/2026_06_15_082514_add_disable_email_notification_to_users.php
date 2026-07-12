@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('enable_email_notifications')
                 ->default(true)
+                ->nullable(false)
                 ->after('email');
         });
     }
