@@ -433,7 +433,6 @@ class ExportStudy extends Command
                     }
 
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : "failure");
-                    if ($success) Log::info(strtoupper($destinationType) . " upload succeeded for {$fileName}");
                     break;
             }
 
@@ -566,7 +565,6 @@ class ExportStudy extends Command
         try {
             $this->dicomWebService->sendStudyInstancesConcurrentlyToDicomWeb($this->orthancService, $seriesOrthancIds, 5);
         } catch (Exception $e) {
-            Log::error($e);
             return false;
         }
         return true;

@@ -228,7 +228,6 @@ class ExportDicom extends Command
                     $success = $this->webdavClientInterface->writeStreamContent($stream, $fileName);
                     unlink($filePath);
                     $this->updateStudyStatus($studyOrthancId, $success ? 'success' : "failure");
-                    Log::info("webDav upload succeeded for {$fileName}");
                     break;
                 case Destinations::FTP->value:
                 case Destinations::SFTP->value:
@@ -242,7 +241,6 @@ class ExportDicom extends Command
                         throw new GaelOException("FTP upload failed for {$fileName}");
                     }
                     $this->updateStudyStatus($studyOrthancId, 'success');
-                    Log::info("FTP upload succeeded for {$fileName}");
                     break;
                 case Destinations::S3->value:
                 case Destinations::AZURESTORAGE->value:
@@ -386,7 +384,6 @@ class ExportDicom extends Command
         try {
             $this->dicomWebService->sendStudyInstancesConcurrentlyToDicomWeb($this->orthancService, $seriesOrthancID, 5);
         } catch (Exception $e) {
-            Log::error($e);
             return false;
         }
 

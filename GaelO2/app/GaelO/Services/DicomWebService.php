@@ -98,7 +98,6 @@ class DicomWebService extends HttpClientAdapter
                 if (file_exists($instanceDetail['path'])) {
                     unlink($instanceDetail['path']);
                 }
-                Log::error($exception);
                 $hasError = true;
             },
         ]);
