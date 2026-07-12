@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('disable_email_notification')
-                ->default(false)
+            $table->boolean('enable_email_notifications')
+                ->default(true)
                 ->after('email');
         });
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'disable_email_notification'
+                'enable_email_notifications'
             ]);
         });
     }

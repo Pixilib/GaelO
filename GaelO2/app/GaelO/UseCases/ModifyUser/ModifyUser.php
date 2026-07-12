@@ -62,7 +62,7 @@ class ModifyUser
                 $modifyUserRequest->lastname,
                 $modifyUserRequest->firstname,
                 $modifyUserRequest->email,
-                $modifyUserRequest->disableEMailNotification,
+                $modifyUserRequest->enableEmailNotifications,
                 $modifyUserRequest->phone,
                 $modifyUserRequest->administrator,
                 $modifyUserRequest->centerCode,
@@ -80,7 +80,8 @@ class ModifyUser
             }
 
             $details = [
-                'modified_user_id' => $modifyUserRequest->userId
+                'modified_user_id' => $modifyUserRequest->userId,
+                'enable_email_notifications' => $modifyUserRequest->enableEmailNotifications
             ];
 
             $this->trackerRepositoryInterface->writeAction($modifyUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $details);

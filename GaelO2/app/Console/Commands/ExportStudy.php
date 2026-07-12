@@ -469,7 +469,7 @@ class ExportStudy extends Command
         rename($statsCsvTemp, $statsCsvFinal);
 
         $excelTemp = $spreadsheetInterface->writeToExcel();
-        $excelFinal = dirname($excelTemp) . '/rapport_export_global_' . $this->studyName . '.xlsx';
+        $excelFinal = dirname($excelTemp) . '/report_export_global_' . $this->studyName . '.xlsx';
         rename($excelTemp, $excelFinal);
 
         return [

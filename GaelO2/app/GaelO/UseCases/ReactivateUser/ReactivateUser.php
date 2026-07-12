@@ -47,7 +47,7 @@ class ReactivateUser
                 $user['lastname'],
                 $user['firstname'],
                 $user['email'],
-                $user['disable_email_notification'],
+                $user['enable_email_notifications'],
                 $user['phone'],
                 $user['administrator'],
                 $user['center_code'],

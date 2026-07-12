@@ -42,20 +42,10 @@ class MailListBuilder
         return $this;
     }
 
-    private function filterNonVerifiedEmailsUsers(array $users)
-    {
-        $emails = [];
-        foreach ($users as $user) {
-            if ($user['email_verified_at'] != null) $emails[] = $user['email'];
-        }
-        return $emails;
-    }
-
     public function withUsersEmailsByRolesInStudy(string $studyName, string $role): self
     {
-        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role, onlyWithEmailActivated:true); 
-        //Filter user with a verified email (password have been set)
-        //$emails = $this->filterNonVerifiedEmailsUsers($users);
+        $users = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, $role, true, true); 
+
         $users = array_column($users, 'email');
         $this->emails = [...$users, ...$this->emails];
         return $this;
@@ -63,8 +53,7 @@ class MailListBuilder
 
     public function withInvestigatorOfCenterInStudy(String $studyName, String $center, ?String $job = null): self
     {
-        $users = $this->userRepositoryInterface->getInvestigatorsOfStudyFromCenter($studyName, $center, $job, true); 
-        //$emails = $this->filterNonVerifiedEmailsUsers($users);
+        $users = $this->userRepositoryInterface->getInvestigatorsOfStudyFromCenter($studyName, $center, $job, true, true); 
         $users = array_column($users, 'email');
         $this->emails = [...$users, ...$this->emails];
         return $this;

@@ -9,7 +9,7 @@ class ModifyUserRequest
     public ?string $lastname = null;
     public ?string $firstname = null;
     public string $email;
-    public bool $disableEMailNotification = false;
+    public bool $enableEmailNotifications;
     public ?string $phone = null;
     public bool $administrator;
     public int $centerCode;

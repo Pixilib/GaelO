@@ -207,7 +207,7 @@ abstract class AbstractGaelOStudy
         $visitType = $event->getVisitTypeName();
 
         //Get All Users with Reviwers in this study
-        $reviewersUsers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+        $reviewersUsers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER, true, true);
 
         //Get All Reviews of this visit
         $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);

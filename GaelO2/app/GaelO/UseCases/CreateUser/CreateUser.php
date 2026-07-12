@@ -60,7 +60,7 @@ class CreateUser
                 $createUserRequest->lastname,
                 $createUserRequest->firstname,
                 $createUserRequest->email,
-                $createUserRequest->disableEmailNotification,
+                $createUserRequest->enableEmailNotifications,
                 $createUserRequest->phone,
                 $createUserRequest->administrator,
                 $createUserRequest->centerCode,

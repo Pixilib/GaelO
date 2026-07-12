@@ -20,7 +20,7 @@ class UserEntity
     public ?String $onboardingVersion;
     public ?string $emailVerifiedAt;
     public ?string $lastConnection;
-    public bool $disableEmailNotification;
+    public bool $enableEmailNotifications;
 
     public CenterEntity $mainCenter;
     public array $affiliatedCenters;
@@ -47,7 +47,7 @@ class UserEntity
         $userEntity->emailVerifiedAt = $array['email_verified_at'];
         $userEntity->lastConnection = $array['last_connection'];
         $userEntity->onboardingVersion = $array['onboarding_version'];
-        $userEntity->disableEmailNotification = (bool)($array['disable_email_notification'] ?? false);
+        $userEntity->enableEmailNotifications = $array['enable_email_notifications'];
         $userEntity->is2FaEnabled = $array['two_factor_confirmed_at'] ==! null ? true : false;
         return $userEntity;
     }
@@ -61,7 +61,7 @@ class UserEntity
         $userEntity->centerCode = $array['center_code'];
         $userEntity->email = $array['email'];
         $userEntity->phone = $array['phone'];
-        $userEntity->disableEmailNotification = (bool)($array['disable_email_notification'] ?? false);
+        $userEntity->enableEmailNotifications = $array['enable_email_notifications'];
         if ($withOnboarding) $userEntity->onboardingVersion = $array['onboarding_version'];
         return $userEntity;
     }

@@ -55,7 +55,7 @@ class UserRepository implements UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
-        bool $disableEMailNotification,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -69,7 +69,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
-        $user->disable_email_notification = $disableEMailNotification;
+        $user->enable_email_notifications = $enableEmailNotifications;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -88,7 +88,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
-        bool $disableEMailNotification,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -104,7 +104,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
-        $user->disable_email_notification = $disableEMailNotification;
+        $user->enable_email_notifications = $enableEmailNotifications;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -171,12 +171,11 @@ class UserRepository implements UserRepositoryInterface
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $onlyWithEmailActivated = false): array
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $onlyWithVerifiedEmail, bool $onlyWithEmailNotificationEnabled): array
     {
 
-            $query = $this->userModel
+        $query = $this->userModel
             ->with('affiliatedCenters')
-            ->where('disable_email_notification', false)
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
                     $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
@@ -191,26 +190,37 @@ class UserRepository implements UserRepositoryInterface
                 $query->whereHas('affiliatedCenters', function ($query) use ($centerCode) {
                     $query->where('center_code', '=', $centerCode);
                 })
-                ->orWhere('users.center_code', '=', $centerCode);
+                    ->orWhere('users.center_code', '=', $centerCode);
             });
+
+        if($onlyWithVerifiedEmail) {
+            $query->whereNotNull('email_verified_at');
+        }
+
+        if($onlyWithEmailNotificationEnabled) {
+            $query->where('enable_email_notifications', true);
+        }
 
         $investigators = $query->get();
 
         return empty($investigators) ? [] : $investigators->toArray();
     }
 
-    public function getUsersByRolesInStudy(string $study, string $role, bool $onlyWithEmailActivated = false): array
+    public function getUsersByRolesInStudy(string $study, string $role, bool $withVerifiedEmail, bool $withEmailNotificationEnabled): array
     {
 
-        $query = $this->userModel
-        ->when($onlyWithEmailActivated, function ($query) {
-            $query->whereNotNull('email_verified_at');
-        })
-        ->where('disable_email_notification', false)
-        ->whereHas('roles', function ($query) use ($study, $role) {
+        $query = $this->userModel->whereHas('roles', function ($query) use ($study, $role) {
             $query->where('name', '=', $role)
                 ->where('study_name', '=', $study);
         });
+
+        if($withVerifiedEmail) {
+            $query->whereNotNull('email_verified_at');
+        }
+
+        if($withEmailNotificationEnabled) {
+            $query->where('enable_email_notifications', true);
+        }
 
         $users = $query->get();
 
@@ -378,7 +388,8 @@ class UserRepository implements UserRepositoryInterface
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
 
-    public function addUserNotification(int $userId, BaseGaelONotification $notification) : void {
+    public function addUserNotification(int $userId, BaseGaelONotification $notification): void
+    {
         $user  = $this->userModel->findOrFail($userId);
         $user->notify($notification);
     }
@@ -401,14 +412,5 @@ class UserRepository implements UserRepositoryInterface
     public function deleteUserNotifications(int $userId, array $notificationsIds): void
     {
         $this->userModel->findOrFail($userId)->notifications()->whereIn('id', $notificationsIds)->delete();
-    }
-
-   
-    public function filterDisableEmailNotification($query): void
-    {
-        $query->where(function ($query) {
-            $query->where('disable_email_notification', false)
-                ->orWhereNull('disable_email_notification');
-        });
     }
 }
