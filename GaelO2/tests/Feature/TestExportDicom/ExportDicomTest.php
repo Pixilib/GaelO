@@ -153,7 +153,7 @@ class ExportDicomTest extends TestCase
         $this->orthancServiceMock->shouldReceive('deletePeer')
             ->once()->with('test-peer');
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'orthanc-peer')
             ->expectsQuestion('Orthanc Destinator Name : (ex: sanofi)', 'test-peer')
             ->expectsQuestion('Orthanc URL : (ex: http://www.pixilib.fr:8042) ', 'http://orthanc:8042')
@@ -175,7 +175,7 @@ class ExportDicomTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Job Orthanc Failure');
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'orthanc-peer')
             ->expectsQuestion('Orthanc Destinator Name : (ex: sanofi)', 'test-peer')
             ->expectsQuestion('Orthanc URL : (ex: http://www.pixilib.fr:8042) ', 'http://orthanc:8042')
@@ -191,7 +191,7 @@ class ExportDicomTest extends TestCase
 
         $this->expectException(GaelOException::class);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'orthanc-peer')
             ->expectsQuestion('Orthanc Destinator Name : (ex: sanofi)', 'test-peer')
             ->expectsQuestion('Orthanc URL : (ex: http://www.pixilib.fr:8042) ', 'http://orthanc:8042')
@@ -213,7 +213,7 @@ class ExportDicomTest extends TestCase
             ->once()->with(\Mockery::type('resource'), 'study-orthanc-uid-001.zip')
             ->andReturn(true);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'ftp')
             ->expectsQuestion('FTP Host : (ex: ftp.pixilib.fr) ', 'ftp.example.com')
             ->expectsQuestion('FTP Port : (ex: 21) ', '21')
@@ -232,7 +232,7 @@ class ExportDicomTest extends TestCase
         $this->expectException(GaelOException::class);
         $this->expectExceptionMessage('FTP upload failed for study-orthanc-uid-001.zip');
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'ftp')
             ->expectsQuestion('FTP Host : (ex: ftp.pixilib.fr) ', 'ftp.example.com')
             ->expectsQuestion('FTP Port : (ex: 21) ', '21')
@@ -254,7 +254,7 @@ class ExportDicomTest extends TestCase
             ->once()->with(\Mockery::type('resource'), 'study-orthanc-uid-001.zip')
             ->andReturn(true);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'sftp')
             ->expectsQuestion('SFTP Host : (ex: sftp.pixilib.fr) ', 'sftp.example.com')
             ->expectsQuestion('SFTP Port : (ex: 22) ', '22')
@@ -273,7 +273,7 @@ class ExportDicomTest extends TestCase
         $this->expectException(GaelOException::class);
         $this->expectExceptionMessage('FTP upload failed for study-orthanc-uid-001.zip');
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'sftp')
             ->expectsQuestion('SFTP Host : (ex: sftp.pixilib.fr) ', 'sftp.example.com')
             ->expectsQuestion('SFTP Port : (ex: 22) ', '22')
@@ -300,7 +300,7 @@ class ExportDicomTest extends TestCase
                 5
             );
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'dicom-web')
             ->expectsQuestion('Dicom URL base : (ex: http://orthancdestination:8042/dicom-web) ', 'http://dicomweb:8042/dicom-web')
             ->expectsQuestion('Dicom Username: ', 'dcmuser')
@@ -322,7 +322,7 @@ class ExportDicomTest extends TestCase
         $this->dicomWebServiceMock->shouldReceive('sendStudyInstancesConcurrentlyToDicomWeb')
             ->once();
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'dicom-web')
             ->expectsQuestion('Dicom URL base : (ex: http://orthancdestination:8042/dicom-web) ', 'http://dicomweb:8042/dicom-web')
             ->expectsQuestion('Dicom Username: ', '')
@@ -339,7 +339,7 @@ class ExportDicomTest extends TestCase
         $this->dicomWebServiceMock->shouldReceive('sendStudyInstancesConcurrentlyToDicomWeb')
             ->once()->andThrow(new \Exception('DicomWeb unreachable'));
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'dicom-web')
             ->expectsQuestion('Dicom URL base : (ex: http://orthancdestination:8042/dicom-web) ', 'http://dicomweb:8042/dicom-web')
             ->expectsQuestion('Dicom Username: ', 'dcmuser')
@@ -363,7 +363,7 @@ class ExportDicomTest extends TestCase
             ->once()->with(\Mockery::type('resource'), 'study-orthanc-uid-001.zip')
             ->andReturn(true);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 's3')
             ->expectsQuestion('S3 Bucket name:', 'my-bucket')
             ->expectsQuestion('S3 Region: (e.g. eu-west-1)', 'eu-west-1')
@@ -380,7 +380,7 @@ class ExportDicomTest extends TestCase
         $this->objectStorageMock->shouldReceive('setObjectStorageServer')->once()->withAnyArgs();
         $this->objectStorageMock->shouldReceive('writeStreamContent')->once()->andReturn(false);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 's3')
             ->expectsQuestion('S3 Bucket name:', 'my-bucket')
             ->expectsQuestion('S3 Region: (e.g. eu-west-1)', 'eu-west-1')
@@ -405,7 +405,7 @@ class ExportDicomTest extends TestCase
             ->once()->with(\Mockery::type('resource'), 'study-orthanc-uid-001.zip')
             ->andReturn(true);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'azure-storage')
             ->expectsQuestion('Azure Container name:', 'my-container')
             ->expectsQuestion('Azure Connection String:', 'DefaultEndpointsProtocol=https;AccountName=test;AccountKey=abc')
@@ -419,7 +419,7 @@ class ExportDicomTest extends TestCase
         $this->objectStorageMock->shouldReceive('setObjectStorageServer')->once()->withAnyArgs();
         $this->objectStorageMock->shouldReceive('writeStreamContent')->once()->andReturn(false);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'azure-storage')
             ->expectsQuestion('Azure Container name:', 'my-container')
             ->expectsQuestion('Azure Connection String:', 'DefaultEndpointsProtocol=https;AccountName=test;AccountKey=abc')
@@ -441,7 +441,7 @@ class ExportDicomTest extends TestCase
             ->once()->with(\Mockery::type('resource'), 'study-orthanc-uid-001.zip')
             ->andReturn(true);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'webdav')
             ->expectsQuestion('WebDAV URL : (ex: https://www.pixilib.fr/webdav) ', 'https://webdav.example.com')
             ->expectsQuestion('Webdav Username: ', 'wduser')
@@ -456,7 +456,7 @@ class ExportDicomTest extends TestCase
         $this->webdavClientMock->shouldReceive('setWebdavServer')->once();
         $this->webdavClientMock->shouldReceive('writeStreamContent')->once()->andReturn(false);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $this->expectCommonQuestions($cmd, 'webdav')
             ->expectsQuestion('WebDAV URL : (ex: https://www.pixilib.fr/webdav) ', 'https://webdav.example.com')
             ->expectsQuestion('Webdav Username: ', 'wduser')
@@ -481,7 +481,7 @@ class ExportDicomTest extends TestCase
         $this->orthancServiceMock->shouldReceive('describeResources')
             ->with('Patients', \Mockery::any())->andReturn([1]);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         
         $this->expectCommonQuestions($cmd, 'webdav')
             ->expectsQuestion('WebDAV URL : (ex: https://www.pixilib.fr/webdav) ', 'https://webdav.example.com')
@@ -531,7 +531,7 @@ class ExportDicomTest extends TestCase
             ->with(1, true, true)
             ->andReturn($this->fakeDicomStudies);
 
-        $cmd = $this->artisan('gaelo:export-dicom');
+        $cmd = $this->artisan('gaelo:export-study');
         $cmd->expectsQuestion('Study to export :', 'STUDY_A')
             ->expectsConfirmation('Includes deleted studies ?', 'yes')
             ->expectsConfirmation('Includes deleted series ?', 'yes')
