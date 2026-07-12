@@ -15,7 +15,6 @@ use App\GaelO\Services\ExportStudyService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Exception;
 use Generator;
 use ZipArchive;
