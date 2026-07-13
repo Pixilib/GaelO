@@ -25,7 +25,7 @@ enum CombinedDestinations: string
     case WEBDAV       = "webdav";
 }
 
-class CommandeExportStudy
+class CommandExportStudyService
 {
     private ExportStudyService $exportStudyService;
     private FTPClientInterface $ftpClientInterface;
