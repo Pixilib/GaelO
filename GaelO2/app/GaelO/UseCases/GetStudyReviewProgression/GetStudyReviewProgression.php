@@ -46,7 +46,7 @@ class GetStudyReviewProgression
             $this->checkAuthorization($getStudyReviewProgressionRequest->currentUserId, $studyName);
 
             //Get Reviewers in the asked study
-            $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+            $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER, false, false);
 
             $reviewersById = [];
             foreach ($reviewers as $reviewer) {

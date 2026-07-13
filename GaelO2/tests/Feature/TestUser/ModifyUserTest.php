@@ -38,7 +38,8 @@ class ModifyUserTest extends TestCase
             'job' => 'CRA',
             'orthancAddress'=> 'https://gaelo.fr',
             'orthancLogin'=>'gaelo',
-            'orthancPassword'=>'gaelo'
+            'orthancPassword'=>'gaelo',
+            'enableEmailNotifications' => true
         ];
         $this->trackerSpy = $this->spy(TrackerRepository::class);
         app()->instance(TrackerRepository::class, $this->trackerSpy);

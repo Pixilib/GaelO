@@ -56,6 +56,7 @@ class ModifyUserIdentification
                 $modifyUserIdentificationRequest->lastname,
                 $modifyUserIdentificationRequest->firstname,
                 $modifyUserIdentificationRequest->email,
+                $modifyUserIdentificationRequest->enableEmailNotifications,
                 $modifyUserIdentificationRequest->phone,
                 $user['administrator'],
                 $user['center_code'],
@@ -76,7 +77,8 @@ class ModifyUserIdentification
                 'lastname' => $modifyUserIdentificationRequest->lastname,
                 'firstname' => $modifyUserIdentificationRequest->firstname,
                 'email' => $modifyUserIdentificationRequest->email,
-                'phone' => $modifyUserIdentificationRequest->phone
+                'phone' => $modifyUserIdentificationRequest->phone,
+                'enable_email_notifications' => $modifyUserIdentificationRequest->enableEmailNotifications
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);

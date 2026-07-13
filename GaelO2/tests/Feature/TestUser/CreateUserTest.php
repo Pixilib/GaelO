@@ -39,7 +39,8 @@ class CreateUserTest extends TestCase
                 'job' => 'Monitor',
                 'orthancAddress' => 'test',
                 'orthancLogin' => 'test',
-                'orthancPassword' => 'test'
+                'orthancPassword' => 'test',
+                'enableEmailNotifications' => true
             ];
 
         $this->trackerSpy = $this->spy(TrackerRepository::class);
