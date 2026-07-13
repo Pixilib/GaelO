@@ -14,7 +14,6 @@ use App\GaelO\Services\ExportStudyService;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Support\Facades\Log;
 use Exception;
-use ExportDestinationsEnum;
 use Generator;
 use ZipArchive;
 

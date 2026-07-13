@@ -5,8 +5,8 @@ namespace App\Console\Commands;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use App\GaelO\Services\CommandExportStudyService\CommandExportStudyService;
+use App\GaelO\Services\CommandExportStudyService\ExportDestinationsEnum;
 use App\GaelO\Services\MailServices;
-use ExportDestinationsEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

@@ -1,4 +1,5 @@
 <?php
+namespace App\GaelO\Services\CommandExportStudyService;
 
 enum ExportDestinationsEnum: string
 {
