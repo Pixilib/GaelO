@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\CommandExportStudyService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Exceptions\GaelOException;
@@ -9,21 +9,14 @@ use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
 use App\GaelO\Interfaces\Adapters\WebdavClientInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Services\DicomWebService;
+use App\GaelO\Services\ExportStudyService;
+use App\GaelO\Services\OrthancService;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use ExportDestinationsEnum;
 use Generator;
 use ZipArchive;
-
-enum CombinedDestinations: string
-{
-    case ORTHANCPEER  = "orthanc-peer";
-    case FTP          = "ftp";
-    case SFTP         = "sftp";
-    case DICOMWEB     = "dicom-web";
-    case S3           = "s3";
-    case AZURESTORAGE = "azure-storage";
-    case WEBDAV       = "webdav";
-}
 
 class CommandExportStudyService
 {
@@ -188,11 +181,11 @@ class CommandExportStudyService
     public function writeToDestination(string $destinationType, $stream, string $fileName): bool
     {
         return match ($destinationType) {
-            CombinedDestinations::FTP->value,
-            CombinedDestinations::SFTP->value         => $this->ftpClientInterface->writeStreamContent($stream, $fileName),
-            CombinedDestinations::S3->value,
-            CombinedDestinations::AZURESTORAGE->value => $this->objectStorage->writeStreamContent($stream, $fileName),
-            CombinedDestinations::WEBDAV->value       => $this->webdavClientInterface->writeStreamContent($stream, $fileName),
+            ExportDestinationsEnum::FTP->value,
+            ExportDestinationsEnum::SFTP->value         => $this->ftpClientInterface->writeStreamContent($stream, $fileName),
+            ExportDestinationsEnum::S3->value,
+            ExportDestinationsEnum::AZURESTORAGE->value => $this->objectStorage->writeStreamContent($stream, $fileName),
+            ExportDestinationsEnum::WEBDAV->value       => $this->webdavClientInterface->writeStreamContent($stream, $fileName),
             default                                   => false,
         };
     }
@@ -250,6 +243,8 @@ class CommandExportStudyService
     public function waitForJobFinished(string $jobId): void
     {
         do {
+            //sleep for 3 seconds to avoid too many requests to orthanc
+            sleep(3);
             $job = $this->orthancService->getJobDetails($jobId);
         } while ($job['State'] !== "Success" && $job['State'] !== "Failure");
 

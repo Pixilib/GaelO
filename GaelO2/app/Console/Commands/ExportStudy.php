@@ -4,9 +4,9 @@ namespace App\Console\Commands;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
-use App\GaelO\Services\CombinedDestinations;
-use App\GaelO\Services\CommandExportStudyService;
+use App\GaelO\Services\CommandExportStudyService\CommandExportStudyService;
 use App\GaelO\Services\MailServices;
+use ExportDestinationsEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -43,39 +43,39 @@ class ExportStudy extends Command
             $commandExportStudyService->setWithDeletedSeries($this->confirm('Includes deleted series?', false));
         }
 
-        $availableDestinations = array_column(CombinedDestinations::cases(), 'value');
+        $availableDestinations = array_column(ExportDestinationsEnum::cases(), 'value');
 
         $destinationType = $this->choice('Destination Type', array_values($availableDestinations));
 
         switch ($destinationType) {
-            case CombinedDestinations::ORTHANCPEER->value:
+            case ExportDestinationsEnum::ORTHANCPEER->value:
                 $destinatorName  = $this->ask('Orthanc Destinator Name: (ex: sanofi)');
                 $orthancAddress  = $this->ask('Orthanc URL: (ex: http://www.example.com:8042) ');
                 $orthancUsername = $this->ask('Orthanc Username: ');
                 $orthancPassword = $this->secret('Orthanc Password: ');
                 $commandExportStudyService->configureOrthancPeer($destinatorName, $orthancAddress, $orthancUsername, $orthancPassword);
                 break;
-            case CombinedDestinations::WEBDAV->value:
+            case ExportDestinationsEnum::WEBDAV->value:
                 $url      = $this->ask('WebDAV URL: (ex: https://www.example.com/webdav)');
                 $username = $this->ask('WebDAV Username:');
                 $password = $this->secret('WebDAV Password:');
                 $commandExportStudyService->configureWebdav($url, $username, $password);
                 break;
-            case CombinedDestinations::FTP->value:
+            case ExportDestinationsEnum::FTP->value:
                 $host     = $this->ask('FTP Host: (ex: ftp.example.com)');
                 $port     = (int) $this->ask('FTP Port: (ex: 21)');
                 $username = $this->ask('FTP Username:');
                 $password = $this->secret('FTP Password:');
                 $commandExportStudyService->configureFtp($host, $port, $username, $password, false);
                 break;
-            case CombinedDestinations::SFTP->value:
+            case ExportDestinationsEnum::SFTP->value:
                 $host     = $this->ask('SFTP Host: (ex: sftp.example.com)');
                 $port     = (int) $this->ask('SFTP Port: (ex: 22)');
                 $username = $this->ask('SFTP Username:');
                 $password = $this->secret('SFTP Password:');
                 $commandExportStudyService->configureFtp($host, $port, $username, $password, true);
                 break;
-            case CombinedDestinations::S3->value:
+            case ExportDestinationsEnum::S3->value:
                 $bucket    = $this->ask('S3 Bucket name:');
                 $region    = $this->ask('S3 Region: (e.g. eu-west-1)');
                 $accessKey = $this->ask('S3 Access Key ID:');
@@ -83,12 +83,12 @@ class ExportStudy extends Command
                 $endpoint  = $this->ask('S3 Custom Endpoint (leave empty for AWS):') ?: null;
                 $commandExportStudyService->configureS3($bucket, $region, $accessKey, $secretKey, $endpoint);
                 break;
-            case CombinedDestinations::AZURESTORAGE->value:
+            case ExportDestinationsEnum::AZURESTORAGE->value:
                 $container        = $this->ask('Azure Container name:');
                 $connectionString = $this->secret('Azure Connection String:');
                 $commandExportStudyService->configureAzure($container, $connectionString);
                 break;
-            case CombinedDestinations::DICOMWEB->value:
+            case ExportDestinationsEnum::DICOMWEB->value:
                 $dicomAddress     = $this->ask('Dicom URL base: (ex: http://orthancdestination:8042/dicom-web) ');
                 $dicomWebUsername = $this->ask('Dicom Username: ');
                 $dicomWebPassword = $this->secret('Dicom Password: ');
@@ -267,7 +267,7 @@ class ExportStudy extends Command
         ];
 
         switch ($destinationType) {
-            case CombinedDestinations::ORTHANCPEER->value:
+            case ExportDestinationsEnum::ORTHANCPEER->value:
                 $this->dicomIndex = array_merge(
                     $this->dicomIndex,
                     $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
@@ -278,7 +278,7 @@ class ExportStudy extends Command
                 $this->updateStudyStatus($studyOrthancId, 'success');
                 break;
 
-            case CombinedDestinations::DICOMWEB->value:
+            case ExportDestinationsEnum::DICOMWEB->value:
                 $this->dicomIndex = array_merge(
                     $this->dicomIndex,
                     $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
@@ -287,11 +287,11 @@ class ExportStudy extends Command
                 $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
                 break;
 
-            case CombinedDestinations::WEBDAV->value:
-            case CombinedDestinations::FTP->value:
-            case CombinedDestinations::SFTP->value:
-            case CombinedDestinations::S3->value:
-            case CombinedDestinations::AZURESTORAGE->value:
+            case ExportDestinationsEnum::WEBDAV->value:
+            case ExportDestinationsEnum::FTP->value:
+            case ExportDestinationsEnum::SFTP->value:
+            case ExportDestinationsEnum::S3->value:
+            case ExportDestinationsEnum::AZURESTORAGE->value:
                 $filePath = $commandExportStudyService->getZipToSend($orthancSeriesIds);
                 $checksum = hash_file('sha256', $filePath);
                 $this->dicomStudyIndex[$studyOrthancId]['checksum_sha256'] = $checksum;
@@ -304,7 +304,7 @@ class ExportStudy extends Command
                     unlink($filePath);
                 }
 
-                if (!$success && in_array($destinationType, [CombinedDestinations::FTP->value, CombinedDestinations::SFTP->value])) {
+                if (!$success && in_array($destinationType, [ExportDestinationsEnum::FTP->value, ExportDestinationsEnum::SFTP->value])) {
                     throw new GaelOException(strtoupper($destinationType) . " upload failed for {$fileName}");
                 }
 
@@ -318,7 +318,7 @@ class ExportStudy extends Command
         $this->newLine();
     }
 
-    if ($destinationType === CombinedDestinations::ORTHANCPEER->value) {
+    if ($destinationType === ExportDestinationsEnum::ORTHANCPEER->value) {
         $commandExportStudyService->deleteOrthancPeer();
     }
 
@@ -328,7 +328,7 @@ class ExportStudy extends Command
     $spreadsheetInterface->addSheet('Export Details');
     $spreadsheetInterface->fillData(
         'Export Details',
-        $destinationType === CombinedDestinations::DICOMWEB->value || $destinationType === CombinedDestinations::ORTHANCPEER->value
+        $destinationType === ExportDestinationsEnum::DICOMWEB->value || $destinationType === ExportDestinationsEnum::ORTHANCPEER->value
             ? $this->dicomIndex
             : array_values($this->dicomStudyIndex)
     );
