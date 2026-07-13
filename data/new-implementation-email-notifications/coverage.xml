@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.81781082796772" branch-rate="0" lines-covered="9018" lines-valid="11027" branches-covered="0" branches-valid="0" complexity="2958" version="0.4" timestamp="1783933768">
+<coverage line-rate="0.81781082796772" branch-rate="0" lines-covered="9018" lines-valid="11027" branches-covered="0" branches-valid="0" complexity="2958" version="0.4" timestamp="1783966204">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -465,7 +465,7 @@
       <classes>
         <class name="App\Console\Commands\ExportStudy" filename="Console/Commands/ExportStudy.php" line-rate="0.75097276264591" branch-rate="0" complexity="56">
           <methods>
-            <method name="handle" signature="CommandeExportStudy $commandeExportStudy, MailServices $mailServices, SpreadsheetInterface $spreadsheetInterface" line-rate="0.74803149606299" branch-rate="0" complexity="28">
+            <method name="handle" signature="CommandExportStudyService $commandExportStudyService, MailServices $mailServices, SpreadsheetInterface $spreadsheetInterface" line-rate="0.74803149606299" branch-rate="0" complexity="28">
               <lines>
                 <line number="29" hits="12"/>
                 <line number="30" hits="12"/>
@@ -596,7 +596,7 @@
                 <line number="190" hits="9"/>
               </lines>
             </method>
-            <method name="transferDataTables" signature="string $destinationType, CommandeExportStudy $commandeExportStudy" line-rate="0" branch-rate="0" complexity="4">
+            <method name="transferDataTables" signature="string $destinationType, CommandExportStudyService $commandExportStudyService" line-rate="0" branch-rate="0" complexity="4">
               <lines>
                 <line number="195" hits="0"/>
                 <line number="198" hits="0"/>
@@ -611,7 +611,7 @@
                 <line number="213" hits="0"/>
               </lines>
             </method>
-            <method name="transferAssociatedFiles" signature="string $destinationType, CommandeExportStudy $commandeExportStudy" line-rate="0" branch-rate="0" complexity="4">
+            <method name="transferAssociatedFiles" signature="string $destinationType, CommandExportStudyService $commandExportStudyService" line-rate="0" branch-rate="0" complexity="4">
               <lines>
                 <line number="219" hits="0"/>
                 <line number="222" hits="0"/>
@@ -640,7 +640,7 @@
                 <line number="253" hits="0"/>
               </lines>
             </method>
-            <method name="transferDicoms" signature="string $destinationType, SpreadsheetInterface $spreadsheetInterface, CommandeExportStudy $commandeExportStudy" line-rate="1" branch-rate="0" complexity="18">
+            <method name="transferDicoms" signature="string $destinationType, SpreadsheetInterface $spreadsheetInterface, CommandExportStudyService $commandExportStudyService" line-rate="1" branch-rate="0" complexity="18">
               <lines>
                 <line number="258" hits="11"/>
                 <line number="259" hits="11"/>
@@ -733,7 +733,7 @@
                 <line number="374" hits="9"/>
               </lines>
             </method>
-            <method name="updateStudyStatus" signature="$studyOrthancId, $status" line-rate="1" branch-rate="0" complexity="1">
+            <method name="updateStudyStatus" signature="string $studyOrthancId, string $status" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="379" hits="9"/>
                 <line number="380" hits="9"/>
@@ -6788,13 +6788,13 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/CommandeExportStudy.php" line-rate="0.63414634146341" branch-rate="0" complexity="47">
+    <package name="GaelO/Services/CommandExportStudyService.php" line-rate="0.63414634146341" branch-rate="0" complexity="47">
       <classes>
-        <class name="App\GaelO\Services\CombinedDestinations" filename="GaelO/Services/CommandeExportStudy.php" line-rate="0" branch-rate="0" complexity="0">
+        <class name="App\GaelO\Services\CombinedDestinations" filename="GaelO/Services/CommandExportStudyService.php" line-rate="0" branch-rate="0" complexity="0">
           <methods/>
           <lines/>
         </class>
-        <class name="App\GaelO\Services\CommandeExportStudy" filename="GaelO/Services/CommandeExportStudy.php" line-rate="0.63414634146341" branch-rate="0" complexity="47">
+        <class name="App\GaelO\Services\CommandExportStudyService" filename="GaelO/Services/CommandExportStudyService.php" line-rate="0.63414634146341" branch-rate="0" complexity="47">
           <methods>
             <method name="__construct" signature="ExportStudyService $exportStudyService, FTPClientInterface $ftpClientInterface, WebdavClientInterface $webdavClientInterface, ObjectStorageInterface $objectStorage, VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, DicomWebService $dicomWebService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
