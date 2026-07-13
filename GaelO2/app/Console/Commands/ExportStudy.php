@@ -274,7 +274,6 @@ class ExportStudy extends Command
         $visitType      = $study['visit']['visit_type']['name'];
         $visitName      = $study['visit']['visit_type']['visit_group']['study_name'];
 
-        // Comportement d'origine préservé : 1 ZIP par ID Orthanc
         $fileName = $studyOrthancId . '.zip';
 
         $this->dicomStudyIndex[$studyOrthancId] = [
