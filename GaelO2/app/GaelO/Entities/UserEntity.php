@@ -48,7 +48,7 @@ class UserEntity
         $userEntity->lastConnection = $array['last_connection'];
         $userEntity->onboardingVersion = $array['onboarding_version'];
         $userEntity->enableEmailNotifications = $array['enable_email_notifications'];
-        $userEntity->is2FaEnabled = $array['two_factor_confirmed_at'] ==! null ? true : false;
+        $userEntity->is2FaEnabled = $array['two_factor_confirmed_at'] !== null ? true : false;
         return $userEntity;
     }
 

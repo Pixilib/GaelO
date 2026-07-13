@@ -47,7 +47,7 @@ class ModifyUserIdentificationTest extends TestCase
         $afterChangeUser = User::find($currentUserId)->toArray();
 
          //Value expected to have changed
-         $updatedArray = ['email', 'lastname', 'firstname', 'email', 'phone', 'enable_email_notifications'];
+         $updatedArray = ['email', 'lastname', 'firstname', 'phone', 'enable_email_notifications'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);

@@ -45,26 +45,6 @@ class ExportStudy extends Command
 
         $availableDestinations = array_column(CombinedDestinations::cases(), 'value');
 
-        if ($exportData || $exportFiles) {
-            $availableDestinations = array_diff($availableDestinations, [
-                CombinedDestinations::ORTHANCPEER->value,
-                CombinedDestinations::DICOMWEB->value
-            ]);
-
-            $spreadsheetInterface->addSheet('Files Details');
-            $spreadsheetInterface->fillData('Files Details', array_values($this->fileIndex));
-
-            $csvTemp = $spreadsheetInterface->writeToCsv('Files Details');
-            $csvFinal = dirname($csvTemp) . '/details_fichiers_' . $this->studyName . '.csv';
-            rename($csvTemp, $csvFinal);
-            $attachments[] = $csvFinal;
-
-            $excelTemp = $spreadsheetInterface->writeToExcel();
-            $excelFinal = dirname($excelTemp) . '/details_fichiers_' . $this->studyName . '.xlsx';
-            rename($excelTemp, $excelFinal);
-            $attachments[] = $excelFinal;
-        }
-
         $destinationType = $this->choice('Destination Type', array_values($availableDestinations));
 
         switch ($destinationType) {
@@ -116,6 +96,7 @@ class ExportStudy extends Command
                 $commandExportStudyService->configureDicomWeb($dicomAddress, $dicomWebUsername, $dicomWebPassword, $dicomWebToken);
                 break;
         }
+
 
         $attachments = [];
 
