@@ -36,6 +36,11 @@ class TmtvProcessingService
         $this->orthancService->setOrthancServer(true);
     }
 
+    public function setModelName(string $modelName)
+    {
+        $this->modelName = $modelName;
+    }
+
     public function setVersion(string $version)
     {
         $this->version = $version;
@@ -79,16 +84,17 @@ class TmtvProcessingService
         return $maskProcessingService;
     }
 
-    public function runRegionalSegmentationCtInference()
+    public function runRegionalSegmentationCtInference(?int $version = null)
     {
         if ($this->idCT == null) {
             $this->sendCtAndCreateSeriesToProcessing();
         }
 
         $inferencePayload = [
-            'idCT' => $this->idCT,
-            'version' => 1
+            'idCT' => $this->idCT
         ];
+
+        if ($version) $inferencePayload['version'] = $version;
 
         $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_regional_swinunetr_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
@@ -98,16 +104,17 @@ class TmtvProcessingService
         return $maskProcessingService;
     }
 
-    public function runAnatomySegmentationCtInference()
+    public function runAnatomySegmentationCtInference(?int $version = null)
     {
         if ($this->idCT == null) {
             $this->sendCtAndCreateSeriesToProcessing();
         }
 
         $inferencePayload = [
-            'idCT' => $this->idCT,
-            'version' => 1
+            'idCT' => $this->idCT
         ];
+
+        if ($version) $inferencePayload['version'] = $version;
 
         $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_anatomy_attentionunet_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
@@ -134,7 +141,7 @@ class TmtvProcessingService
     }
 
 
-    public function loadPetAndCtSeriesOrthancIdsFromVisit($visitId): void
+    public function loadPetAndCtSeriesOrthancIdsFromVisit(int $visitId): void
     {
         $dicomStudyEntity = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visitId, false, false);
 

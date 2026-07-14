@@ -22,7 +22,7 @@ class ReverseProxyTus
     {
         //No particular RBAC, authentified users are allowed to send data (complicated to implement to get only users mathching the uploaded visit id)
         //Get Headers from Request
-        $headers  = $reverseProxyTusRequest->header;
+        $headers = $reverseProxyTusRequest->header;
         //Set server information to make TUS able to send the correct server location for client
         $url = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
         $parsedUrl = parse_url($url);

@@ -45,6 +45,7 @@ class UserRepositoryTest extends TestCase
             'Kanoun',
             'Salim',
             'salim.kanoun@gmail.com',
+            true,
             '0600000000',
             false,
             0,
@@ -67,6 +68,7 @@ class UserRepositoryTest extends TestCase
             'Kanoun',
             'Salim',
             'salim.kanoun@gmail.com',
+            true,
             '0600000000',
             false,
             0,
@@ -89,6 +91,7 @@ class UserRepositoryTest extends TestCase
             'newLastName',
             'newFirstName',
             'new@email.com',
+            true,
             null,
             !$userToModify->administrator,
             $this->center3->code,
@@ -236,19 +239,19 @@ class UserRepositoryTest extends TestCase
         });
 
         //Querying investigator from first study and center 3 with CRA role should return 10 results
-        $investigatorsEmails = $this->userRepository->getInvestigatorsOfStudyFromCenter($study1->name, 3, JobEnum::CRA->value);
+        $investigatorsEmails = $this->userRepository->getInvestigatorsOfStudyFromCenter($study1->name, 3, JobEnum::CRA->value, true, true);
         $this->assertEquals(10, sizeof($investigatorsEmails));
 
         //Querying investigator from last study and center 3 with CRA role should return 0 results
-        $investigatorsEmails2 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::CRA->value);
+        $investigatorsEmails2 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::CRA->value, true, true);
         $this->assertEquals(0, sizeof($investigatorsEmails2));
 
         //Querying investigator from last study and center 5 with Supervision role should return 15 results
-        $investigatorsEmails3 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 5, JobEnum::SUPERVISION->value);
+        $investigatorsEmails3 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 5, JobEnum::SUPERVISION->value, true, true);
         $this->assertEquals(15, sizeof($investigatorsEmails3));
 
         //Querying investigator from first study and center 3 with Radiologist role should return 0 results
-        $investigatorsEmails4 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::RADIOLOGIST->value);
+        $investigatorsEmails4 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::RADIOLOGIST->value, true, true);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query should be different
@@ -277,15 +280,15 @@ class UserRepositoryTest extends TestCase
         });
 
         //We should have 10 investigators, 20 supervisors, 0 monitor in this study
-        $investigatorsEmails = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
+        $investigatorsEmails = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR, true, true);
         $this->assertEquals(10, sizeof($investigatorsEmails));
-        $investigatorsEmails2 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_SUPERVISOR);
+        $investigatorsEmails2 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_SUPERVISOR, true, true);
         $this->assertEquals(20, sizeof($investigatorsEmails2));
-        $investigatorsEmails3 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_MONITOR);
+        $investigatorsEmails3 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_MONITOR, true, true);
         $this->assertEquals(0, sizeof($investigatorsEmails3));
 
         //We should have 0 investigators, in the other study
-        $investigatorsEmails4 = $this->userRepository->getUsersByRolesInStudy($study2->name, Constants::ROLE_INVESTIGATOR);
+        $investigatorsEmails4 = $this->userRepository->getUsersByRolesInStudy($study2->name, Constants::ROLE_INVESTIGATOR, true, true);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query role should be different

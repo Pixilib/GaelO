@@ -30,4 +30,6 @@ class MailConstants {
     const EMAIL_RADIOMICS_REPORT = 25;
     const EMAIL_JOB_FAILURE = 26;
     const EMAIL_UPDATED_ROLE = 27;
+
+    const EMAIL_USER_SYNC=28;
 }

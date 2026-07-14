@@ -17,6 +17,7 @@ interface UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -31,6 +32,7 @@ interface UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -56,9 +58,9 @@ interface UserRepositoryInterface
 
     public function getAdministrators(): array;
 
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array;
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $withVerifiedEmail, bool $withEmailNotificationEnabled): array;
 
-    public function getUsersByRolesInStudy(string $study, string $role): array;
+    public function getUsersByRolesInStudy(string $study, string $role, bool $withVerifiedEmail, bool $withEmailNotificationEnabled): array;
 
     public function getStudiesOfUser(int $userId): array;
 

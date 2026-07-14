@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Adapters;
 
+use App\Mail\MailUserSync;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Adjudication;
 use App\Mail\AdminLoged;
@@ -53,9 +54,10 @@ class MailerAdapter implements MailerInterface
     }
 
 
-    public function setReplyTo(?String $replyTo = null)
+    public function setReplyTo(?string $replyTo = null)
     {
-        if ($replyTo != null) $this->replyTo = $replyTo;
+        if ($replyTo != null)
+            $this->replyTo = $replyTo;
     }
 
     public function setTo(array $to)
@@ -87,6 +89,12 @@ class MailerAdapter implements MailerInterface
             Mail::to($destinator)->send($model);
         }
     }
+
+    public function setAttachements(array $filePaths)
+    {
+        $this->parameters['attachements'] = $filePaths;
+    }
+
 
     private function getModel(int $model): Mailable
     {
@@ -169,6 +177,9 @@ class MailerAdapter implements MailerInterface
                 break;
             case MailConstants::EMAIL_UPDATED_ROLE:
                 $model = new UpdatedRole($this->parameters);
+                break;
+            case MailConstants::EMAIL_USER_SYNC:
+                $model = new MailUserSync($this->parameters);
                 break;
             default:
                 throw new GaelOException("Unkown Mail Type");

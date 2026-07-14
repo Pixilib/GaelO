@@ -55,6 +55,7 @@ class UserRepository implements UserRepositoryInterface
         String $lastname,
         String $firstname,
         String $email,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -68,6 +69,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
+        $user->enable_email_notifications = $enableEmailNotifications;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -86,6 +88,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $lastname,
         ?String $firstname,
         String $email,
+        bool $enableEmailNotifications,
         ?String $phone,
         bool $administrator,
         int $centerCode,
@@ -101,6 +104,7 @@ class UserRepository implements UserRepositoryInterface
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = strtolower($email);
+        $user->enable_email_notifications = $enableEmailNotifications;
         $user->phone = $phone;
         $user->administrator = $administrator;
         $user->center_code = $centerCode;
@@ -167,10 +171,10 @@ class UserRepository implements UserRepositoryInterface
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job, bool $onlyWithVerifiedEmail, bool $onlyWithEmailNotificationEnabled): array
     {
 
-        $investigators = $this->userModel
+        $query = $this->userModel
             ->with('affiliatedCenters')
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
@@ -187,21 +191,38 @@ class UserRepository implements UserRepositoryInterface
                     $query->where('center_code', '=', $centerCode);
                 })
                     ->orWhere('users.center_code', '=', $centerCode);
-            })
-            ->get();
+            });
+
+        if($onlyWithVerifiedEmail) {
+            $query->whereNotNull('email_verified_at');
+        }
+
+        if($onlyWithEmailNotificationEnabled) {
+            $query->where('enable_email_notifications', true);
+        }
+
+        $investigators = $query->get();
 
         return empty($investigators) ? [] : $investigators->toArray();
     }
 
-    public function getUsersByRolesInStudy(string $study, string $role): array
+    public function getUsersByRolesInStudy(string $study, string $role, bool $withVerifiedEmail, bool $withEmailNotificationEnabled): array
     {
 
-        $users = $this->userModel
-            ->whereHas('roles', function ($query) use ($study, $role) {
-                $query->where('name', '=', $role)
-                    ->where('study_name', '=', $study);
-            })
-            ->get();
+        $query = $this->userModel->whereHas('roles', function ($query) use ($study, $role) {
+            $query->where('name', '=', $role)
+                ->where('study_name', '=', $study);
+        });
+
+        if($withVerifiedEmail) {
+            $query->whereNotNull('email_verified_at');
+        }
+
+        if($withEmailNotificationEnabled) {
+            $query->where('enable_email_notifications', true);
+        }
+
+        $users = $query->get();
 
         return empty($users) ? [] : $users->toArray();
     }
@@ -367,7 +388,8 @@ class UserRepository implements UserRepositoryInterface
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
 
-    public function addUserNotification(int $userId, BaseGaelONotification $notification) : void {
+    public function addUserNotification(int $userId, BaseGaelONotification $notification): void
+    {
         $user  = $this->userModel->findOrFail($userId);
         $user->notify($notification);
     }

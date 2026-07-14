@@ -17,7 +17,6 @@
 namespace App\GaelO\Services\StoreObjects;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Constants\Enums\ModalityEnum;
 use App\GaelO\Services\OrthancService;
 
 

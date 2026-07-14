@@ -38,6 +38,7 @@ class ModifyUserIdentificationTest extends TestCase
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
             'phone' => '0101010101',
+            'enableEmailNotifications' => false
         ];
 
         //Update with update API, shoud be success
@@ -46,7 +47,7 @@ class ModifyUserIdentificationTest extends TestCase
         $afterChangeUser = User::find($currentUserId)->toArray();
 
          //Value expected to have changed
-         $updatedArray = ['email', 'lastname', 'firstname', 'email', 'phone'];
+         $updatedArray = ['email', 'lastname', 'firstname', 'phone', 'enable_email_notifications'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);

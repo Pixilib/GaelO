@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'orthanc_login' => $this->faker->userName,
             'orthanc_password' => $this->faker->password,
             'onboarding_version' => Config::get('app.onboarding_version'),
+            'enable_email_notifications' => true,
             'email_verified_at' => now()
         ];
     }
@@ -111,6 +112,15 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) use ($version) {
             return [
                 'onboarding_version' => $version,
+            ];
+        });
+    }
+
+    public function enableEmailNotifications(bool $enable)
+    {
+        return $this->state(function (array $attributes) use ($enable) {
+            return [
+                'enable_email_notifications' => $enable,
             ];
         });
     }
