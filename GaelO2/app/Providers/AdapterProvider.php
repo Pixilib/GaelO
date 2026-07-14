@@ -30,7 +30,6 @@ use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use App\GaelO\Interfaces\Adapters\WebdavClientInterface;
 use App\GaelO\Interfaces\Adapters\ObjectStorageInterface;
 use App\GaelO\Interfaces\Adapters\ZipStreamInterface;
-use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use AzureOss\Storage\Blob\BlobServiceClient;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
@@ -38,6 +37,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
+use AzureOss\Storage\BlobFlysystem\AzureBlobStorageAdapter;
 
 class AdapterProvider extends ServiceProvider
 {

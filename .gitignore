@@ -4,3 +4,4 @@ composer.phar
 
 src/*
 GaelO2/app/Console/Commands/RealysaTmtvInference.php
+GaelO2/app/Console/Commands/AutoPsmaPhysioTmtvInference.php
