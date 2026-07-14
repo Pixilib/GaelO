@@ -116,7 +116,7 @@ class TmtvProcessingService
 
         if ($version) $inferencePayload['version'] = $version;
 
-        $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_anatomy_swinunetr_ct', $inferencePayload);
+        $inferenceResponse = $this->gaelOProcessingService->executeInferenceAsync('localisation_anatomy_attentionunet_ct', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
         $maskProcessingService = new MaskProcessingService($this->orthancService, $this->gaelOProcessingService);
         $maskProcessingService->setMaskId($maskId);
