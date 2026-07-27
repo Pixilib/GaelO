@@ -38,6 +38,7 @@ jobs:
           context: .
           push: true
           pull: true
+          network: host
           tags: ${{ steps.meta.outputs.tags }}
 
 permissions:
