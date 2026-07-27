@@ -7,13 +7,13 @@
 #RUN cd Viewers && yarn config set workspaces-experimental true && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
 #RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
-FROM alpine as stone
-RUN apk --no-cache add wget
-RUN apk add --update zip
-RUN wget https://orthanc.uclouvain.be/downloads/linux-standard-base/stone-web-viewer/2.3/wasm-binaries.zip
-RUN mkdir /stone
-RUN unzip wasm-binaries.zip -d /stone
-RUN rm /stone/wasm-binaries/StoneWebViewer/configuration.json
+#FROM alpine as stone
+#RUN apk --no-cache add wget
+#RUN apk add --update zip
+#RUN wget https://orthanc.uclouvain.be/downloads/linux-standard-base/stone-web-viewer/2.3/wasm-binaries.zip
+#RUN mkdir /stone
+#RUN unzip wasm-binaries.zip -d /stone
+#RUN rm /stone/wasm-binaries/StoneWebViewer/configuration.json
 
 FROM php:7.4.33-apache
 
@@ -62,7 +62,7 @@ RUN a2enconf gaelo-app
 
 COPY --chown=www-data:www-data src .
 #COPY --from=ohif --chown=www-data:www-data /ohif/Viewers/platform/viewer/dist ./ohif/
-COPY --from=stone /stone/wasm-binaries/StoneWebViewer ./stone/
+#COPY --from=stone /stone/wasm-binaries/StoneWebViewer ./stone/
 
 
 RUN composer install --no-dev
