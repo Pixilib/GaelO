@@ -42,6 +42,7 @@ class CreateStudy
             $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
             $creatablePatientsInvestigator = $createStudyRequest->creatablePatientsInvestigator;
+            $allowAlphaPatientCode = $createStudyRequest->allowAlphaPatientCode;
 
             if (preg_match('/[^A-Z0-9]/', $studyName)) {
                 throw new GaelOBadRequestException('Only uppercase alphanumerical name allowed, no space or special characters');
@@ -75,7 +76,11 @@ class CreateStudy
                 throw new GaelOBadRequestException('Missing Creatable Patient Investigator');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll, $documentationMandatory, $ancillaryOf, $creatablePatientsInvestigator);
+            if(!isset($allowAlphaPatientCode)) {
+                throw new GaelOBadRequestException('Missing Allow Alpha Patient Code');
+            }
+
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll, $documentationMandatory, $ancillaryOf, $creatablePatientsInvestigator, $allowAlphaPatientCode);
 
             $currentUserId = $createStudyRequest->currentUserId;
             $actionDetails = [

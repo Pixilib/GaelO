@@ -19,6 +19,7 @@ class StudyFactory extends Factory
             'documentation_mandatory' => false,
             'ancillary_of' => null,
             'creatable_patients_investigator' => false,
+            'allow_alpha_patient_code' => false
         ];
     }
 
@@ -90,6 +91,15 @@ class StudyFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'creatable_patients_investigator' => true,
+            ];
+        });
+    }
+
+    public function allowAlphaPatientCode()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'allow_alpha_patient_code' => true,
             ];
         });
     }
