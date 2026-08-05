@@ -156,7 +156,7 @@ class ImportPatientService
     {
 
         if($this->allowAlphaPatientCode && !preg_match('/^[a-zA-Z0-9\-_]+$/', $patientCode)) {
-            throw new GaelOBadRequestException('Patient Code accept only alphanumerical characters, - and _');
+            throw new GaelOBadRequestException('Unallowed characters');
         }
 
         if (!$this->allowAlphaPatientCode && !is_numeric($patientCode)) {

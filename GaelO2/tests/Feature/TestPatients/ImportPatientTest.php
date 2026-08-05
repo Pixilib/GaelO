@@ -268,4 +268,25 @@ class ImportPatientTest extends TestCase
         $resp = $this->json('POST', '/api/studies/' . $this->study->name . '/import-patients?role=Supervisor', $this->validPayload);
         $this->assertEquals(1, count($resp['success']));
     }
+
+    public function testForbiddenAlphaPatientCode()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->validPayload[0]['code'] = '1234123123412b';
+        $resp = $this->json('POST', '/api/studies/' . $this->study->name . '/import-patients?role=Supervisor', $this->validPayload);
+         $this->assertEquals(0, count($resp['success']));
+        $this->assertNotEmpty($resp['fail']['Patient Code accept only numbers']);
+    }
+
+    public function testAllowedAlphaPatientCode()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $this->study->allow_alpha_patient_code = true;
+        $this->study->save();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->validPayload[0]['code'] = '1234123123412b';
+        $resp = $this->json('POST', '/api/studies/' . $this->study->name . '/import-patients?role=Supervisor', $this->validPayload);
+        $this->assertEquals(1, count($resp['success']));
+    }
 }

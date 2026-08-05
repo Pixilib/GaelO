@@ -30,7 +30,8 @@ class CreateStudyTest extends TestCase
             'monitorShowAll' => false,
             'documentationMandatory' => false,
             'contactEmail' => 'test@gaelo.fr',
-            'creatablePatientsInvestigator' => false
+            'creatablePatientsInvestigator' => false,
+            'allowAlphaPatientCode' => false
         ];
         $this->trackerSpy = $this->spy(TrackerRepository::class);
         app()->instance(TrackerRepository::class, $this->trackerSpy);
