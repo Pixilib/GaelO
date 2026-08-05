@@ -16,6 +16,7 @@ use Throwable;
 class ImportPatientService
 {
     private int $patientCodeLength;
+    private bool $allowAlphaPatientCode;
     private array $existingPatientCodes;
     private array $existingCenter;
     private array $patientEntities;
@@ -52,7 +53,8 @@ class ImportPatientService
     public function import()
     {
 
-        $this->patientCodeLength = $this->studyEntity->patientCodeLength;
+        $this->patientCodeLength = $this->studyEntity->getPatientCodeLength();
+        $this->allowAlphaPatientCode = $this->studyEntity->isAllowedAlphaPatientCode();
         $this->existingPatientCodes = $this->patientRepository->getAllPatientsCodesInStudy($this->studyEntity->name);
 
         $allCenters = $this->centerRepository->getAll();
@@ -153,7 +155,11 @@ class ImportPatientService
     private function isCorrectPatientCode(string $patientCode): void
     {
 
-        if (!is_numeric($patientCode)) {
+        if($this->allowAlphaPatientCode && !preg_match('/^[a-zA-Z0-9\-_]+$/', $patientCode)) {
+            throw new GaelOBadRequestException('Patient Code accept only alphanumerical characters, - and _');
+        }
+
+        if (!$this->allowAlphaPatientCode && !is_numeric($patientCode)) {
             throw new GaelOBadRequestException('Patient Code accept only numbers');
         }
 
