@@ -122,7 +122,7 @@ class AuthorizationDicomWebService
         parse_str($url['query'], $params);
         // Filter wild card beacause OHIF add wildcard
         if (key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']);
-        else{
+        else {
             throw new GaelOException("No Patient ID Found");
         }
     }
@@ -161,7 +161,7 @@ class AuthorizationDicomWebService
         $studies[] = $this->originalStudyName;
 
         //Get User's Role
-        $allowedRoles =  [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
+        $allowedRoles =  [Constants::ROLE_INVESTIGATOR, Constants::ROLE_MONITOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
         $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId, $allowedRoles);
         $userStudies = array_keys($availableRoles);
 

@@ -14,4 +14,5 @@ class CreateStudyRequest
     public bool $documentationMandatory;
     public ?string $ancillaryOf = null;
     public bool $creatablePatientsInvestigator;
+    public bool $allowAlphaPatientCode;
 }

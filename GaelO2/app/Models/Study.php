@@ -25,7 +25,8 @@ class Study extends Model
             'controller_show_all' => 'boolean',
             'monitor_show_all' => 'boolean',
             'ancillary_of' =>  'string',
-            'documentation_mandatory' => 'boolean'
+            'documentation_mandatory' => 'boolean',
+            'allow_alpha_patient_code'=> 'boolean'
         ];
     }
 

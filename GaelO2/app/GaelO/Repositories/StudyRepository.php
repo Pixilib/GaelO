@@ -27,7 +27,7 @@ class StudyRepository implements StudyRepositoryInterface
         $this->studyModel->findOrFail($name)->delete();
     }
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, bool $documentationMandatory, ?string $ancillaryOf, bool $creatablePatientsInvestigator): void
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, bool $documentationMandatory, ?string $ancillaryOf, bool $creatablePatientsInvestigator, bool $allowAlphaPatientCode): void
     {
         $study = new Study();
         $study->name = $name;
@@ -39,6 +39,7 @@ class StudyRepository implements StudyRepositoryInterface
         $study->documentation_mandatory = $documentationMandatory;
         $study->ancillary_of = $ancillaryOf;
         $study->creatable_patients_investigator = $creatablePatientsInvestigator;
+        $study->allow_alpha_patient_code = $allowAlphaPatientCode;
         $study->save();
     }
 

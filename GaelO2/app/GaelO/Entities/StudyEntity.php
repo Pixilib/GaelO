@@ -11,6 +11,7 @@ class StudyEntity
     public string $contactEmail;
     public bool $controllerShowAll;
     public bool $monitorShowAll;
+    public bool $allowAlphaPatientCode;
     public bool $documentationMandatory;
     public bool $deleted;
     public bool $creatablePatientsInvestigator;
@@ -28,6 +29,7 @@ class StudyEntity
         $studyEntity->contactEmail = $array['contact_email'];
         $studyEntity->controllerShowAll = $array['controller_show_all'];
         $studyEntity->monitorShowAll = $array['monitor_show_all'];
+        $studyEntity->allowAlphaPatientCode = $array['allow_alpha_patient_code'];
         $studyEntity->ancillaryOf = $array['ancillary_of'];
         $studyEntity->documentationMandatory = $array['documentation_mandatory'];
         $studyEntity->creatablePatientsInvestigator = $array['creatable_patients_investigator'];
@@ -58,5 +60,15 @@ class StudyEntity
     public function setVisitGroups(array $visitGroupEntities) : void
     {
         $this->visitGroups = $visitGroupEntities;
+    }
+
+    public function isAllowedAlphaPatientCode() : bool
+    {
+        return $this->allowAlphaPatientCode;
+    }
+
+    public function getPatientCodeLength() : int
+    {
+        return $this->patientCodeLength;
     }
 }
