@@ -27,7 +27,6 @@ class ExportStudy extends Command
         SpreadsheetInterface $spreadsheetInterface
     ): int {
 
-        ini_set('memory_limit', '1024M');
         $this->studyName = $this->ask('Study to export:');
         $commandExportStudyService->setStudyName($this->studyName);
 
