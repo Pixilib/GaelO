@@ -26,6 +26,7 @@ class ExportStudy extends Command
         MailServices $mailServices,
         SpreadsheetInterface $spreadsheetInterface
     ): int {
+
         $this->studyName = $this->ask('Study to export:');
         $commandExportStudyService->setStudyName($this->studyName);
 
@@ -235,125 +236,125 @@ class ExportStudy extends Command
     }
 
     private function transferDicoms(string $destinationType, SpreadsheetInterface $spreadsheetInterface, CommandExportStudyService $commandExportStudyService): array
-{
-    $studies = $commandExportStudyService->getDicomStudiesToSend();
-    $fullSeriesOrthancIds = [];
+    {
+        $studies = $commandExportStudyService->getDicomStudiesToSend();
+        $fullSeriesOrthancIds = [];
 
-    $totalStudies = $commandExportStudyService->getCountTotalStudies();
-    $progressBar = $this->output->createProgressBar($totalStudies);
-    $progressBar->start();
+        $totalStudies = $commandExportStudyService->getCountTotalStudies();
+        $progressBar = $this->output->createProgressBar($totalStudies);
+        $progressBar->start();
 
-    foreach ($studies as $study) {
-        $orthancSeriesIds = array_map(
-            fn ($series) => $series['orthanc_id'],
-            $study['studies']['dicom_series']
-        );
+        foreach ($studies as $study) {
+            $orthancSeriesIds = array_map(
+                fn($series) => $series['orthanc_id'],
+                $study['studies']['dicom_series']
+            );
 
-        array_push($fullSeriesOrthancIds, ...$orthancSeriesIds);
-        $studyOrthancId = $study['studies']['orthanc_id'];
-        $patientCode    = $study['visit']['patient']['code'];
-        $visitType      = $study['visit']['visit_type']['name'];
-        $visitName      = $study['visit']['visit_type']['visit_group']['study_name'];
+            array_push($fullSeriesOrthancIds, ...$orthancSeriesIds);
+            $studyOrthancId = $study['studies']['orthanc_id'];
+            $patientCode    = $study['visit']['patient']['code'];
+            $visitType      = $study['visit']['visit_type']['name'];
+            $visitName      = $study['visit']['visit_type']['visit_group']['study_name'];
 
-        $fileName = $studyOrthancId . '.zip';
+            $fileName = $studyOrthancId . '.zip';
 
-        $this->dicomStudyIndex[$studyOrthancId] = [
-            'orthancStudyId'  => $studyOrthancId,
-            'patientCode'     => $patientCode,
-            'visitType'       => $visitType,
-            'visitName'       => $visitName,
-            'checksum_sha256' => null,
-            'status'          => 'sending'
-        ];
+            $this->dicomStudyIndex[$studyOrthancId] = [
+                'orthancStudyId'  => $studyOrthancId,
+                'patientCode'     => $patientCode,
+                'visitType'       => $visitType,
+                'visitName'       => $visitName,
+                'checksum_sha256' => null,
+                'status'          => 'sending'
+            ];
 
-        switch ($destinationType) {
-            case ExportDestinationsEnum::ORTHANCPEER->value:
-                $this->dicomIndex = array_merge(
-                    $this->dicomIndex,
-                    $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
-                );
-                $idWithLevels = array_map(fn($id) => ['Level' => 'Series', 'ID' => $id], $orthancSeriesIds);
-                $jobData = $commandExportStudyService->sendToPeer($idWithLevels);
-                $commandExportStudyService->waitForJobFinished($jobData['ID']);
-                $this->updateStudyStatus($studyOrthancId, 'success');
-                break;
+            switch ($destinationType) {
+                case ExportDestinationsEnum::ORTHANCPEER->value:
+                    $this->dicomIndex = array_merge(
+                        $this->dicomIndex,
+                        $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
+                    );
+                    $idWithLevels = array_map(fn($id) => ['Level' => 'Series', 'ID' => $id], $orthancSeriesIds);
+                    $jobData = $commandExportStudyService->sendToPeer($idWithLevels);
+                    $commandExportStudyService->waitForJobFinished($jobData['ID']);
+                    $this->updateStudyStatus($studyOrthancId, 'success');
+                    break;
 
-            case ExportDestinationsEnum::DICOMWEB->value:
-                $this->dicomIndex = array_merge(
-                    $this->dicomIndex,
-                    $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
-                );
-                $success = $commandExportStudyService->sendSeriesToDicomWeb($orthancSeriesIds);
-                $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
-                break;
+                case ExportDestinationsEnum::DICOMWEB->value:
+                    $this->dicomIndex = array_merge(
+                        $this->dicomIndex,
+                        $commandExportStudyService->buildDicomProtocolIndex($studyOrthancId, $patientCode, $visitType, $visitName, $orthancSeriesIds)
+                    );
+                    $success = $commandExportStudyService->sendSeriesToDicomWeb($orthancSeriesIds);
+                    $this->updateStudyStatus($studyOrthancId, $success ? 'success' : 'failure');
+                    break;
 
-            case ExportDestinationsEnum::WEBDAV->value:
-            case ExportDestinationsEnum::FTP->value:
-            case ExportDestinationsEnum::SFTP->value:
-            case ExportDestinationsEnum::S3->value:
-            case ExportDestinationsEnum::AZURESTORAGE->value:
-                $filePath = $commandExportStudyService->getZipToSend($orthancSeriesIds);
-                $checksum = hash_file('sha256', $filePath);
-                $this->dicomStudyIndex[$studyOrthancId]['checksum_sha256'] = $checksum;
-                
-                $stream = fopen($filePath, 'rb');
-                try {
-                    $success = $commandExportStudyService->writeToDestination($destinationType, $stream, $fileName);
-                } finally {
-                    if (is_resource($stream)) fclose($stream);
-                    unlink($filePath);
-                }
+                case ExportDestinationsEnum::WEBDAV->value:
+                case ExportDestinationsEnum::FTP->value:
+                case ExportDestinationsEnum::SFTP->value:
+                case ExportDestinationsEnum::S3->value:
+                case ExportDestinationsEnum::AZURESTORAGE->value:
+                    $filePath = $commandExportStudyService->getZipToSend($orthancSeriesIds);
+                    $checksum = hash_file('sha256', $filePath);
+                    $this->dicomStudyIndex[$studyOrthancId]['checksum_sha256'] = $checksum;
 
-                if (!$success && in_array($destinationType, [ExportDestinationsEnum::FTP->value, ExportDestinationsEnum::SFTP->value])) {
-                    throw new GaelOException(strtoupper($destinationType) . " upload failed for {$fileName}");
-                }
+                    $stream = fopen($filePath, 'rb');
+                    try {
+                        $success = $commandExportStudyService->writeToDestination($destinationType, $stream, $fileName);
+                    } finally {
+                        if (is_resource($stream)) fclose($stream);
+                        unlink($filePath);
+                    }
 
-                $this->updateStudyStatus($studyOrthancId, $success ? 'success' : "failure");
-                if ($success) Log::info(strtoupper($destinationType) . " upload succeeded for {$fileName}");
-                break;
+                    if (!$success && in_array($destinationType, [ExportDestinationsEnum::FTP->value, ExportDestinationsEnum::SFTP->value])) {
+                        throw new GaelOException(strtoupper($destinationType) . " upload failed for {$fileName}");
+                    }
+
+                    $this->updateStudyStatus($studyOrthancId, $success ? 'success' : "failure");
+                    if ($success) Log::info(strtoupper($destinationType) . " upload succeeded for {$fileName}");
+                    break;
+            }
+
+            $this->newLine();
+            $progressBar->advance();
+            $this->newLine();
         }
 
-        $this->newLine();
-        $progressBar->advance();
-        $this->newLine();
+        if ($destinationType === ExportDestinationsEnum::ORTHANCPEER->value) {
+            $commandExportStudyService->deleteOrthancPeer();
+        }
+
+        $stats = $commandExportStudyService->getExportStats($fullSeriesOrthancIds);
+        $this->table(["instanceCount", "seriesCount", "studyCount", "patientCount"], [$stats]);
+
+        $spreadsheetInterface->addSheet('Export Details');
+        $spreadsheetInterface->fillData(
+            'Export Details',
+            $destinationType === ExportDestinationsEnum::DICOMWEB->value || $destinationType === ExportDestinationsEnum::ORTHANCPEER->value
+                ? $this->dicomIndex
+                : array_values($this->dicomStudyIndex)
+        );
+
+        $spreadsheetInterface->addSheet('Export Stats');
+        $spreadsheetInterface->fillData('Export Stats', [$stats]);
+
+        $detailsCsvTemp = $spreadsheetInterface->writeToCsv('Export Details');
+        $detailsCsvFinal = dirname($detailsCsvTemp) . '/details_export_dicom_' . $this->studyName . '.csv';
+        rename($detailsCsvTemp, $detailsCsvFinal);
+
+        $statsCsvTemp = $spreadsheetInterface->writeToCsv('Export Stats');
+        $statsCsvFinal = dirname($statsCsvTemp) . '/stats_export_dicom_' . $this->studyName . '.csv';
+        rename($statsCsvTemp, $statsCsvFinal);
+
+        $excelTemp = $spreadsheetInterface->writeToExcel();
+        $excelFinal = dirname($excelTemp) . '/rapport_export_global_' . $this->studyName . '.xlsx';
+        rename($excelTemp, $excelFinal);
+
+        return [
+            $detailsCsvFinal,
+            $statsCsvFinal,
+            $excelFinal
+        ];
     }
-
-    if ($destinationType === ExportDestinationsEnum::ORTHANCPEER->value) {
-        $commandExportStudyService->deleteOrthancPeer();
-    }
-
-    $stats = $commandExportStudyService->getExportStats($fullSeriesOrthancIds);
-    $this->table(["instanceCount", "seriesCount", "studyCount", "patientCount"], [$stats]);
-
-    $spreadsheetInterface->addSheet('Export Details');
-    $spreadsheetInterface->fillData(
-        'Export Details',
-        $destinationType === ExportDestinationsEnum::DICOMWEB->value || $destinationType === ExportDestinationsEnum::ORTHANCPEER->value
-            ? $this->dicomIndex
-            : array_values($this->dicomStudyIndex)
-    );
-
-    $spreadsheetInterface->addSheet('Export Stats');
-    $spreadsheetInterface->fillData('Export Stats', [$stats]);
-
-    $detailsCsvTemp = $spreadsheetInterface->writeToCsv('Export Details');
-    $detailsCsvFinal = dirname($detailsCsvTemp) . '/details_export_dicom_' . $this->studyName . '.csv';
-    rename($detailsCsvTemp, $detailsCsvFinal);
-
-    $statsCsvTemp = $spreadsheetInterface->writeToCsv('Export Stats');
-    $statsCsvFinal = dirname($statsCsvTemp) . '/stats_export_dicom_' . $this->studyName . '.csv';
-    rename($statsCsvTemp, $statsCsvFinal);
-
-    $excelTemp = $spreadsheetInterface->writeToExcel();
-    $excelFinal = dirname($excelTemp) . '/rapport_export_global_' . $this->studyName . '.xlsx';
-    rename($excelTemp, $excelFinal);
-
-    return [
-        $detailsCsvFinal,
-        $statsCsvFinal,
-        $excelFinal
-    ];
-}
 
     private function updateStudyStatus(string $studyOrthancId, string $status): void
     {

@@ -238,6 +238,10 @@ class ExportStudyService
 
     public function exportAllTables(): void
     {
+        //Increase memory limit for large data exports
+        ini_set('memory_limit', '1024M');
+        //Operation might be long, set max execution time to 30 minutes
+        set_time_limit(1800);
         $this->exportPatientTable();
         $this->exportVisitTable();
         $this->exportDicomsTable();
