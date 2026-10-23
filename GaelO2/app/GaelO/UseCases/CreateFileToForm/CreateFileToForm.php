@@ -92,7 +92,7 @@ class CreateFileToForm
 
             $this->trackerRepositoryInterface->writeAction(
                 $createFileToReviewRequest->currentUserId,
-                $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
+                $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_REVIEWER,
                 $studyName,
                 $visitId,
                 $local ? Constants::TRACKER_SAVE_INVESTIGATOR_FORM : Constants::TRACKER_SAVE_REVIEWER_FORM,
